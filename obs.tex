@@ -1,0 +1,65 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+\newcommand{\Raa}{R_{AA}}
+
+\begin{document}
+\section{Initial production of heavy quark}
+Due to the large mass of heavy quark, its production can be described by perturbative QCD calculation.
+The structure of the pQCD calculation has the form,
+\begin{eqnarray}
+	\frac{d\sigma_{A + B \rightarrow H + X}}{p_T d{p_T} dy} = \int d x_a d x_b x_a x_b d x_H x_H f_{A}(x_a, M_f)f_{B}(x_a, M_f)\frac{d\sigma_{a + b \rightarrow Q + X}}{p_T d{p_T} dy} f_{Q \rightarrow H}(x_H)
+\end{eqnarray}
+
+\section{Calculation of $\Raa$}
+$\Raa$ is defined to be the ratio of differential cross-sections in AA collision to the spectra in pp collision scaled by the average number of binary collision for a given centrality.
+The differential cross-sections are usually restricted to certain rapidity cuts.
+Take the D-meson $\Raa$ as an example,
+\begin{eqnarray}
+\Raa = \frac{\left. \left\langle \frac{d\sigma_{AA \rightarrow D}}{dp_T} \right|_{|y|<y_0} \right\rangle}{\left. \langle T_{AA}\rangle \frac{d\sigma_{pp \rightarrow D}}{dp_T}\right|_{|y|<y_0}}
+\end{eqnarray}
+The average is taken over all events that fulfilling the centrality selection criterion.
+
+For experimental measurements, this definition is straight forward. 
+The differential cross-sections in the numerator and the denominator can be measured and $\langle T_{AA}\rangle$ is a model-dependent evaluation of nuclear overlapping function.
+For transport calculations, however, some complications arise.
+In the linear Boltzmann transport simulation, there are four key ingredients,
+\begin{itemize}
+\item An initial condition model for both hard process and bulk physics. 
+It calculates nuclear overlapping function $T_{AA}$, initial spectrum of charm quark production (per binary collision) and hydrodynamic initial condition for soft particles. 
+It also provides the base line in the denominator.
+\item A hydrodynamic evolution of the bulk.
+\item A transport model for energy loss in the medium, which conserves the  total number of charm quarks and only changes the shape of the spectra.
+\item A hadronization routine plus hadronic rescattering.
+\end{itemize} .
+Express the $\Raa$ with there quantities,
+\begin{eqnarray}
+\Raa &=& \frac{\left\langle \left.\frac{T_{AA}}{\langle T_{AA}\rangle} \frac{d\sigma_{nn \rightarrow D}}{dp_T} \right|_{|y|<y_0} \right\rangle}{\left.  \frac{\sigma_{pp \rightarrow D}}{dp_T}\right|_{|y|<y_0}} \\
+&=& \frac{\left\langle \left.\sigma_{nn \rightarrow D}\right|_{|y|<y_0} \left.\frac{d N_D}{dp_T} \right|_{|y|<y_0} \right\rangle_{w=T_{AA}}}{\left.  \frac{d\sigma_{pp \rightarrow D}}{dp_T}\right|_{|y|<y_0}}.
+\end{eqnarray}
+$d\sigma_{nn \rightarrow D}/dp_T$ is the D meson production within the rapidity cuts per binary collision.
+$d N_D/dp_T$ is the normalized distribution of D meson in the final states which can be obtained directly from the transport simulation.
+The average over events is then weighted by the nuclear overlapping function.
+The only missing piece that connects our calculation with the observable is the actually yield per binary collision of D meson for each event $\sigma_{nn\rightarrow D}$.
+We relate this quantity to the initial charm production cross-section,
+\begin{eqnarray}
+\left.\sigma_{nn\rightarrow D}\right|_{|y|<y_0} = \left.\sigma_{nn\rightarrow c} \right|_{|y|<y_{max}} \frac{\sum_{|y|<y_0}w_D}{\sum_{|y|<y_{max}}w_c} =  \left.\sigma_{nn\rightarrow c} \right|_{|y|<y_{max}} r_{D/c}.
+\end{eqnarray}
+This simply represents that the ratio between the total yield of D meson within $|y|<y_0$ to the yield of initial charm quark within $|y| < y_{max}$ equals to the ratio of the respective number of D meson and charm quark in a simulation.
+With $\sigma_{nn\rightarrow c}$ calculated from pQCD and the number ratio $r_{D/c}$ from event-by-event simulation, $\Raa$ finally relates to model calculations by,
+\begin{eqnarray}
+\Raa = \frac{\left\langle \left.\sigma_{nn\rightarrow c} \right|_{|y|<y_{max}} r_{D/c} \left.\frac{d N_D}{dp_T} \right|_{|y|<y_0} \right\rangle_{w=T_{AA}}}{\left.  \frac{d\sigma_{pp \rightarrow D}}{dp_T}\right|_{|y|<y_0}}.
+\end{eqnarray}
+
+\section{Calculation of $v_n\{2\}$ and $v_2\{EP\}$}
+The calculation of heavy flavor $v_2$ is easier since it measures the amount of anisotrpic and is insensitive to the total yield of heavy flavor hadrons.
+Cumulant method correlates a heavy meson with a light particle to estimate $v_n$.
+\begin{eqnarray}
+v_n\{2\} &=& \frac{d_n\{2\}}{\sqrt{c_n\{2\}} } \\
+d_n\{2\} &=& \left.\left\langle \frac{\Re\{pQ^*\}}{mM} \right\rangle\right|_{w = mM} \\
+c_n\{2\} &=& \left.\left\langle \frac{|Q|^2-M}{M(M-1)} \right\rangle\right|_{w = M(M-1)}
+\end{eqnarray}
+\end{document}

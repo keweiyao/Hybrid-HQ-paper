@@ -1,0 +1,71 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+\newcommand{\ppi}{\frac{\partial}{\partial p_i}}
+\newcommand{\ppj}{\frac{\partial}{\partial p_j}}
+\newcommand{\ppl}{\frac{\partial}{\partial p_l}}
+\newcommand{\Kpara}{\kappa_{\|}}
+\newcommand{\Kperp}{\kappa_{\perp}}
+\newcommand{\Ppara}{\hat{P}^{\|}}
+\newcommand{\Pperp}{\hat{P}^{\perp}}
+\begin{document}
+\section{Fokker-Plank with anisotropic momentum diffusion.}
+The small-momenta transfer approximation reduces the Linear Boltzmann equation to a Fokker-Plank equation,
+\begin{eqnarray}
+\frac{\partial f}{\partial t} + v\cdot\frac{\partial f}{\partial x}
+= \ppi \left(A(p^2) p_i + \frac{1}{2}\ppj B_{ij}\right)f 
+\end{eqnarray}
+$A(p^2)$ is the momentum drag term. 
+By the symmetry of in medium in equilibrium, the momentum diffusion term can be can be decomposed into,
+\begin{eqnarray}
+B_{ij} = \Kpara \frac{p_i p_j}{p^2} + \Kperp \left(\delta_{ij} - \frac{p_i p_j}{p^2}\right)
+\end{eqnarray} 
+Where the diffusion coefficient parallel and transverse to the direction of motion $\Kpara$ and $\Kperp$ are functions of $p^2$.
+
+To guarantee the system thermalize at infinite time, $A$, $\Kpara$ and $\Kperp$ are not independent.
+Given a static and homogeneous medium at equilibrium with temperature $T$, $f = N\exp\left(-\beta E\right)$, the equation becomes,
+\begin{eqnarray}
+0 &=& \ppi(\phi p_i f)\\
+\phi &=& A - \frac{\Kpara}{TE} + \frac{\partial \Kpara}{\partial p^2} + \frac{\Kpara-\Kperp}{p^2}.
+\end{eqnarray}
+The Einstein relation $\phi = 0$ guarantees the exist of a equilibrium solution.
+Therefore the drag coefficient is related to momentum diffusion via
+\begin{eqnarray}
+A = \frac{\Kpara}{TE} - \frac{\partial \Kpara}{\partial p^2} - \frac{\Kpara-\Kperp}{p^2}.
+\end{eqnarray}
+
+\section{Langevin simulation of the anisotropic Fokker-Plank equation}
+The Langevin equation governs the evolution of an ensemble of particles whose distribution is the solution of the Fokker-Plank equation.
+The Langevin equation in the post-point discretization scheme is,
+\begin{eqnarray}
+\Delta x_i &=& \frac{p_i}{E} \Delta t	\\
+\Delta p_i &=& -\Gamma p_i \Delta t + \sqrt{\kappa_i(p+\Delta_p)\Delta t} \xi_i
+\end{eqnarray}
+Where $\Gamma(p^2)$ is the Langevin drag term which may not be the same as $A(p^2)$. 
+$\kappa_i$ is the momentum diffusion in that direction. 
+It can be projected from $\Kpara$ and $\Kperp$.
+The relation between $A$ and $\Gamma$ in the post-point scheme is,
+\begin{eqnarray}
+p_j \Gamma  = p_jA + \left(\sqrt{\Kpara}\Ppara_{lk} + \sqrt{\Kperp}\Pperp_{lk}\right) \ppl \left( \sqrt{\Kpara}\Ppara_{kj} + \sqrt{\Kperp}\Pperp_{kh} \right).
+\end{eqnarray}
+This finally reduces to,
+\begin{eqnarray}
+\Gamma &=& A + \frac{\partial \Kpara}{p^2} + \frac{2\sqrt{\Kpara\Kperp} - 2\Kperp}{p^2}
+\end{eqnarray}
+And plug in the Einstein relation, the drag coefficient to be used in Langevin simulation is related to momentum diffusion coefficients via,
+\begin{eqnarray}
+\Gamma &=& \frac{\Kpara}{TE} - \frac{1}{p^2}\left( \sqrt{\Kpara} - \sqrt{\Kperp} \right)^2.
+\end{eqnarray}
+Discussions of this result,
+\begin{itemize}
+\item This results in the isotropic case $\Kpara=\Kperp=\kappa$ gives back to $\Gamma = \kappa/TE$.
+\item $\Kpara$ and $\Kperp$ from LOpQCD calculations are different, but $\Kpara=\Kperp=\kappa$ is always fulfilled in the limit $p^2 \rightarrow 0$, since there is not a special spatial direction.
+\item LOpQCD calculation also violates the Einstein relation. 
+This does not prevent the linear Boltzmann equation using the pQCD cross-section from approaching thermal equilibrium. 
+However, when comparing to Langevin/Fokker plank dynamics using the same underlying pQCD process, there is definitely an ambiguity that only two of the three quantities from  $A, \Kpara, \Kperp$ from pQCD calculation are need as input, with the rest one (usually the drag coefficient) fixed by the Einstein relation. 
+\end{itemize}
+
+\end{document}

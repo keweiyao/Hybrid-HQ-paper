@@ -1,0 +1,551 @@
+#!/usr/bin/env python3
+
+import matplotlib.pyplot as plt
+import numpy as np
+import argparse
+import colorsys
+import h5py
+import husl
+import glob
+import os
+import pickle
+from itertools import chain
+from scipy import interpolate
+from scipy.optimize import brentq
+from matplotlib import ticker
+from matplotlib.colors import LinearSegmentedColormap
+from matplotlib import patches
+from matplotlib import gridspec
+
+aspect = 1/1.618
+resolution = 72.27
+columnwidth = 246/resolution
+textwidth = 510/resolution
+textiny, texsmall, texnormal = 8.0, 9.25, 10.0
+cm1, cm2 = plt.cm.Blues(.8), plt.cm.Reds(.8)
+cb,co,cg,cr = plt.cm.Blues(.6), \
+	plt.cm.Oranges(.6), plt.cm.Greens(.6), plt.cm.Reds(.6)
+offblack = '#262626'
+gray = '0.8'
+
+plt.rcdefaults()
+plt.rcParams.update({
+	'font.family': 'sans-serif',
+	'font.serif': ['CMU Serif'],
+	'font.size': texsmall,
+	'legend.fontsize': texsmall,
+	'axes.labelsize': texsmall,
+	'axes.titlesize': texsmall,
+	'xtick.labelsize': textiny,
+	'ytick.labelsize': textiny,
+	'font.weight': 400,
+	'axes.labelweight': 400,
+	'axes.titleweight': 400,
+	'lines.linewidth': .9,
+	'lines.markersize': 3,
+	'lines.markeredgewidth': .1,
+	'patch.linewidth': .9,
+	'axes.linewidth': .5,
+	'xtick.major.width': .5,
+	'ytick.major.width': .5,
+	'xtick.minor.width': .5,
+	'ytick.minor.width': .5,
+	'xtick.major.size': 2,
+	'ytick.major.size': 2,
+	'xtick.minor.size': 1.3,
+	'ytick.minor.size': 1.3,
+	'xtick.major.pad': 1.8,
+	'ytick.major.pad': 1.8,
+	'text.color': 'black',
+	'axes.edgecolor': 'black',
+	'axes.labelcolor': 'black',
+	'xtick.color': 'black',
+	'ytick.color': 'black',
+	'legend.numpoints': 1,
+	'legend.scatterpoints': 1,
+	'legend.frameon': False,
+	'image.interpolation': 'none',
+	'pdf.fonttype': 42,
+})
+
+
+plot_functions = {}
+
+
+def plot(f):
+	def wrapper(*args, **kwargs):
+		print(f.__name__)
+		f(*args, **kwargs)
+		plt.savefig('{}.pdf'.format(f.__name__))
+		plt.close()
+
+	plot_functions[f.__name__] = wrapper
+
+	return wrapper
+
+
+def finish(despine=True, remove_ticks=False, pad=0.1, h_pad=None, w_pad=None,
+		   rect=[0, 0, 1, 1]):
+	fig = plt.gcf()
+
+	for ax in fig.axes:
+		if despine:
+			for spine in 'top', 'right':
+				ax.spines[spine].set_visible(False)
+
+		if remove_ticks:
+			for ax_name in 'xaxis', 'yaxis':
+				getattr(ax, ax_name).set_ticks_position('none')
+		else:
+			ax.xaxis.set_ticks_position('bottom')
+			ax.yaxis.set_ticks_position('left')
+
+	fig.tight_layout(pad=pad, h_pad=h_pad, w_pad=w_pad, rect=rect)
+
+
+def set_loc(ax, xy=None, nbins=5, steps=[1, 2, 3, 4, 5, 10],
+			prune=None, minor=0):
+	if xy == 'x':
+		axes = ax.xaxis,
+	elif xy == 'y':
+		axes = ax.yaxis,
+	else:
+		axes = ax.xaxis, ax.yaxis
+
+	for axis in axes:
+		axis.set_major_locator(
+			ticker.MaxNLocator(nbins=nbins, steps=steps, prune=prune)
+		)
+		if minor:
+			axis.set_minor_locator(ticker.AutoMinorLocator(minor))
+
+
+def desaturate(color, fraction=0.5):
+	h, l, s = colorsys.rgb_to_hls(*color[:3])
+	return colorsys.hls_to_rgb(h, l, fraction*s)
+
+
+def recolor(color, f1=0.7, f2=0.7):
+	h, l, s = colorsys.rgb_to_hls(*color[:3])
+	return colorsys.hls_to_rgb(h, f1*l, f2*s)
+
+
+def truncate_colormap(cmap, minval=0.0, maxval=1.0, n=100):
+	new_cmap = LinearSegmentedColormap.from_list(
+		'trunc({n},{a:.2f},{b:.2f})'.format(n=cmap.name, a=minval, b=maxval),
+		cmap(np.linspace(minval, maxval, n)))
+	return new_cmap
+
+
+TRENTO_LABEL = r'T\raisebox{-.5ex}{R}ENTo'
+
+
+Nc, Nf = 3., 3.
+pf_g = 4.*np.pi/3.*(Nc+Nf/2.)
+alpha0 = 4.*np.pi/(11. - 2./3.*Nf)
+Lambda2 = 0.2**2
+Q2cut_l = -Lambda2*np.exp(alpha0)
+Q2cut_h = Lambda2*np.exp(np.pi*np.tan(np.pi*(0.5-1./alpha0)))
+def alpha_s(Q2):
+	return 0.3
+#	if Q2 < Q2cut_l:
+#		return alpha0/np.log(-Q2/Lambda2)
+#	elif Q2 <= Q2cut_h:
+#		return 1.0;
+#	else:
+#		return alpha0*(0.5 - np.arctan(np.log(Q2/Lambda2)/np.pi)/np.pi)
+def mD2_LO_eq(m2, T, mu):
+	scale = -m2*mu
+	return alpha_s(scale)*6.*np.pi - m2/T/T
+def naive_LO_mD2(T, mu):
+	Q2 = -(mu*2.*np.pi*T)**2
+	return alpha_s(Q2)*6.*np.pi*T*T
+naive_LO_mD2 = np.vectorize(naive_LO_mD2)
+def mD2_LO_sf(T, mu):
+	return brentq(mD2_LO_eq, 0.01, 100., args=(T, mu))
+mD2_LO_sf = np.vectorize(mD2_LO_sf)
+
+@plot
+def tau_f():
+	fig, axes = plt.subplots(nrows=2, ncols=1, sharex=True,
+							 figsize=(columnwidth, 1.5*columnwidth))
+	M = 1.3
+	T = 0.2
+	E = 20.
+	def tau_f(sqrts, T, kperp, etak, switch):
+		pmax = 0.5*(sqrts-M*M/sqrts)
+		xb = kperp*np.exp(np.abs(etak))/sqrts
+		x = kperp*np.exp(etak)/sqrts
+		k = kperp*np.cosh(etak)
+		if k >= pmax:
+			return 0.
+		else:
+			return 2.*k*(1.-xb)/(kperp**2 + (x*M)**2 + switch*(1.-xb)*0.5*mD2_LO_sf(T, 1.))
+	tau_f = np.vectorize(tau_f)
+
+	x = np.linspace(0, T*5, 100) # kperp
+	y = np.linspace(-8, 8, 300) # etak
+
+	X, Y = np.meshgrid(x, y)
+	X = X.T
+	Y = Y.T
+	tks = [0, 5, 10], [-2,0,2,4]
+	titles = r"$m_g^2 = 0$", r"$m_g^2 = m_D^2/2$"
+	vcom = (E-T)/(E+T)
+	gcom = 1./np.sqrt(1.-vcom**2)
+	vhq = np.sqrt(1.-(M/E)**2)
+	eta_com = 0.5*np.log((1+vcom)/(1-vcom))
+	for s, ax, tk, title in zip([0,1], axes, tks, titles):
+		sqrts = np.sqrt(4.*E*T)
+		pmax = 0.5*(sqrts-M*M/sqrts)
+		Z = np.log(tau_f(sqrts, T, X, Y, s)*T/gcom/(vhq-vcom))
+		im = ax.contourf(X/T, Y+eta_com, Z, 10)
+		ax.plot(x/T, np.arccosh(pmax/x)+eta_com, 'r--',
+				label='Kinetic constrain')
+		ax.plot(x/T, -np.arccosh(pmax/x)+eta_com, 'r--')
+		ax.annotate(title, xy=(3,6))
+		cb = fig.colorbar(im, ax=ax, pad=0.15, ticks=tk)
+		cb.ax.set_title(r'$\ln\left(\tau_f T\right)$')
+		if s<0.5:
+			ax.legend(loc="lower right")
+		else:
+			ax.set_xlabel(r'$k_\perp / T$')
+			ax.annotate(r'$E={:1.1f}$ [GeV]'.format(E)+'\n'\
+						+r'$M={:1.1f}$ [GeV]'.format(M)+'\n'\
+						+r'$T={:1.1f}$ [GeV]'.format(T),
+						xy=(2.5,-4))
+		ax.set_ylabel(r'$\eta$')
+		ax.set_xticks([0,1,2,3,4,5])
+		ax.set_yticks([-4,0,4,8])
+	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.98, 0.98])
+
+@plot
+def L_Eloss():
+	fig, axes = plt.subplots(nrows=2, ncols=2,
+							 figsize=(textwidth, 0.67*textwidth))
+
+	f = h5py.File('data/LdE-sin.hdf5','r')
+	dE_el = f['elastic']['dE'].value
+	dE_tot = f['total']['dE'].value
+	Ea = f['elastic'].attrs['E']
+	Ta = f['elastic'].attrs['Temp']
+	f.close()
+
+	L = np.linspace(0,5,41)
+	dL = L[1]-L[0]
+	M = 1.3
+	color = [co,cg,cb]
+	line = ['-', '--', '-.']
+	for iT, T in enumerate(Ta[:-1]):
+		for iE, E in enumerate(Ea):
+			mD2 = mD2_LO_sf(T, 1.)
+			Lc = (E/mD2/T)**0.5*0.197
+			x = L+dL
+			y = dE_tot[iT, iE]-dE_el[iT, iE]
+			y0 = dE_el[iT, iE]
+			semiy0 = x
+			# elastic
+			axes[0,0].plot(x, y0,line[iT], color=color[iE], label=r'$E={}$ [GeV]'.format(E) if iT==0 else '')
+			axes[0,1].plot(x, y0/semiy0, line[iT], color=color[iE], label=r'$T={}$ [GeV]'.format(T) if iE==0 else '')
+			# inelastic
+			axes[1,0].plot(x, y, line[iT], color=color[iE], label=r'$E={}$ [GeV]'.format(E) if iT==0 else '')
+			axes[1,1].plot(x/Lc, y/E, line[iT], color=color[iE], label=r'$T={}$ [GeV]'.format(T) if iE==0 else '')
+
+
+	axes[0,0].set_xlabel(r"$L$ [fm]")
+	axes[0,0].set_ylabel(r"$\Delta E$ [GeV]")
+	axes[0,0].legend(framealpha=0.)
+	axes[0,0].set_ylim(0,15)
+
+	axes[0,1].set_xlabel(r"$L$ [fm]")
+	axes[0,1].set_ylabel(r"$\Delta E / L$ [GeV/fm]")
+	axes[0,1].legend(framealpha=0.)
+	axes[0,1].set_ylim(0,4)
+
+	axes[1,0].set_xlabel(r"$L$ [fm]")
+	axes[1,0].set_ylabel(r"$\Delta E$ [GeV]")
+	axes[1,0].set_ylim(0,25)
+	#axes[1,0].legend(framealpha=0.)
+
+	axes[1,1].set_xlabel(r"$L/L_c$")
+	axes[1,1].set_ylabel(r"$\Delta E / E$")
+	axes[1,1].set_ylim(0,0.35)
+	#axes[1,1].legend(framealpha=0.)
+	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.05, 0.04, 0.98, 0.98])
+
+@plot
+def E_Eloss():
+	fig, axes = plt.subplots(nrows=2, ncols=2,
+							 figsize=(textwidth, 0.67*textwidth))
+
+	f = h5py.File('data/EdE-sin.hdf5','r')
+	dE_el = f['elastic']['dE'].value
+	dE_tot = f['total']['dE'].value
+	La = f['elastic'].attrs['L']
+	Ta = f['elastic'].attrs['Temp']
+	f.close()
+
+	E = np.linspace(3,100,50)
+	M = 1.3
+	color = [co,cg,cb]
+	line = ['-', '--', '-.']
+	for iT, T in enumerate(Ta):
+		for iL, L in enumerate(La):
+			mD2 = mD2_LO_sf(T, 1.)
+			Ec = T*mD2*(L/0.197)**2
+			x = E
+			y = dE_tot[iT, iL]-dE_el[iT, iL]
+			y0 = dE_el[iT, iL]
+			semiy0 = L
+			# elastic
+			axes[0,0].plot(x, y0,line[iT], color=color[iL],
+							label=r'$L={}$ [fm]'.format(L) if iT==0 else '')
+			axes[0,1].plot(x, y0/semiy0, line[iT], color=color[iL],
+							label=r'$T={}$ [GeV]'.format(T) if iL==0 else '')
+			# inelastic
+			axes[1,0].plot(x, y, line[iT], color=color[iL],
+							label=r'$L={}$ [fm]'.format(L) if iT==0 else '')
+			axes[1,1].plot(x/Ec, y/Ec, line[iT], color=color[iL],
+							label=r'$T={}$ [GeV]'.format(T) if iL==0 else '')
+
+
+	axes[0,0].set_xlabel(r"$E$ [GeV]")
+	axes[0,0].set_ylabel(r"$\Delta E$ [GeV]")
+	axes[0,0].legend(framealpha=0.)
+	axes[0,0].set_ylim(0,15)
+
+	axes[0,1].set_xlabel(r"$E$ [GeV]")
+	axes[0,1].set_ylabel(r"$\Delta E / L$ [GeV/fm]")
+	axes[0,1].legend(framealpha=0.)
+	axes[0,1].set_ylim(0,4)
+
+	axes[1,0].set_xlabel(r"$E$ [GeV]")
+	axes[1,0].set_ylabel(r"$\Delta E$ [GeV]")
+	axes[1,0].set_ylim(0,20)
+	#axes[1,0].legend(framealpha=0.)
+
+	axes[1,1].set_xlabel(r"$E/E_c$")
+	axes[1,1].set_ylabel(r"$\Delta E / E$")
+	axes[1,1].set_ylim(0,0.5)
+	#axes[1,1].legend(framealpha=0.)
+	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.05, 0.04, 0.98, 0.98])
+
+def Xection_PS():
+	def projector(p):
+		norm2 = (p**2).sum()
+		return np.diag([1,1,1]) - np.outer(p,p)/norm2
+
+	def find_level(H, percentage):
+		tot = np.sum(H)
+		minH, maxH = np.min(H), np.max(H)
+		def percentile_above_level(level):
+			return np.sum(H[H>level])/tot - percentage
+		return brentq(percentile_above_level, minH, maxH), maxH
+
+	def corner(X, ax, color, cmap):
+		ndims, xsamples = X.shape
+		for i in range(ndims):
+			for j in range(0,i+1):
+				plt.subplot(ndims, ndims, i*ndims+j+1)
+				if i==j:
+					plt.hist(X[i], bins=30, normed=True,
+							histtype='step', color=color, linewidth=1.,)
+				else:
+					H, xb, yb = np.histogram2d(X[j], X[i],
+												bins=10, normed=True)
+					# solve 70% level
+					level, maxH = find_level(H, 0.7)
+					plt.contour(H.T,extent=[xb[0],xb[-1],yb[0],yb[-1]],
+								levels=[level,maxH], colors=(color,), alpha=0.5)
+
+	def get_data(ds):
+		M = 1.
+		E = ds.attrs['E']
+		T = ds.attrs['T']
+		dt = ds.attrs['dt']
+		y0 = np.log(E/M + np.sqrt(1.+E*E/M/M))
+		sqrts = E + np.sqrt(E**2-M**2)
+		s = sqrts**2
+		pmax = (sqrts**2-M*M)/2./sqrts
+
+		p3 = f['p3'].value
+		p4 = f['p4'].value
+		k = f['k'].value
+
+		k0 = k.T[0]
+		kz = k.T[3]
+		kt = np.sqrt(k.T[1]**2 + k.T[2]**2)
+		etak = 0.5*np.log((k0+kz)/(k0-kz))
+		xk = (k0+kz)/sqrts
+
+		qperp = np.sqrt(p4.T[1]**2 + p4.T[2]**2)
+
+		Tp4 = np.array([projector(ip[1:]) for ip in p4])
+		direction = np.array([[0,0,-1] for ip in p4])
+		vec1 = np.array([np.dot(PP, vv) for PP, vv in zip(Tp4, direction)])
+		vec2 = np.array([np.dot(PP, vv[1:]) for PP, vv in zip(Tp4, k)])
+		c4k = np.array([np.dot(v1, v2)/np.sqrt(np.dot(v1, v1)*np.dot(v2, v2))
+						for v1, v2 in zip(vec1, vec2)])
+
+		#tauf = 2*k0*(1.-xk)/(kt*kt + xk**2*M**2 + (1-xk)*0.5*9.*T*T)
+
+		#return np.array([np.log(qperp/T), np.log(kt/qperp), np.log(tauf),
+		# np.arccos(c4k)])
+		return np.array([np.log(qperp/T), np.log(kt/T), etak, np.arccos(c4k)])
+	f = h5py.File('data/X-PS.hdf5', 'r')
+	corner(get_data(), ax)
+
+@plot
+def thermalization():
+	mass = 1.3
+	def norm_boltzmann(T):
+		E = np.linspace(1, 10, 1000)*mass
+		dfdE = np.exp(-E/T)*E*np.sqrt(E**2-mass**2)*4.*np.pi
+		return np.sum(dfdE)*(E[1]-E[0])
+	def thermal_dfdE(T):
+		E = np.linspace(1, 10., 1000)*mass
+		dfdE = np.exp(-E/T)*E*np.sqrt(E**2-mass**2)*4.*np.pi
+		return E, dfdE/norm_boltzmann(T)
+	def S_diff(E, T):
+		values = np.log(norm_boltzmann(T)) + E/T
+		return np.mean(values), np.std(values)/np.sqrt(len(E)*1.)
+	def S_same(T):
+		E = np.linspace(1, 10., 1000)*mass
+		norm = norm_boltzmann(T)
+		y = (E/T + np.log(norm))*np.exp(-E/T)*E*np.sqrt(E**2-mass**2)*4.*np.pi/norm
+		return np.sum(y)*(E[1]-E[0])
+	def get_xy(ds):
+		E0 = ds.attrs['E']
+		Temp = ds.attrs['T']
+		dt = ds.attrs['dt']
+		S0 = S_same(Temp)
+		sarray = np.array([S_diff(ds.value[i,:,0], Temp) \
+							for i in range(80)]).T
+		return np.array(range(len(ds.value)))*dt, sarray[0]-S0, sarray[1]
+
+	fig, axes = plt.subplots(nrows=2, ncols=1,
+							 figsize=(columnwidth, columnwidth))
+	f = h5py.File("data/thermalization.hdf5", 'r')
+
+	for name, fmt, c, label in \
+		zip(['T300E10-22', 'T300E10-22-23', 'T300E10-22-23-32'],
+			[':', '--', '-'], [cr, cg, cb],
+			['Elastic', 'Elastic + rad.',
+			'Elastic + rad. + abs.']):
+		t, S, dS = get_xy(f[name])
+		for ia, (ax, ylim) in enumerate(zip(axes, [[-2,30], [-1,2]])):
+			ax.plot(t, S, fmt, color=c, label=label)
+			ax.fill_between(t, S-dS*2, S+dS*2, color=c, alpha=0.4)
+			ax.set_ylim(*ylim)
+			ax.plot(t, np.zeros_like(t),'k:')
+			if ia==1:
+				ax.set_xlabel(r'$t$ [fm/c]')
+				ax.annotate(r"$E_0 = 10.0$ [GeV]" + "\n"	\
+							+"$T = 0.3$ [GeV]", xy=(25, 1))
+			else:
+				ax.legend()
+			ax.set_ylabel(r'$\Delta S$')
+	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.98, 0.98])
+
+@plot
+def static_process():
+	mass = 1.3
+	def norm_boltzmann(T):
+		E = np.linspace(1, 4, 1000)*mass
+		dfdE = np.exp(-E/T)*E*np.sqrt(E**2-mass**2)*4.*np.pi
+		return np.sum(dfdE)*(E[1]-E[0])
+	def thermal_dfdE(T):
+		E = np.linspace(1, 4., 1000)*mass
+		dfdE = np.exp(-E/T)*E*np.sqrt(E**2-mass**2)*4.*np.pi
+		return E, dfdE/norm_boltzmann(T)
+
+	fig, axes = plt.subplots(nrows=3, ncols=1, sharex=True, sharey=True,
+							 figsize=(columnwidth, columnwidth*1.3))
+	f = h5py.File("data/thermalization.hdf5", 'r')
+	labels = ['Elastic', 'Elastic + rad.', 'Elastic + rad. + abs.']
+	labels2 = [r'$t = 1$ [fm/c]', r'$t = 10$ [fm/c]', r'$t = 30$ [fm/c]']
+	names = ['T300E10-22', 'T300E10-22-23', 'T300E10-22-23-32']
+	colors = [cr, cg, cb]
+	times = [2, 10, 60]
+	for i in range(3):
+		ds = f[names[i]]
+		E0 = ds.attrs['E']
+		Temp = ds.attrs['T']
+		dt = ds.attrs['dt']
+		ax = axes[i]
+		ax.plot([E0, E0], [0.0, 1.5], 'k-', label="Initial" if i==0 else '')
+		ax.plot(*thermal_dfdE(Temp), 'k--', label="Boltzmann, $T = 0.3$ [GeV]" if i==0 else '')
+		ax.set_title(labels[i])
+		for j in range(3):
+			E = ds.value[times[j],:,0]
+			ax.hist(E, range=[1.3, 11], bins=100, normed=True,
+					histtype='step', color=colors[j],
+					label=labels2[j] if i==2 else '')
+		ax.legend(fontsize=textiny)
+		ax.set_xlim(1.2,11)
+		if i==2:
+			ax.set_xlabel(r'$E$ [GeV]')
+		if i==1:
+			ax.set_ylabel(r'$df/dE$ [GeV${}^{-1}$]')
+	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.98, 0.98])
+
+@plot
+def avg_alphas():
+	name = 'Qhat-tab'
+	f = h5py.File('data/alpha_s/Qhat_Qq2Qq.hdf5', 'r')
+	R0 = f[name].value[0]
+	f = h5py.File('data/alpha_s/Qhat_Qg2Qg.hdf5', 'r')
+	R1 = f[name].value[0]
+	f = h5py.File('data/alpha_s/alphas_Qhat_Qq2Qq.hdf5', 'r')
+	aR0 = f[name].value[0]
+	f = h5py.File('data/alpha_s/alphas_Qhat_Qg2Qg.hdf5', 'r')
+	aR1 = f[name].value[0]
+	alphas = ((aR0+aR1)/(R0+R1))
+	NT = f[name].attrs['N_T']
+	TH = f[name].attrs['T_high']
+	TL = f[name].attrs['T_low']
+	NE = f[name].attrs['N_E1_half']
+	EH = f[name].attrs['E1_high']
+	EM = f[name].attrs['E1_mid']
+	EL = f[name].attrs['E1_low']
+	T = np.linspace(TL, TH, NT)
+	E = np.concatenate([np.linspace(EL, EM, NE), np.linspace(EM, EH, NE)])
+	mE, mT = np.meshgrid(E, T)
+	mE = mE.T
+	mT = mT.T
+	alphas[alphas>1] = 1
+	alphas[alphas<0] = 0
+	fig, axes = plt.subplots(nrows=1, ncols=1, sharex=True, sharey=True,
+							 figsize=(columnwidth, 0.8*columnwidth))
+	im = axes.contourf(mE, mT, alphas, 10)
+	axes.set_xlim(1.3,100)
+	axes.set_ylim(0.15, 0.6)
+	fig.colorbar(im, pad=.15)
+	#axes.semilogy()
+	axes.semilogx()
+	axes.set_xlabel(r'$E$ [GeV]')
+	axes.set_ylabel(r'$T$ [GeV]')
+	axes.set_yticks([0.2, 0.3, 0.4, 0.5, 0.6])
+	axes.set_title(r'E-loss weighted $\alpha_s$')
+	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.98, 0.98])
+
+def main():
+	parser = argparse.ArgumentParser()
+	parser.add_argument('plots', nargs='*')
+	args = parser.parse_args()
+
+	if args.plots:
+		for i in args.plots:
+			if i.endswith('.pdf'):
+				i = i[:-4]
+			if i in plot_functions:
+				plot_functions[i]()
+			else:
+				print('unknown plot:', i)
+	else:
+		for f in plot_functions.values():
+			f()
+
+
+if __name__ == "__main__":
+	main()

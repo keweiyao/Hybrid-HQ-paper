@@ -1,0 +1,64 @@
+\documentclass[10pt,a4paper,draft]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\title{For oversampling with initial correlation}
+
+\newcommand{\dndy}{$dN/d\phi dp_T dy$}
+
+\begin{document}
+\maketitle
+
+\section{Open heavy flavor IC and oversampling for 1-particle observables }
+For open heavy flavor simulation, if we only focus on single particle distribution, an initial condition that reproduces 1-particle distribution \dndy\ is enough. 
+$R_{AA}$ is a typical 1-particle observables.
+$v_2\{2\}$ of heavy meson may sounds like involving two particles, but since the particle to be correlated with the heavy meson is a light flavor particle, $v_2\{2\}$ does not depend on how the heavy mesons correlate among themselves.
+The advantage is that we can oversample as many as heavy quark as we want without changing the observables .
+
+\section{Open heavy flavor IC and oversampling for 2-particle observables and Quarkonium observables}
+Problem arises when initial 2-particle correlation affects the observables. 
+For example, if a $b\bar{b}$ pair is co-linearly produced, it should be more likely that they recombine later. 
+Some of the correlations come from initial production vertex (in CoM frame),
+\begin{eqnarray}
+\frac{dN_{\textrm{pair}}}{d\phi_1 d\phi_2 dp_{T,1}dp_{T,2}dy_1dy_2}
+\end{eqnarray}
+This 6-D distribution is not easy to parametrized, but it can be represented by an ensemble of events calculated from event generator such as PYTHIA(which the correlation is back-to-back in CoM frame) and POWHEG (NLO, much complex correlations).
+Other correlations come from the boosting the vertex to the lab frame like Steffen said this morning.
+For example, given an ensemble of events each with some number of $b\bar{b}$ pairs, the correlation is reconstructed as,
+\begin{eqnarray}
+C(p_1, p_2) = \frac{\langle N_b N_{\bar{b}}\rangle}{ \langle N_b\rangle\langle N_{\bar{b}}\rangle}
+\end{eqnarray}
+With the counts $N_{b, \bar{b}}$ on particles within certain kinematic cuts, $p_b \in [p_1-\Delta p, p_1 + \Delta p]$ and $p_{\bar{b}} \in [p_2-\Delta p, p_2 +  \Delta p]$.
+Now, if we still randomly sample $b\bar{b}$ pairs, $C(p_1, p_2)$ will be suppressed, since $\langle N_b N_{\bar{b}}\rangle$ scales like $1/N$.
+This means we cannot maintain the correlation feature with this naive oversampling.
+
+One possible solution is, instead of randomly choosing the oversample pairs, we make identical copies of the physical pairs.
+It works like this:
+\begin{itemize}
+\item First, determine how many pairs ($N_{\text{phy}}$) should be produced in an actually event (up to a Poisson fluctuation):
+	\begin{eqnarray}
+	N_{\text{phy}} = \sigma_{pp\rightarrow b\bar{b}}T_{AB} 
+	\end{eqnarray}
+\item Second, sample these $N_{\text{phy}}$ pairs. 
+	For example, randomly select $N_{\text{phy}}$ pairs of $b\bar{b}$ from a event generator.
+\item Then, given an oversampling multiple factor $M$, we initialize $M$ identical copies of the above $N_{\text{phy}}$ pairs ($x_1, x_2, p_1, p_2$).
+\item Since the $M$ copies have identical momentum ($x$ could be spread out a little bit), $\langle N_b N_{\bar{b}}\rangle$ will not be changed.
+In this case, the $b\bar{b}$ recombination cross-section also needs to be scaled by $1/M$.
+\end{itemize}
+
+An easy interpretation of this method is that each oversample particle represents $1/M$ fraction of the physical particle and these copies evolve independently to represents all possible evolution histories of the physically particle.
+In this way, we keep the initial correlation information and the calculated observables will not be so granular limited by the small number $N_{\text{phy}}$ in an actually event.
+
+
+
+\section{Compared to parallel events method}
+Another way of achieving higher statistics is run parallel events.
+But in terms of uncertainty, it does not works as well as the precious oversample method.
+For example, an event with $N_{\text{phy}}$ pairs with: 
+\begin{itemize}
+\item 1. an event with $M$ times oversamples, the number of pairs for calculating correlation observables is $N_{\text{phy}}^2 M^2$
+\item 2. $M$ parallel events without oversamples, the number of pairs for calculating correlation observables is $N_{\text{phy}}^2 M$
+\end{itemize}
+Comparing these two cases, the oversample method has a statistical uncertainty that is only $1/\sqrt{M}$ of the uncertainty using parallel events, given the same number of particles.
+\end{document}
