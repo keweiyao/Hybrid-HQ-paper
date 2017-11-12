@@ -144,22 +144,18 @@ Nc, Nf = 3., 3.
 pf_g = 4.*np.pi/3.*(Nc+Nf/2.)
 alpha0 = 4.*np.pi/(11. - 2./3.*Nf)
 Lambda2 = 0.2**2
-Q2cut_l = -Lambda2*np.exp(alpha0)
-Q2cut_h = Lambda2*np.exp(np.pi*np.tan(np.pi*(0.5-1./alpha0)))
-def alpha_s(Q2):
-	return 0.3
-#	if Q2 < Q2cut_l:
-#		return alpha0/np.log(-Q2/Lambda2)
-#	elif Q2 <= Q2cut_h:
-#		return 1.0;
-#	else:
-#		return alpha0*(0.5 - np.arctan(np.log(Q2/Lambda2)/np.pi)/np.pi)
+def alpha_s(Q2, T):
+	scale2 = (2*np.pi*T)**2
+	if Q2 < 0:
+		return alpha0/np.log(np.max([-Q2, scale2], axis=0)/Lambda2)
+	else:
+		return alpha0*(0.5 - np.arctan(np.log(np.max([Q2, scale2], axis=0)/Lambda2)/np.pi)/np.pi)
+
 def mD2_LO_eq(m2, T, mu):
 	scale = -m2*mu
 	return alpha_s(scale)*6.*np.pi - m2/T/T
 def naive_LO_mD2(T, mu):
-	Q2 = -(mu*2.*np.pi*T)**2
-	return alpha_s(Q2)*6.*np.pi*T*T
+	return alpha_s(0., T)*6.*np.pi*T*T
 naive_LO_mD2 = np.vectorize(naive_LO_mD2)
 def mD2_LO_sf(T, mu):
 	return brentq(mD2_LO_eq, 0.01, 100., args=(T, mu))
@@ -220,114 +216,162 @@ def tau_f():
 	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.98, 0.98])
 
 @plot
-def L_Eloss():
+def L_Eloss(quark):
+	M = 1.3 if quark == 'charm' else 4.2
 	fig, axes = plt.subplots(nrows=2, ncols=2,
 							 figsize=(textwidth, 0.67*textwidth))
 
-	f = h5py.File('data/LdE-sin.hdf5','r')
+	f = h5py.File(quark+'-data/LdE.hdf5','r')
 	dE_el = f['elastic']['dE'].value
-	dE_tot = f['total']['dE'].value
+	#dE_inel = f['inelastic']['dE'].value
+	dE_tot = f['elastic+inelastic']['dE'].value
 	Ea = f['elastic'].attrs['E']
 	Ta = f['elastic'].attrs['Temp']
 	f.close()
 
+
 	L = np.linspace(0,5,41)
 	dL = L[1]-L[0]
-	M = 1.3
 	color = [co,cg,cb]
 	line = ['-', '--', '-.']
-	for iT, T in enumerate(Ta[:-1]):
+	L = L+dL
+	for iT, T in enumerate(Ta):
 		for iE, E in enumerate(Ea):
-			mD2 = mD2_LO_sf(T, 1.)
-			Lc = (E/mD2/T)**0.5*0.197
-			x = L+dL
-			y = dE_tot[iT, iE]-dE_el[iT, iE]
 			y0 = dE_el[iT, iE]
-			semiy0 = x
+			y = dE_tot[iT, iE] - dE_el[iT, iE]
 			# elastic
-			axes[0,0].plot(x, y0,line[iT], color=color[iE], label=r'$E={}$ [GeV]'.format(E) if iT==0 else '')
-			axes[0,1].plot(x, y0/semiy0, line[iT], color=color[iE], label=r'$T={}$ [GeV]'.format(T) if iE==0 else '')
-			# inelastic
-			axes[1,0].plot(x, y, line[iT], color=color[iE], label=r'$E={}$ [GeV]'.format(E) if iT==0 else '')
-			axes[1,1].plot(x/Lc, y/E, line[iT], color=color[iE], label=r'$T={}$ [GeV]'.format(T) if iE==0 else '')
+			axes[0,0].plot(L, y0, line[iT], color=color[iE], label=r'$E={}$ [GeV]'.format(E) if iT==0 else '')
+			axes[1,0].plot(L, y0/E, line[iT], color=color[iE])
 
+			# inelastic
+			axes[0,1].plot(L, y, line[iT], color=color[iE], label=r'$T={}$ [GeV]'.format(T) if iE==0 else '')
+			axes[1,1].plot(L, y/E, line[iT], color=color[iE])
+
+	axes[0,0].set_title('Elastic')
+	axes[0,1].set_title('Radiative')
 
 	axes[0,0].set_xlabel(r"$L$ [fm]")
 	axes[0,0].set_ylabel(r"$\Delta E$ [GeV]")
 	axes[0,0].legend(framealpha=0.)
-	axes[0,0].set_ylim(0,15)
 
 	axes[0,1].set_xlabel(r"$L$ [fm]")
-	axes[0,1].set_ylabel(r"$\Delta E / L$ [GeV/fm]")
+	axes[0,1].set_ylabel(r"$\Delta E$ [GeV]")
 	axes[0,1].legend(framealpha=0.)
-	axes[0,1].set_ylim(0,4)
 
 	axes[1,0].set_xlabel(r"$L$ [fm]")
-	axes[1,0].set_ylabel(r"$\Delta E$ [GeV]")
-	axes[1,0].set_ylim(0,25)
-	#axes[1,0].legend(framealpha=0.)
+	axes[1,0].set_ylabel(r"$\Delta E / E$ ")
 
-	axes[1,1].set_xlabel(r"$L/L_c$")
+
+	axes[1,1].set_xlabel(r"$L$ [fm]")
 	axes[1,1].set_ylabel(r"$\Delta E / E$")
-	axes[1,1].set_ylim(0,0.35)
-	#axes[1,1].legend(framealpha=0.)
+
 	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.05, 0.04, 0.98, 0.98])
 
 @plot
-def E_Eloss():
+def E_Eloss(quark):
+	M = 1.3 if quark == 'charm' else 4.2
 	fig, axes = plt.subplots(nrows=2, ncols=2,
 							 figsize=(textwidth, 0.67*textwidth))
 
-	f = h5py.File('data/EdE-sin.hdf5','r')
+	f = h5py.File(quark+'-data/EdE.hdf5','r')
 	dE_el = f['elastic']['dE'].value
-	dE_tot = f['total']['dE'].value
+	dE_tot = f['elastic+inelastic']['dE'].value
+	#dE_inel = f['inelastic']['dE'].value
 	La = f['elastic'].attrs['L']
 	Ta = f['elastic'].attrs['Temp']
 	f.close()
 
-	E = np.linspace(3,100,50)
-	M = 1.3
+	E = np.linspace(5,100,20)
 	color = [co,cg,cb]
 	line = ['-', '--', '-.']
+	print(Ta)
 	for iT, T in enumerate(Ta):
 		for iL, L in enumerate(La):
-			mD2 = mD2_LO_sf(T, 1.)
-			Ec = T*mD2*(L/0.197)**2
+			print(T, L)
+			mD2 = naive_LO_mD2(T, 1.)
+
 			x = E
-			y = dE_tot[iT, iL]-dE_el[iT, iL]
 			y0 = dE_el[iT, iL]
-			semiy0 = L
+			y = dE_tot[iT, iL]-dE_el[iT, iL]
+
+			semiy0 = L*mD2
 			# elastic
 			axes[0,0].plot(x, y0,line[iT], color=color[iL],
 							label=r'$L={}$ [fm]'.format(L) if iT==0 else '')
-			axes[0,1].plot(x, y0/semiy0, line[iT], color=color[iL],
-							label=r'$T={}$ [GeV]'.format(T) if iL==0 else '')
+			axes[1,0].plot(x, y0/E, line[iT], color=color[iL])
 			# inelastic
-			axes[1,0].plot(x, y, line[iT], color=color[iL],
-							label=r'$L={}$ [fm]'.format(L) if iT==0 else '')
-			axes[1,1].plot(x/Ec, y/Ec, line[iT], color=color[iL],
+			axes[0,1].plot(x, y, line[iT], color=color[iL],
 							label=r'$T={}$ [GeV]'.format(T) if iL==0 else '')
+			axes[1,1].plot(x, y/E, line[iT], color=color[iL])
 
+	axes[0,0].set_title('Elastic')
+	axes[0,1].set_title('Radiative')
 
 	axes[0,0].set_xlabel(r"$E$ [GeV]")
 	axes[0,0].set_ylabel(r"$\Delta E$ [GeV]")
 	axes[0,0].legend(framealpha=0.)
-	axes[0,0].set_ylim(0,15)
 
 	axes[0,1].set_xlabel(r"$E$ [GeV]")
-	axes[0,1].set_ylabel(r"$\Delta E / L$ [GeV/fm]")
+	axes[0,1].set_ylabel(r"$\Delta E$ [GeV]")
 	axes[0,1].legend(framealpha=0.)
-	axes[0,1].set_ylim(0,4)
 
 	axes[1,0].set_xlabel(r"$E$ [GeV]")
-	axes[1,0].set_ylabel(r"$\Delta E$ [GeV]")
-	axes[1,0].set_ylim(0,20)
-	#axes[1,0].legend(framealpha=0.)
+	axes[1,0].set_ylabel(r"$\Delta E / E$")
 
-	axes[1,1].set_xlabel(r"$E/E_c$")
+	axes[1,1].set_xlabel(r"$E$ [GeV]")
 	axes[1,1].set_ylabel(r"$\Delta E / E$")
-	axes[1,1].set_ylim(0,0.5)
-	#axes[1,1].legend(framealpha=0.)
+
+	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.05, 0.04, 0.98, 0.98])
+
+@plot
+def el_vs_inel(quark):
+	M = 1.3 if quark == 'charm' else 4.2
+	fig, axes = plt.subplots(nrows=1, ncols=2, sharey=True,
+							 figsize=(textwidth, 0.67*textwidth))
+
+	f = h5py.File(quark+'-data/EdE.hdf5','r')
+	EdE_el = f['elastic']['dE'].value[::2,::2]
+	EdE_tot = f['elastic+inelastic']['dE'].value[::2,::2]
+	L_E = f['elastic'].attrs['L'][::2]
+	T_E = f['elastic'].attrs['Temp'][::2]
+	A = EdE_el/EdE_tot
+	f.close()
+
+	f = h5py.File(quark+'-data/LdE.hdf5','r')
+	LdE_el = f['elastic']['dE'].value[::2,::2]
+	LdE_tot = f['elastic+inelastic']['dE'].value[::2,::2]
+	E_L = f['elastic'].attrs['E'][::2]
+	T_L = f['elastic'].attrs['Temp'][::2]
+	B = LdE_el/LdE_tot
+	f.close()
+
+	E = np.linspace(5,100,20)
+	L = np.linspace(0,5,41)
+	dL = L[1]-L[0]
+	L = L+dL
+	color = [cr, co, cg, cb]
+	axes[0].plot([],[], alpha=0.,label=r'$T$ [GeV]'+'\t'+r'$L$ [fm]')
+	for iT, eT in enumerate(T_E):
+		for iL, eL in enumerate(L_E):
+			axes[0].step(E, A[iT, iL], color=color[iT*2+iL],
+						label=r'${}$'.format(eT)+'\t\t  '+r'${:.0f}$'.format(eL))
+	axes[1].plot([],[], alpha=0.,label=r'$E$ [GeV]'+'\t'+r'$T$ [GeV]')
+	for iE, eE in enumerate(E_L):
+		for iT, eT in enumerate(T_L):
+			axes[1].step(L, B[iE, iT], color=color[iE*2+iT],
+						label=r'${:.0f}$'.format(eE)+'\t\t  '+r'${}$'.format(eT))
+
+
+	axes[0].set_xlabel(r"$E$ [GeV]", fontsize=15)
+	axes[0].set_ylabel(r"$\Delta E_{\mathrm{el}} / \Delta E_{\mathrm{tot}}$",
+																	fontsize=15)
+	axes[0].legend(framealpha=0.)
+
+	axes[1].set_xlabel(r"$L$ [fm]", fontsize=15)
+	axes[1].legend(framealpha=0.)
+
+	axes[1].set_ylim(0.0,1.)
+	#axes[1].set_xlim(0.0,6.)
 	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.05, 0.04, 0.98, 0.98])
 
 def Xection_PS():
@@ -377,9 +421,9 @@ def Xection_PS():
 		kt = np.sqrt(k.T[1]**2 + k.T[2]**2)
 		etak = 0.5*np.log((k0+kz)/(k0-kz))
 		xk = (k0+kz)/sqrts
-
+		cos4k = np.dot(k.T[1:], p4.T[1:], axis=0)/k0/p4.T[0]
 		qperp = np.sqrt(p4.T[1]**2 + p4.T[2]**2)
-
+		Mt = (p4.T[0]-pmax)**2 - p4.T[1]**2 - p4.T[2]**2 - (p4.T[3]+pmax)**2
 		Tp4 = np.array([projector(ip[1:]) for ip in p4])
 		direction = np.array([[0,0,-1] for ip in p4])
 		vec1 = np.array([np.dot(PP, vv) for PP, vv in zip(Tp4, direction)])
@@ -391,13 +435,13 @@ def Xection_PS():
 
 		#return np.array([np.log(qperp/T), np.log(kt/qperp), np.log(tauf),
 		# np.arccos(c4k)])
-		return np.array([np.log(qperp/T), np.log(kt/T), etak, np.arccos(c4k)])
+		return np.array([np.log(Mt/T*T), np.log(k0/T), cos4k, np.arccos(c4k)])
 	f = h5py.File('data/X-PS.hdf5', 'r')
 	corner(get_data(), ax)
 
 @plot
-def thermalization():
-	mass = 1.3
+def thermalization(quark):
+	mass = 1.3 if quark == 'charm' else 4.2
 	def norm_boltzmann(T):
 		E = np.linspace(1, 10, 1000)*mass
 		dfdE = np.exp(-E/T)*E*np.sqrt(E**2-mass**2)*4.*np.pi
@@ -420,12 +464,12 @@ def thermalization():
 		dt = ds.attrs['dt']
 		S0 = S_same(Temp)
 		sarray = np.array([S_diff(ds.value[i,:,0], Temp) \
-							for i in range(80)]).T
+							for i in range(len(ds.value))]).T
 		return np.array(range(len(ds.value)))*dt, sarray[0]-S0, sarray[1]
 
 	fig, axes = plt.subplots(nrows=2, ncols=1,
 							 figsize=(columnwidth, columnwidth))
-	f = h5py.File("data/thermalization.hdf5", 'r')
+	f = h5py.File(quark+"-data/thermalization.hdf5", 'r')
 
 	for name, fmt, c, label in \
 		zip(['T300E10-22', 'T300E10-22-23', 'T300E10-22-23-32'],
@@ -448,8 +492,8 @@ def thermalization():
 	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.98, 0.98])
 
 @plot
-def static_process():
-	mass = 1.3
+def static_process(quark):
+	mass = 1.3 if quark == 'charm' else 4.2
 	def norm_boltzmann(T):
 		E = np.linspace(1, 4, 1000)*mass
 		dfdE = np.exp(-E/T)*E*np.sqrt(E**2-mass**2)*4.*np.pi
@@ -461,12 +505,13 @@ def static_process():
 
 	fig, axes = plt.subplots(nrows=3, ncols=1, sharex=True, sharey=True,
 							 figsize=(columnwidth, columnwidth*1.3))
-	f = h5py.File("data/thermalization.hdf5", 'r')
+	f = h5py.File(quark+"-data/thermalization.hdf5", 'r')
 	labels = ['Elastic', 'Elastic + rad.', 'Elastic + rad. + abs.']
-	labels2 = [r'$t = 1$ [fm/c]', r'$t = 10$ [fm/c]', r'$t = 30$ [fm/c]']
+	labels2 = [r'$t = 1$ [fm/c]', r'$t = 10$ [fm/c]', \
+				r'$t = 50$ [fm/c]', r'$t = 150$ [fm/c]']
 	names = ['T300E10-22', 'T300E10-22-23', 'T300E10-22-23-32']
-	colors = [cr, cg, cb]
-	times = [2, 10, 60]
+	colors = [cr, co, cg, cb]
+	times = [1, 9, 99, 299]
 	for i in range(3):
 		ds = f[names[i]]
 		E0 = ds.attrs['E']
@@ -474,15 +519,17 @@ def static_process():
 		dt = ds.attrs['dt']
 		ax = axes[i]
 		ax.plot([E0, E0], [0.0, 1.5], 'k-', label="Initial" if i==0 else '')
-		ax.plot(*thermal_dfdE(Temp), 'k--', label="Boltzmann, $T = 0.3$ [GeV]" if i==0 else '')
+		ax.plot(*thermal_dfdE(Temp), 'k--', label="Boltzmann, $T = 0.3$ [GeV]"\
+		 													if i==0 else '')
 		ax.set_title(labels[i])
-		for j in range(3):
+		for j in range(4):
 			E = ds.value[times[j],:,0]
 			ax.hist(E, range=[1.3, 11], bins=100, normed=True,
 					histtype='step', color=colors[j],
 					label=labels2[j] if i==2 else '')
 		ax.legend(fontsize=textiny)
-		ax.set_xlim(1.2,11)
+		ax.set_xlim(mass-0.1,11)
+		ax.set_ylim(0,2)
 		if i==2:
 			ax.set_xlabel(r'$E$ [GeV]')
 		if i==1:
@@ -491,45 +538,157 @@ def static_process():
 
 @plot
 def avg_alphas():
-	name = 'Qhat-tab'
-	f = h5py.File('data/alpha_s/Qhat_Qq2Qq.hdf5', 'r')
-	R0 = f[name].value[0]
-	f = h5py.File('data/alpha_s/Qhat_Qg2Qg.hdf5', 'r')
-	R1 = f[name].value[0]
-	f = h5py.File('data/alpha_s/alphas_Qhat_Qq2Qq.hdf5', 'r')
-	aR0 = f[name].value[0]
-	f = h5py.File('data/alpha_s/alphas_Qhat_Qg2Qg.hdf5', 'r')
-	aR1 = f[name].value[0]
-	alphas = ((aR0+aR1)/(R0+R1))
-	NT = f[name].attrs['N_T']
-	TH = f[name].attrs['T_high']
-	TL = f[name].attrs['T_low']
-	NE = f[name].attrs['N_E1_half']
-	EH = f[name].attrs['E1_high']
-	EM = f[name].attrs['E1_mid']
-	EL = f[name].attrs['E1_low']
-	T = np.linspace(TL, TH, NT)
-	E = np.concatenate([np.linspace(EL, EM, NE), np.linspace(EM, EH, NE)])
-	mE, mT = np.meshgrid(E, T)
-	mE = mE.T
-	mT = mT.T
-	alphas[alphas>1] = 1
-	alphas[alphas<0] = 0
-	fig, axes = plt.subplots(nrows=1, ncols=1, sharex=True, sharey=True,
-							 figsize=(columnwidth, 0.8*columnwidth))
-	im = axes.contourf(mE, mT, alphas, 10)
-	axes.set_xlim(1.3,100)
-	axes.set_ylim(0.15, 0.6)
-	fig.colorbar(im, pad=.15)
-	#axes.semilogy()
-	axes.semilogx()
-	axes.set_xlabel(r'$E$ [GeV]')
-	axes.set_ylabel(r'$T$ [GeV]')
-	axes.set_yticks([0.2, 0.3, 0.4, 0.5, 0.6])
-	axes.set_title(r'E-loss weighted $\alpha_s$')
-	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.98, 0.98])
+	def get_a(muset):
+		name = 'Rates-tab'
+		f = h5py.File('data/avg-alpha_s/RQq2Qq-{}.hdf5'.format(muset), 'r')
+		R0 = f[name].value
+		f = h5py.File('data/avg-alpha_s/RQg2Qg-{}.hdf5'.format(muset), 'r')
+		R0 += f[name].value
+		f = h5py.File('data/avg-alpha_s/aRQq2Qq-{}.hdf5'.format(muset), 'r')
+		aR0 = f[name].value
+		f = h5py.File('data/avg-alpha_s/aRQg2Qg-{}.hdf5'.format(muset), 'r')
+		aR0 += f[name].value
 
-def main():
+		NT = f[name].attrs['N_T']
+		TH = f[name].attrs['T_high']
+		TL = f[name].attrs['T_low']
+		NE = f[name].attrs['N_E1']
+		EH = f[name].attrs['E1_high']
+		EL = f[name].attrs['E1_low']
+		T = np.linspace(TL, TH, NT)
+		E = np.linspace(EL, EH, NE)
+		mE, mT = np.meshgrid(E, T)
+		mE = mE.T
+		mT = mT.T
+		return mE, mT, aR0/R0
+
+	from matplotlib import cm
+	from mpl_toolkits.mplot3d import Axes3D
+	fig = plt.figure(figsize=(columnwidth, columnwidth))
+	ax = fig.add_subplot(1, 1, 1, projection='3d')
+
+	for muset, cmm in zip(['1piT', '2piT', '4piT'], ['Red', 'Green', 'Blue']):
+		E, T, data = get_a(muset)
+		ax.plot_surface(np.log10(E), T, data, rstride=1, cstride=1,
+						color=cmm, alpha=0.5,
+                        linewidth=0, antialiased=False)
+	ax.set_xlabel(r'$E$ [GeV]')
+	ax.set_ylabel(r'$T$ [GeV]')
+	ax.set_zlim(0, 1.0)
+	ax.set_zlabel(r'$\langle\alpha_s(\mu^2)\rangle$')
+	ax.set_xticks([np.log10(1.3),np.log10(10),np.log10(100)])
+	ax.set_yticks([0.2, 0.4,0.6])
+	ax.set_xticklabels(['1.3', '10', '100'])
+	ax.view_init(5, 150)
+	ax.text(1, 0.8, 0.33, r"$\mu_0=\pi T$", (-1,0 ,0), fontsize=8)
+	ax.text(1, 0.8, 0.225, r"$\mu_0=2\pi T$", (-1,0,0), fontsize=8)
+	ax.text(1, 0.8, 0.12, r"$\mu_0=4\pi T$", (-1, 0,0), fontsize=8)
+	fig.subplots_adjust(left=0.05, right=0.85, top=0.9)
+	ax.set_title(r'Rate averaged $\alpha_s(\mu)$, screened propagator' + '\n'\
+		+ r'$\mu=\mathrm{max}\{Q, \mu_0\}$')
+@plot
+def Rscale():
+	def get_R(muset):
+		name = 'Rates-tab'
+		f = h5py.File('data/avg-alpha_s/RQq2Qq-{}.hdf5'.format(muset), 'r')
+		R = f[name].value
+		f = h5py.File('data/avg-alpha_s/RQg2Qg-{}.hdf5'.format(muset), 'r')
+		R += f[name].value
+		NT = f[name].attrs['N_T']
+		TH = f[name].attrs['T_high']
+		TL = f[name].attrs['T_low']
+		NE = f[name].attrs['N_E1']
+		EH = f[name].attrs['E1_high']
+		EL = f[name].attrs['E1_low']
+		T = np.linspace(TL, TH, NT)
+		E = np.linspace(EL, EH, NE)
+		mE, mT = np.meshgrid(E, T)
+		mE = mE.T
+		mT = mT.T
+		return mE, mT, R
+
+	from matplotlib import cm
+	from mpl_toolkits.mplot3d import Axes3D
+	fig = plt.figure(figsize=(columnwidth, columnwidth))
+	ax = fig.add_subplot(1, 1, 1, projection='3d')
+
+	E, T, R1 = get_R('1piT')
+	E, T, R2 = get_R('2piT')
+	E, T, R4 = get_R('4piT')
+	ax.plot_surface(np.log10(E), T, R1/R2, rstride=1, cstride=1,
+							color='red', alpha=0.5,
+	                       linewidth=0, antialiased=False)
+	ax.plot_surface(np.log10(E), T, R2/R2, rstride=1, cstride=1,
+							color='green', alpha=0.5,
+	                       linewidth=0, antialiased=False)
+	ax.plot_surface(np.log10(E), T, R4/R2, rstride=1, cstride=1,
+							color='blue', alpha=0.5,
+	                       linewidth=0, antialiased=False)
+	ax.set_xlabel(r'$E$ [GeV]')
+	ax.set_ylabel(r'$T$ [GeV]')
+
+	ax.set_zlim(0, 3.0)
+	ax.set_zlabel(r'$R(\mu_0 = n \pi T)/R(\mu_0 = 2\pi T)$')
+	ax.set_xticks([np.log10(1.3),np.log10(10),np.log10(100)])
+	ax.set_yticks([0.2, 0.4,0.6])
+	ax.set_xticklabels(['1.3', '10', '100'])
+	ax.view_init(10, 40)
+	ax.text(2.3, 0.8, 1.6, r"$n=1$", (1,0,0), fontsize=8)
+	ax.text(2.3, 0.8, 0.8, r"$n=4$", (1,0,0), fontsize=8)
+	fig.subplots_adjust(left=0.15, right=0.95, top=0.9, bottom=0.1)
+	ax.set_title('Change of scattering rates varying scales' + '\n'\
+		+ r'$\alpha_s (\mu = \mathrm{max}\{Q, \mu_0\} )$')
+
+@plot
+def Box_Raa(quark):
+	def dN_dp_init(quark, pabs):
+		# https://arxiv.org/pdf/1205.2396.pdf
+		Lambda = 2.1 if quark == 'charm' else 7.5 # [GeV]
+		power = 3.9 if quark == 'charm' else 4.9
+		return pabs/(pabs**2+Lambda**2)**power
+
+	def plot_1Raa(quark, ax, type, c, label):
+		mass = 1.3 if quark == 'charm' else 4.2
+		f = h5py.File(quark+"-data/Box-Raa.hdf5", 'r')
+		y = []
+		for pre in ['0d5piT-', 'piT-', '2piT-']:
+			p0abs, p1abs = f[pre+type].value.T
+			W = dN_dp_init(quark, p0abs)
+			H00, bins = np.histogram(p0abs, 50, weights=W, normed=True, range=[0,105])
+			H1, bins = np.histogram(p1abs, 50, weights=W, normed=True, range=[0,105])
+			x = (bins[1:] + bins[:-1])/2.
+			norm = dN_dp_init(quark, np.linspace(0,100,2000)).sum()*100./2000.
+			H0 = np.array([dN_dp_init(quark,
+					np.linspace(bins[i], bins[i+1], 20)).mean()/norm
+							for i in range(len(x))])
+			y.append(H1/H00)
+		ax.fill_between(x, y[0], y[2], color=c, alpha=0.5,
+							label=label if quark == 'bottom' else '')
+		for i, (line, name) in enumerate(['-,:,--'],
+							[r'$0.5\mu=\pi T$',r'$\mu=\pi T$',r'$2\mu=\pi T$']):
+		ax.plot(x, y[i],line, color='k', label=name
+							if quark == 'charm' and type=='T3004fm-22' else '')
+
+		ax.set_ylim(0, 1.2)
+		ax.legend(fontsize=15)
+		if quark=='charm':
+			ax.set_ylabel(r'$R_{AA}$, quark [GeV]', fontsize=15)
+			ax.annotate('Charm\n'+ r'$\frac{dN}{dp_T^2}\propto \frac{1}{\left(p_T^2 + 2.1^2\right)^{3.9}}$',
+			 			xy=(40, 0.2), fontsize=15)
+		else:
+			ax.annotate('Bottom\n'+ r'$\frac{dN}{dp_T^2}\propto \frac{1}{\left(p_T^2 + 7.5^2\right)^{4.9}}$',
+			 			xy=(40, 0.2), fontsize=15)
+		ax.set_xlabel(r'$p_T$ [GeV]', fontsize=15)
+
+	fig, axes = plt.subplots(nrows=1, ncols=2, sharex=True, sharey=True,
+							 figsize=(textwidth, columnwidth*1.3))
+	for quark, ax in zip(['charm', 'bottom'], axes):
+		plot_1Raa(quark, ax,'T3004fm-22', cr, label='Elastic')
+		plot_1Raa(quark, ax,'T3004fm-22-23', cb, label='Elastic+inelastic')
+	plt.subplots_adjust(wspace=0.)
+	plt.suptitle(r'$T=300$' +'[GeV]' + r', $\Delta t=4$' +'[fm/c]', fontsize=15)
+	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.95, 0.95])
+def main(quark):
 	parser = argparse.ArgumentParser()
 	parser.add_argument('plots', nargs='*')
 	args = parser.parse_args()
@@ -539,13 +698,13 @@ def main():
 			if i.endswith('.pdf'):
 				i = i[:-4]
 			if i in plot_functions:
-				plot_functions[i]()
+				plot_functions[i](quark)
 			else:
 				print('unknown plot:', i)
 	else:
 		for f in plot_functions.values():
-			f()
+			f(quark)
 
 
 if __name__ == "__main__":
-	main()
+	main('bottom')
