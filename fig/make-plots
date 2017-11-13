@@ -374,7 +374,39 @@ def el_vs_inel(quark):
 	#axes[1].set_xlim(0.0,6.)
 	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.05, 0.04, 0.98, 0.98])
 
-def Xection_PS():
+@plot
+def X22_PS():
+	M = 1.3
+	def get_t(ds):
+		T = ds.attrs['T']
+		sqrts = ds.attrs['sqrts']
+		pmax = sqrts/2.*(1-M*M/sqrts**2)
+		p0 = np.array([pmax, 0, 0, -pmax])
+		dp = np.array([p0-pi for pi in ds['p4'].value])
+		return T, sqrts, dp[:,0]**2-np.sum(dp[:,1:]**2, axis=1)
+
+	f = h5py.File('data/x-ps.hdf5', 'r')
+	fig, axes = plt.subplots(nrows=1, ncols=2, sharex=True, sharey=True,
+							 figsize=(columnwidth, 0.6*columnwidth))
+	for ia, (ax, group) in enumerate(zip(axes, [['elastic-ps-1','elastic-ps-3'],
+								['elastic-ps-2','elastic-ps-4']])):
+		for name, c in zip(group, [co, cb]):
+			T, sqrts, t = get_t(f[name])
+			ax.hist(-t/T/T, bins=100, range = [0,10],
+					color=c, histtype='step', normed=True,
+					label=r"$\sqrt{s} = $"+"${:1.1f}$ [GeV]".format(sqrts))
+			ax.set_title("$T = {:1.1f}$ [GeV]".format(T))
+			ax.set_xlim(0,10)
+			ax.set_xlabel("$-t/T^2$")
+			if ia == 0:
+				ax.set_ylabel("$-T^2 d\sigma/dt/\sigma$")
+			else:
+				ax.legend(fontsize=textiny*0.8)
+	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.98, 0.98])
+
+@plot
+def X23_PS():
+	M = 1.3
 	def projector(p):
 		norm2 = (p**2).sum()
 		return np.diag([1,1,1]) - np.outer(p,p)/norm2
@@ -386,35 +418,68 @@ def Xection_PS():
 			return np.sum(H[H>level])/tot - percentage
 		return brentq(percentile_above_level, minH, maxH), maxH
 
-	def corner(X, ax, color, cmap):
-		ndims, xsamples = X.shape
+	def corner(X1, X2, axes, c1, c2, cmap, ranges):
+		name = [r'$\ln(q_{\perp}/T)$', r'$\ln(k_{\perp}/T)$',
+				r'$\eta_k$', r'$\phi_{4,k}$']
+		ndims, xsamples = X1.shape
 		for i in range(ndims):
-			for j in range(0,i+1):
-				plt.subplot(ndims, ndims, i*ndims+j+1)
+			for j in range(ndims):
+				ax = axes[i,j]
 				if i==j:
-					plt.hist(X[i], bins=30, normed=True,
-							histtype='step', color=color, linewidth=1.,)
+					ax.hist(X1[i], bins=50, normed=True, range=ranges[i],
+							histtype='step', color=c1)
+					ax.hist(X2[i], bins=50, normed=True, range=ranges[i],
+							histtype='step', color=c2)
+					ax.set_xlim(ranges[i])
 				else:
-					H, xb, yb = np.histogram2d(X[j], X[i],
-												bins=10, normed=True)
+					if i>j:
+						A = X1[j]
+						B = X1[i]
+						ax.set_xlim(ranges[j])
+						ax.set_ylim(ranges[i])
+						cm = cmap[0]
+						ax.hist2d(A, B, range=[ranges[j], ranges[i]],
+								 cmap=cm, bins=50, normed=True)
+					else:
+						A = X2[j]
+						B = X2[i]
+						ax.set_xlim(ranges[j])
+						ax.set_ylim(ranges[i])
+						cm = cmap[1]
+						ax.hist2d(A, B, range=[ranges[j], ranges[i]],
+								 cmap=cm, bins=50, normed=True)
+					#H, xb, yb = np.histogram2d(A, B,
+					#							bins=20, normed=True)
+
 					# solve 70% level
-					level, maxH = find_level(H, 0.7)
-					plt.contour(H.T,extent=[xb[0],xb[-1],yb[0],yb[-1]],
-								levels=[level,maxH], colors=(color,), alpha=0.5)
+					#level, maxH = find_level(H, 0.7)
+					#ax.contourf(H.T,10,
+					#			extent=[xb[0],xb[-1],yb[0],yb[-1]])
+					#,levels=[level,maxH], alpha=0.5)
+
+				if i==ndims-1:
+					ax.set_xlabel(name[j])
+				else:
+					ax.set_xticks([])
+				if j==0:
+					ax.set_ylabel(name[i])
+				else:
+					ax.set_yticks([])
 
 	def get_data(ds):
-		M = 1.
-		E = ds.attrs['E']
+		M = 1.3
+		sqrts = ds.attrs['sqrts']
 		T = ds.attrs['T']
 		dt = ds.attrs['dt']
+		E = sqrts/2.*(1.+M*M/sqrts**2)
 		y0 = np.log(E/M + np.sqrt(1.+E*E/M/M))
 		sqrts = E + np.sqrt(E**2-M**2)
 		s = sqrts**2
 		pmax = (sqrts**2-M*M)/2./sqrts
 
-		p3 = f['p3'].value
-		p4 = f['p4'].value
-		k = f['k'].value
+		p3 = ds['p3'].value
+		p4 = ds['p4'].value
+		k = ds['k'].value
 
 		k0 = k.T[0]
 		kz = k.T[3]
@@ -435,9 +500,21 @@ def Xection_PS():
 
 		#return np.array([np.log(qperp/T), np.log(kt/qperp), np.log(tauf),
 		# np.arccos(c4k)])
+<<<<<<< Updated upstream
 		return np.array([np.log(Mt/T*T), np.log(k0/T), cos4k, np.arccos(c4k)])
 	f = h5py.File('data/X-PS.hdf5', 'r')
 	corner(get_data(), ax)
+=======
+		return np.array([np.log(qperp/T), np.log(kt/T), etak, np.arccos(c4k)])
+	f = h5py.File('data/x-ps.hdf5', 'r')
+	fig, axes = plt.subplots(nrows=4, ncols=4,
+							 figsize=(columnwidth, columnwidth))
+	X1 = get_data(f['23-ps-2'])
+	X2 = get_data(f['23-ps-1'])
+	ranges = [[-2,3],[-5,5],[-5,5],[0,np.pi]]
+	corner(X1, X2, axes, co, cb, ['Oranges', 'Blues'], ranges)
+	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.98, 0.98])
+>>>>>>> Stashed changes
 
 @plot
 def thermalization(quark):

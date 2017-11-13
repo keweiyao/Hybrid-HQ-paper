@@ -1,0 +1,171 @@
+\documentclass[11pt]{beamer}
+\usetheme{Boadilla}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+%\author{}
+\title{Hybrid model}
+%\setbeamercovered{transparent}
+%\setbeamertemplate{navigation symbols}{}
+%\logo{}
+%\institute{}
+%\date{}
+%\subject{}
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+%\begin{frame}
+%\tableofcontents
+%\end{frame}
+
+\begin{frame}{"Final" model}
+\begin{eqnarray}
+\nonumber
+\frac{p}{E}\cdot \partial f = {\color{red} C^{2\leftrightarrow 2, 2\leftrightarrow 3}_{\textrm{pQCD}}[f]} + {\color{blue} C_{\textrm{Diff}}[f]}
+\end{eqnarray}
+{\color{red} A "basic" pQCD model.}
+\begin{itemize}
+\item "Basic": no magic tuning, no K-factor, $\alpha_s$ under control.
+\item Only uncertainty comes from the scale at which $\alpha_s$ is evaluated.
+\end{itemize}
+{\color{blue} A diffusion component parametrizes what is missing from pQCD.}
+\begin{itemize}
+\item $\hat{q}(T, E)$ can be completely parametric. Problem: $\hat{q}_c$, $\hat{q}_b$?
+\item Or, guided by a simple parametric model. Fit a single set of parameter for both $c$ and $b$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The pQCD component}
+Elastic process: intermediate propagators are all screened by Debye mass.
+\begin{eqnarray}
+\nonumber
+\frac{1}{s}, \frac{1}{t}, \frac{1}{u} \rightarrow \frac{1}{s+m_D^2}, \frac{1}{t-m_D^2}, \frac{1}{u+m_D^2}
+\end{eqnarray}
+Debye mass: simplest leading order result.
+\begin{eqnarray}
+\nonumber
+m_D^2 = \frac{4\pi}{3}\left(Nc+\frac{N_f}{2}\right)\alpha_s T^2
+\end{eqnarray}
+Inelastic process: Gunion-Bertsch matrix-element, with interference between subsequent radiation/absorption.
+\begin{eqnarray}
+\nonumber
+\frac{dP}{dq dk^3 dt} = \frac{dP_{GB}}{dq dk^3 dt} \left(1-\cos\left(\frac{\Delta t}{\tau_k}\right)\right)
+\end{eqnarray}
+\end{frame}
+
+\begin{frame}{The pQCD component: control running coupling}
+Running coupling is difficult for multi-scale problem:
+{\color{red} $M^2$, $p_T^2$}, {\color{blue}$T$, $Q^2$, $k_\perp^2$}.
+\begin{itemize}
+\item For initial production, the scale is chosen at $m_T^2 = M^2 + p_T^2$
+\item For probe-medium interaction:
+\begin{eqnarray}
+\nonumber
+|M_{2\leftrightarrow 2}|^2 &\propto& \alpha_s^2(Q^2, T) \\
+\nonumber
+|M_{2\leftrightarrow 2}|^2 &\propto& \alpha_s^2(Q^2, T) \alpha_s(k_\perp^2, T)
+\end{eqnarray}
+\item In medium, no process slower than $t\sim 1/T$ can exist alone, since the thermal collision rate $\propto T$. So $\alpha_s$ scale has a lower limit of $O(T)$,
+\begin{eqnarray}
+\nonumber
+\alpha_s(Q^2, T) = \alpha_s(\max\{Q, \mu T\}),\\
+\nonumber
+\alpha_s(k_\perp^2, T) = \alpha_s(\max\{k_\perp, \mu T\}).
+\end{eqnarray}
+Coupling constant must be smaller than $\alpha_s(\mu T)$, $\mu$ is uncertain ($\pi T$, $2\pi T$, or any number within a reasonable range).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{pQCD: average $\alpha_s(\mu)$}
+The averaged coupling constant of elastic processes. The uncertainty of $\mu_0$ leads to large uncertainty in scattering rates (like a K-factor but with $E, T$-dependence).
+\begin{center}
+\includegraphics[width=0.5\textwidth]{fig/charm-plot/avg_alphas.pdf}
+\includegraphics[width=0.5\textwidth]{fig/charm-plot/Rscale.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{pQCD: thermalization time of charm vs bottom, $\mu = 2\pi T$}
+\begin{center}
+\includegraphics[width=0.5\textwidth]{fig/charm-plot/thermalization.pdf}
+\includegraphics[width=0.5\textwidth]{fig/bottom-plot/thermalization.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{pQCD: $\Delta E$-$E$ in box, charm vs bottom, $\mu = 2\pi T$}
+\begin{overprint}
+\onslide<1> 
+Charm: radiative E-loss dominates at large energy.
+\begin{center}
+\includegraphics[width=\textwidth]{fig/charm-plot/E_Eloss.pdf}
+\end{center}
+\onslide<2> 
+Bottom: similar elastic E-loss as charm, but much less radiative E-loss.
+\begin{center}
+\includegraphics[width=\textwidth]{fig/bottom-plot/E_Eloss.pdf}
+\end{center}
+\end{overprint}
+\end{frame}
+
+\begin{frame}{pQCD: $\Delta E$-$L$ in box, charm vs bottom, $\mu = 2\pi T$}
+\begin{overprint}
+\onslide<1> 
+Charm: non-linear $\Delta E-L$ behavior at small length.
+\begin{center}
+\includegraphics[width=\textwidth]{fig/charm-plot/L_Eloss.pdf}
+\end{center}
+\onslide<2> 
+Bottom: again similar elastic E-loss, but less radiative E-loss.
+\begin{center}
+\includegraphics[width=\textwidth]{fig/bottom-plot/L_Eloss.pdf}
+\end{center}
+\end{overprint}
+\end{frame}
+
+\begin{frame}{pQCD: relative importance of $\Delta E_{\textrm{el}}$ vs $\Delta E_{\textrm{rad}}$, $\mu = 2\pi T$}
+\begin{overprint}
+\onslide<1> 
+Charm: \\
+It looks $\Delta E_{\textrm{rad}}$) always contributes $>50\%$ for large path length.\\
+$\Delta E_{\textrm{el}}$ only dominates at small path length (where LPM is important).
+\begin{center}
+\includegraphics[width=0.85\textwidth]{fig/charm-plot/el_vs_inel.pdf}
+\end{center}
+\onslide<2> 
+Bottom: $\Delta E_{\textrm{rad}}$ not important at very low energy ($E<5 GeV$)
+\begin{center}
+\includegraphics[width=0.85\textwidth]{fig/bottom-plot/el_vs_inel.pdf}
+\end{center}
+\end{overprint}
+\end{frame}
+
+\begin{frame}{pQCD: comparison of charm / bottom $R_{AA}$ in box.}
+Something like what Shanshan compares in the HQ collaboration. Heavy quark produced according to parametrized spectra and then propagates in static box for $\Delta t = 4$ fm/c. 
+\begin{center}
+\includegraphics[width=0.9\textwidth]{fig/compare-plot/Box_Raa.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}{Diffusion: parametrization that includes mass difference}
+pQCD cross-section looks like at small $t$,
+\begin{eqnarray}
+\nonumber
+\frac{d\sigma}{dt} = \frac{1}{(s-M^2)^2} \frac{(s-M^2)^2}{(t-m_D^2)^2}
+\end{eqnarray}
+What if there are some non-perturbative corrections to cross-section,
+\begin{eqnarray}
+\nonumber
+\frac{d\sigma}{dt} = \frac{1}{(s-M^2)^2} \left\{ \frac{(s-M^2)^2}{(t-m_D^2)^2}\left(1 + {\color{red}A\frac{\Lambda^2}{-t}}\right) + {\color{red} B\frac{\Lambda^2}{s'}} \right\}
+\end{eqnarray}
+They lead to a diffusion constant:
+\begin{eqnarray}
+\nonumber
+\frac{\hat{q}}{T^3} \sim  a\frac{\Lambda^2}{T^2} + b\frac{\Lambda^2}{ET}
+\end{eqnarray}
+\end{frame}
+
+
+\end{document}

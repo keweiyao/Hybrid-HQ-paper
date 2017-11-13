@@ -1,0 +1,64 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+\title{Use rate equation and oversampling to solve Boltzmann equation}
+\begin{document}
+\section{Target equation}
+\begin{eqnarray}
+\frac{\partial f_\Upsilon}{\partial t} - \vec{v}\cdot\frac{\partial f_\Upsilon}{\partial x}
+= \frac{1}{2E_1}\int d\Gamma_2 d\Gamma_3 d\Gamma_3 |M|^2 \left( f_b(p_3)f_{\bar{b}}(p_4)- f_\Upsilon(p_1)f_0(p_2)\right)  (2\pi)^4  \delta^4(p_1+p_2-p_3-p_4) 
+\end{eqnarray}
+The evolution of $f_{b, \bar{b}}$ is taken care of by diffusion / LBT dynamics.
+
+\section{Solve by rate equation}
+Particles in solving the rate equation may not represent a physical particle, but just a sample point from the distribution $f(p)$.
+
+\begin{itemize}
+\item Dissociation rate (probability / unit time):
+\begin{eqnarray}
+\frac{d P}{d t} = \frac{1}{2E_1}\int d\Gamma_2 d\Gamma_3 d\Gamma_3 |M|^2 f_0(p_2)  (2\pi)^4  \delta^4(p_1+p_2-p_3-p_4) 
+\end{eqnarray}
+For small enough time-step $\Delta t$, the dissociation probability is $\Delta t \frac{dP}{dt}$. Xiaojun showed last time the dissociation implementation is working as expected.
+
+\item Recombination rates for a $b$ quark (probability / unit time):
+\begin{eqnarray}
+\frac{d P}{d t} &=& \frac{1}{2 E_3}\int d\Gamma_1 d\Gamma_2 d\Gamma_4 |M|^2 f_{\bar{b}}(p_4) (2\pi)^4  \delta^4(1+2-3-4) \\
+&=& \int d p_4^3 f_{\bar{b}}(p_4) [v_{rel}  \sigma_{b\bar{b}\rightarrow \Upsilon}]_{\textrm{calculate in the same frame}}
+\end{eqnarray}
+The RHS has dimension $[E]^3[L]^2 = [T]^{-1}$ and is interpret as the probability per unit time.
+
+But the integration of $p_4$ is not possible since no analytic form of $f_{\bar{b}}(p_4)$ is available. 
+Instead, it is estimated by the surrounding $\bar{b}$ quarks' current status.
+The measure on $p_4$ is...
+\begin{eqnarray}
+\int dp_4^3f_{\bar{b}}(p_4) F(p_4)  \approx \frac{\sum_{x_i \in \Delta V} F(p_i)}{\Delta V}
+\end{eqnarray}
+$\Delta V$ is some test volume independent of each scattering process in the sum.
+
+Therefore, the rates for recombination process is approximated by,
+\begin{eqnarray}
+\frac{d P}{d t} &=& \sum_{x_i \in \Delta V}\frac{ [v_{rel}  \sigma_{b\bar{b}\rightarrow \Upsilon}]_{p_4 = p_i} }{\Delta V}
+\end{eqnarray}
+So, instead of using $\Delta V = [\textrm{relative distance}]^3$ for each term in the scattering, it is the volume for pair searching. 
+The probability for of each pair scattering is,
+\begin{eqnarray}
+p_i = \frac{ dt [v_{rel}  \sigma_{b\bar{b}\rightarrow \Upsilon}]_{p_4 = p_i} }{\Delta V}
+\end{eqnarray}
+The total recombination probability for this $b$ quark is 
+\begin{eqnarray}
+P = \sum_{x_i \in \Delta V} p_i
+\end{eqnarray}
+This approximations requires that the total probability $P$  to be much smaller than $1$.
+\end{itemize}
+
+\section{Oversampling and initial correlation}
+In the original target equation, if we increase the number of $b$ and $\bar{b}$ and $\Upsilon$ by a factor of $N$ (for example to increase the statistics), to make the equation unchanged, we only need to decrease the recombination cross-section by a factor of $N$ (the decay process is not affected since it is linear).
+\begin{eqnarray}
+p_i = \frac{ dt [v_{rel}  \sigma_{b\bar{b}\rightarrow \Upsilon}]_{p_4 = p_i} }{N\Delta V}
+\end{eqnarray}
+
+
+\end{document}
