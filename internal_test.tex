@@ -59,9 +59,8 @@ Inelastic process: Gunion-Bertsch matrix-element, with interference between subs
 
 \begin{frame}{The pQCD component: control running coupling}
 Running coupling is difficult for multi-scale problem:
-{\color{red} $M^2$, $p_T^2$}, {\color{blue}$T$, $Q^2$, $k_\perp^2$}.
+$T$, $Q^2$, $k_\perp^2$.
 \begin{itemize}
-\item For initial production, the scale is chosen at $m_T^2 = M^2 + p_T^2$
 \item For probe-medium interaction:
 \begin{eqnarray}
 \nonumber
@@ -72,11 +71,11 @@ Running coupling is difficult for multi-scale problem:
 \item In medium, no process slower than $t\sim 1/T$ can exist alone, since the thermal collision rate $\propto T$. So $\alpha_s$ scale has a lower limit of $O(T)$,
 \begin{eqnarray}
 \nonumber
-\alpha_s(Q^2, T) = \alpha_s(\max\{Q, \mu T\}),\\
+\alpha_s(\mu) = \alpha_s(\mu = \max\{Q, \mu_0 T\}),\\
 \nonumber
-\alpha_s(k_\perp^2, T) = \alpha_s(\max\{k_\perp, \mu T\}).
+\alpha_s(\mu) = \alpha_s(\mu = \max\{k_\perp, \mu_0 T\}).
 \end{eqnarray}
-Coupling constant must be smaller than $\alpha_s(\mu T)$, $\mu$ is uncertain ($\pi T$, $2\pi T$, or any number within a reasonable range).
+Coupling constant must be smaller than $\alpha_s(\mu_0 T)$, $\mu_0$ is uncertain ($\pi T$, $2\pi T$, or any number within a reasonable range).
 \end{itemize}
 \end{frame}
 
@@ -89,6 +88,11 @@ The averaged coupling constant of elastic processes. The uncertainty of $\mu_0$ 
 \end{frame}
 
 \begin{frame}{pQCD: thermalization time of charm vs bottom, $\mu = 2\pi T$}
+To see the approach to thermalization of an ensemble of particles $\{E_i\}$,
+\begin{eqnarray}
+\nonumber
+\Delta S = \left\langle \ln(f_0(E_i)) \right\rangle_i - \int f_0(E) \ln(f_0(E)) dE
+\end{eqnarray}
 \begin{center}
 \includegraphics[width=0.5\textwidth]{fig/charm-plot/thermalization.pdf}
 \includegraphics[width=0.5\textwidth]{fig/bottom-plot/thermalization.pdf}
@@ -99,11 +103,15 @@ The averaged coupling constant of elastic processes. The uncertainty of $\mu_0$ 
 \begin{overprint}
 \onslide<1> 
 Charm: radiative E-loss dominates at large energy.
+\onslide<2> 
+Bottom: similar elastic E-loss as charm, but much less radiative E-loss.
+\end{overprint}
+\begin{overprint}
+\onslide<1> 
 \begin{center}
 \includegraphics[width=\textwidth]{fig/charm-plot/E_Eloss.pdf}
 \end{center}
 \onslide<2> 
-Bottom: similar elastic E-loss as charm, but much less radiative E-loss.
 \begin{center}
 \includegraphics[width=\textwidth]{fig/bottom-plot/E_Eloss.pdf}
 \end{center}
@@ -114,11 +122,16 @@ Bottom: similar elastic E-loss as charm, but much less radiative E-loss.
 \begin{overprint}
 \onslide<1> 
 Charm: non-linear $\Delta E-L$ behavior at small length.
+\onslide<2> 
+Bottom: again similar elastic E-loss, but less radiative E-loss.
+\end{overprint}
+
+\begin{overprint}
+\onslide<1> 
 \begin{center}
 \includegraphics[width=\textwidth]{fig/charm-plot/L_Eloss.pdf}
 \end{center}
 \onslide<2> 
-Bottom: again similar elastic E-loss, but less radiative E-loss.
 \begin{center}
 \includegraphics[width=\textwidth]{fig/bottom-plot/L_Eloss.pdf}
 \end{center}
@@ -131,11 +144,16 @@ Bottom: again similar elastic E-loss, but less radiative E-loss.
 Charm: \\
 It looks $\Delta E_{\textrm{rad}}$) always contributes $>50\%$ for large path length.\\
 $\Delta E_{\textrm{el}}$ only dominates at small path length (where LPM is important).
+\onslide<2> 
+Bottom: $\Delta E_{\textrm{rad}}$ not important at very low energy ($E<5 GeV$)
+\end{overprint}
+
+\begin{overprint}
+\onslide<1> 
 \begin{center}
 \includegraphics[width=0.85\textwidth]{fig/charm-plot/el_vs_inel.pdf}
 \end{center}
 \onslide<2> 
-Bottom: $\Delta E_{\textrm{rad}}$ not important at very low energy ($E<5 GeV$)
 \begin{center}
 \includegraphics[width=0.85\textwidth]{fig/bottom-plot/el_vs_inel.pdf}
 \end{center}
@@ -143,29 +161,85 @@ Bottom: $\Delta E_{\textrm{rad}}$ not important at very low energy ($E<5 GeV$)
 \end{frame}
 
 \begin{frame}{pQCD: comparison of charm / bottom $R_{AA}$ in box.}
+
+\begin{overprint}
+\onslide<1> 
 Something like what Shanshan compares in the HQ collaboration. Heavy quark produced according to parametrized spectra and then propagates in static box for $\Delta t = 4$ fm/c. 
+\onslide<2-> 
+If we use the same power law spectra $\propto p_T^{3.9}$, it appears there is less "suppression" for bottom.
+\end{overprint}
+
+\begin{overprint}
+\onslide<1> 
 \begin{center}
 \includegraphics[width=0.9\textwidth]{fig/compare-plot/Box_Raa.pdf}
 \end{center}
+\onslide<2-> 
+\begin{center}
+\includegraphics[width=0.9\textwidth]{fig/compare-plot/same_Box_Raa.pdf}
+\end{center}
+\end{overprint}
+
 \end{frame}
 
-\begin{frame}{Diffusion: parametrization that includes mass difference}
-pQCD cross-section looks like at small $t$,
+
+\begin{frame}{Diffusion component}
+Role of pQCD and diffusion,
+\begin{itemize}
+\item pQCD component: highly anisotropic scatterings ($\mu$).
+\item Diffusion component: what is missing from pQCD ($a,b,c...$).
+\begin{itemize}
+\item[(1)] Non-perturbative origin.
+\item[(2)] Assume to be isotropic.
+\item[(3)] Assume it is pure diffusion, without induce extra radiation.
+\end{itemize}
+\end{itemize}
+Choose a parametrization,
+\begin{itemize}
+\item Need mass dependence. Currently all parameters are fitted to charm meson data. But to calculate bottom quark, we probably need,
+\begin{itemize}
+\item[(1)] a new fit
+\item[(2)] rescale it by an {\it ad hoc} mass-dependence.
+\item[(3)] *start with a simple parametization with mass dependence (also based on assumptions) and fit to both charm and bottom.
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Diffusion: parametrization with mass (extremely na\"ive)}
+For example, pQCD cross-section at small $t$ looks like,
 \begin{eqnarray}
 \nonumber
 \frac{d\sigma}{dt} = \frac{1}{(s-M^2)^2} \frac{(s-M^2)^2}{(t-m_D^2)^2}
 \end{eqnarray}
-What if there are some non-perturbative corrections to cross-section,
+What if there are non-perturbative corrections (na\"ive guess),
 \begin{eqnarray}
 \nonumber
-\frac{d\sigma}{dt} = \frac{1}{(s-M^2)^2} \left\{ \frac{(s-M^2)^2}{(t-m_D^2)^2}\left(1 + {\color{red}A\frac{\Lambda^2}{-t}}\right) + {\color{red} B\frac{\Lambda^2}{s'}} \right\}
+\frac{d\sigma}{dt} = \frac{1}{(s-M^2)^2} \left\{ \frac{(s-M^2)^2}{(t-m_D^2)^2}\left(1 + {\color{blue}A\frac{\Lambda^2}{-t}}\right) + {\color{red} B\frac{\Lambda^2}{\left(\sqrt{s}-{M^*}^2\right)^2+\Lambda^2}} \right\}
 \end{eqnarray}
-They lead to a diffusion constant:
+\begin{itemize}
+\item {\color{blue} Blue:} maybe NP effect gives heavy quark a different form factor.
+\item {\color{red} Red:} maybe NP effect allows resonances.
+\end{itemize}
+
+Eventually, they just contribute to diffusion coefficient,
 \begin{eqnarray}
 \nonumber
-\frac{\hat{q}}{T^3} \sim  a\frac{\Lambda^2}{T^2} + b\frac{\Lambda^2}{ET}
+\frac{\hat{q}}{T^3} \sim  {\color{blue}a\frac{\Lambda^2}{T^2}} + {\color{red}b\frac{\Lambda^2}{ET}}
 \end{eqnarray}
 \end{frame}
+
+\begin{frame}{Next:}
+\begin{itemize}
+\item Settled down the pQCD component (I think this part is completed).
+\item Work on the Hybrid model right now. Few problems to solve
+\begin{itemize}
+\item A discretization scheme for the Langevin equation in the presence of scatterings.
+\item Reasonable parametizations that include mass dependence.
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+
 
 
 \end{document}

@@ -500,11 +500,6 @@ def X23_PS():
 
 		#return np.array([np.log(qperp/T), np.log(kt/qperp), np.log(tauf),
 		# np.arccos(c4k)])
-<<<<<<< Updated upstream
-		return np.array([np.log(Mt/T*T), np.log(k0/T), cos4k, np.arccos(c4k)])
-	f = h5py.File('data/X-PS.hdf5', 'r')
-	corner(get_data(), ax)
-=======
 		return np.array([np.log(qperp/T), np.log(kt/T), etak, np.arccos(c4k)])
 	f = h5py.File('data/x-ps.hdf5', 'r')
 	fig, axes = plt.subplots(nrows=4, ncols=4,
@@ -514,7 +509,6 @@ def X23_PS():
 	ranges = [[-2,3],[-5,5],[-5,5],[0,np.pi]]
 	corner(X1, X2, axes, co, cb, ['Oranges', 'Blues'], ranges)
 	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.98, 0.98])
->>>>>>> Stashed changes
 
 @plot
 def thermalization(quark):
@@ -721,12 +715,12 @@ def Box_Raa(quark):
 	def dN_dp_init(quark, pabs):
 		# https://arxiv.org/pdf/1205.2396.pdf
 		Lambda = 2.1 if quark == 'charm' else 7.5 # [GeV]
-		power = 3.9 if quark == 'charm' else 4.9
+		power = 3.9 if quark == 'charm' else 3.9#4.9
 		return pabs/(pabs**2+Lambda**2)**power
 
 	def plot_1Raa(quark, ax, type, c, label):
 		mass = 1.3 if quark == 'charm' else 4.2
-		f = h5py.File(quark+"-data/Box-Raa.hdf5", 'r')
+		f = h5py.File(quark+"-data/{}-Box-Raa.hdf5".format(quark), 'r')
 		y = []
 		for pre in ['0d5piT-', 'piT-', '2piT-']:
 			p0abs, p1abs = f[pre+type].value.T
@@ -739,24 +733,28 @@ def Box_Raa(quark):
 					np.linspace(bins[i], bins[i+1], 20)).mean()/norm
 							for i in range(len(x))])
 			y.append(H1/H00)
-		ax.fill_between(x, y[0], y[2], color=c, alpha=0.5,
-							label=label if quark == 'bottom' else '')
-		for i, (line, name) in enumerate(['-,:,--'],
-							[r'$0.5\mu=\pi T$',r'$\mu=\pi T$',r'$2\mu=\pi T$']):
-		ax.plot(x, y[i],line, color='k', label=name
-							if quark == 'charm' and type=='T3004fm-22' else '')
-
+		ax.fill_between(x, y[0], y[2],
+						facecolor='white' if '23' not in type else c,
+						edgecolor=c,
+						hatch='///' if '23' not in type else '',
+						alpha=0.5,
+						label=label if quark == 'bottom' else '')
+		names = [r'$\mu=0.5\pi T$',r'$\mu=\pi T$',r'$\mu=2\pi T$']
+		ax.plot(x, y[0],'-', color=c, label=names[0] if quark == 'charm' and type == 'T3004fm-22' else '')
+		ax.plot(x, y[1],'--', color=c, label=names[1] if quark == 'charm' and type == 'T3004fm-22' else '')
+		ax.plot(x, y[2],':', color=c, label=names[2] if quark == 'charm' and type == 'T3004fm-22' else '')
 		ax.set_ylim(0, 1.2)
-		ax.legend(fontsize=15)
+		ax.legend(fontsize=12, loc='upper right')
 		if quark=='charm':
-			ax.set_ylabel(r'$R_{AA}$, quark [GeV]', fontsize=15)
+			ax.set_ylabel(r'$R_{AA}$, quark', fontsize=15)
 			ax.annotate('Charm\n'+ r'$\frac{dN}{dp_T^2}\propto \frac{1}{\left(p_T^2 + 2.1^2\right)^{3.9}}$',
-			 			xy=(40, 0.2), fontsize=15)
+			 			xy=(40, 0.15), fontsize=15)
 		else:
-			ax.annotate('Bottom\n'+ r'$\frac{dN}{dp_T^2}\propto \frac{1}{\left(p_T^2 + 7.5^2\right)^{4.9}}$',
-			 			xy=(40, 0.2), fontsize=15)
+			ax.annotate('Bottom\n'+ r'$\frac{dN}{dp_T^2}\propto \frac{1}{\left(p_T^2 + 7.5^2\right)^{3.9}}$',
+			 			xy=(40, 0.15), fontsize=15)
 		ax.set_xlabel(r'$p_T$ [GeV]', fontsize=15)
 
+	# plots
 	fig, axes = plt.subplots(nrows=1, ncols=2, sharex=True, sharey=True,
 							 figsize=(textwidth, columnwidth*1.3))
 	for quark, ax in zip(['charm', 'bottom'], axes):
@@ -765,6 +763,93 @@ def Box_Raa(quark):
 	plt.subplots_adjust(wspace=0.)
 	plt.suptitle(r'$T=300$' +'[GeV]' + r', $\Delta t=4$' +'[fm/c]', fontsize=15)
 	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.95, 0.95])
+@plot
+def Raa_32(quark):
+	def dN_dp_init(quark, pabs):
+		# https://arxiv.org/pdf/1205.2396.pdf
+		Lambda = 2.1 if quark == 'charm' else 7.5 # [GeV]
+		power = 3.9 if quark == 'charm' else 4.9#4.9
+		return pabs/(pabs**2+Lambda**2)**power
+
+	def plot_1Raa(quark, ax, type, c, l, label):
+		mass = 1.3 if quark == 'charm' else 4.2
+		f = h5py.File(quark+"-data/{}-Box-Raa.hdf5".format(quark), 'r')
+		y = []
+		for pre in ['2piT-']:
+			p0abs, p1abs = f[pre+type].value.T
+			W = dN_dp_init(quark, p0abs)
+			H00, bins = np.histogram(p0abs, 50, weights=W, normed=True, range=[0,105])
+			H1, bins = np.histogram(p1abs, 50, weights=W, normed=True, range=[0,105])
+			x = (bins[1:] + bins[:-1])/2.
+			norm = dN_dp_init(quark, np.linspace(0,100,2000)).sum()*100./2000.
+			H0 = np.array([dN_dp_init(quark,
+					np.linspace(bins[i], bins[i+1], 20)).mean()/norm
+							for i in range(len(x))])
+			y.append(H1/H00)
+		"""
+		ax.fill_between(x, y[0], y[2],
+						facecolor='white' if '23' not in type else c,
+						edgecolor=c,
+						hatch='///' if '23' not in type else '',
+						alpha=0.5,
+						label=label if quark == 'bottom' else '')
+		"""
+		ax.plot(x, y[0],l, color=c, label=label)
+		ax.set_ylim(0, 1.2)
+		ax.legend(fontsize=12, loc='upper right')
+		if quark=='charm':
+			ax.set_ylabel(r'$R_{AA}$, quark', fontsize=15)
+			ax.annotate('Charm\n'+ r'$\frac{dN}{dp_T^2}\propto \frac{1}{\left(p_T^2 + 2.1^2\right)^{3.9}}$',
+			 			xy=(40, 0.15), fontsize=15)
+		else:
+			ax.annotate('Bottom\n'+ r'$\frac{dN}{dp_T^2}\propto \frac{1}{\left(p_T^2 + 7.5^2\right)^{4.9}}$',
+			 			xy=(40, 0.15), fontsize=15)
+		ax.set_xlabel(r'$p_T$ [GeV]', fontsize=15)
+
+	# plots
+	fig, axes = plt.subplots(nrows=1, ncols=1, sharex=True, sharey=True,
+							 figsize=(columnwidth*1.3, columnwidth*1.3))
+	for quark, ax in zip(['charm'], [axes]):
+		plot_1Raa(quark, ax,'T3004fm-22', cr, '--',label='Elastic')
+		plot_1Raa(quark, ax,'T3004fm-22-23', cb, '-', label='Elastic+23')
+		plot_1Raa(quark, ax,'T3004fm-22-23-32', cb, ':', label='Elastic+23+32')
+	plt.subplots_adjust(wspace=0.)
+	plt.suptitle(r'$T=300$' +'[GeV]' + r', $\Delta t=4$' +'[fm/c]', fontsize=15)
+	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.95, 0.95])
+
+
+@plot
+def qhat(dummy):
+	def plot(ax, quark, a, b, c):
+		M = 1.3 if quark == 'charm' else 4.2
+		Lambda = 0.2
+		T = np.linspace(0.1, 0.7, 50)
+		E = np.linspace(1, 100, 50)*M
+		E, T = np.meshgrid(E, T)
+		E = E.T
+		T = T.T
+		qhatT3 = a*(1/T)**2 + b/E/T
+		D2piT = 8.*np.pi/qhatT3
+		ax.plot_surface(np.log10(np.sqrt(E**2-M**2)), T, D2piT, rstride=1, cstride=1,
+								color=c, alpha=0.5,
+		                        linewidth=0, antialiased=False)
+	from matplotlib import cm
+	from mpl_toolkits.mplot3d import Axes3D
+	fig = plt.figure(figsize=(columnwidth, columnwidth))
+	ax = fig.add_subplot(1, 1, 1, projection='3d')
+	plot(ax, 'charm', .0, 1.0, 'Blue')
+	plot(ax, 'bottom', .0, 1.0, 'Red')
+	ax.set_xlabel(r'$p$ [GeV]')
+	ax.set_ylabel(r'$T$ [GeV]')
+	ax.set_zlabel(r'$\hat{q}/T^3$')
+	#ax.set_zlim(0, 15)
+	ax.set_xticks([np.log10(1),np.log10(10),np.log10(100)])
+	ax.set_yticks([0.2, 0.4, 0.6])
+	ax.set_xticklabels(['1', '10', '100'])
+	ax.view_init(5, -130)
+	plt.show()
+	fig.subplots_adjust(left=0.1, right=0.95, top=0.9)
+
 def main(quark):
 	parser = argparse.ArgumentParser()
 	parser.add_argument('plots', nargs='*')
