@@ -240,6 +240,114 @@ Eventually, they just contribute to diffusion coefficient,
 
 \end{frame}
 
+\begin{frame}{Default pQCD v.s. CMS data}
+\begin{itemize}
+\item pQCD sector has one parameter meidium scale $\mu_0$
+\begin{eqnarray}
+\nonumber
+\alpha_s = \alpha_s(\max\{Q, \mu_0 \pi T \})
+\end{eqnarray}
+\item A linear search $-1.6 \leq \log(\mu_0) \leq 0.8, N=13$. Correspond to $0.2 \leq \mu_0 \leq 2.2$.
+\item CMS data at $\sqrt{s} = 5.02$ TeV, $R_{AA}, v_{2}$, $p_T > 10 \textrm{ GeV}$, stat error only. $v_2$ errorbars are reduced by a factor $3$, because there are much less data points compared to $R_{AA}$.
+\item Bulk evolution, freestreaming $\tau_0 = 0.3$ and $0.6$ [fm/c] + viscous hydro + UrQMD.
+\item Nuclear PDF, nCTEQ15np and EPS09s
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Bulk observables}
+\begin{itemize}
+\item Make sure the integrated bulk observables are not sensitive to the bulk freestreaming time $\tau_0$.
+\item Here, heavy quark does not interaction with medium until $\tau_0$. 
+\item Varying $\tau_0$ assesses how sensitive the HQ observables are to the dynamics during $<1$ fm/c $\longrightarrow$ pre-equilibrium modeling necessary?
+\end{itemize}
+\begin{center}
+\includegraphics[width=\textwidth]{fig/mu-tune/Compare_soft.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{Fit quality with $\tau_0 = 0.6, 0.3$ fm/c}
+\begin{overprint}
+\onslide<1>
+With $\tau = 0.3$ fm/c: elastic process overshoots central $R_{AA}$.
+\onslide<2>
+With $\tau = 0.3$ fm/c: elastic+inelastic processes fit high-$p_T$ $R_{AA}$ pretty well. Flows are still systematically underestimated.
+\onslide<3>
+With $\tau = 0.6$ fm/c: elastic+inelastic processes.
+\end{overprint}
+
+\begin{overprint}
+\onslide<1>
+\begin{center}
+\includegraphics[width=\textwidth]{fig/mu-tune/{posterior-high-pT-tau=0.3-elastic}.png}
+\end{center}
+\onslide<2>
+\begin{center}
+\includegraphics[width=\textwidth]{fig/mu-tune/{posterior-high-pT-tau=0.3}.png}
+\end{center}
+\onslide<3>
+\begin{center}
+\includegraphics[width=\textwidth]{fig/mu-tune/{posterior-high-pT-tau=0.6}.png}
+\end{center}
+\end{overprint}
+
+\end{frame}
+
+\begin{frame}{Fitted $\mu$ with $\tau_0 = 0.6, 0.3$ fm/c}
+\begin{overprint}
+\onslide<1>
+With $\tau = 0.3$ fm/c, elastic process needs a large coupling constant $\mu_0 \sim 0.37$. Decreasing $\mu$ does not always increase interaction strength due to increased screening. For example $\hat{q} \sim T^3 \alpha_s^2 \ln(1/C\alpha_s)$. The extreme is around $\mu_0 \sim 0.37$.
+\onslide<2>
+With $\tau = 0.3$ fm/c, elastic+inelastic process prefers $\mu_0 \sim 0.65$. \\
+Usually people estimate the in-medium coupling with $\alpha_s^*(\pi T <\mu<4\pi T)$.
+\onslide<3>
+With $\tau = 0.6$ fm/c, pQCD needs a small $\mu_0 \sim 0.45$ to be compatible with data.
+\end{overprint}
+
+\begin{overprint}
+\onslide<1>
+\begin{center}
+\includegraphics[width=0.58\textwidth]{fig/mu-tune/{posterior-mu-high-pT-tau=0.3-elastic}.png}
+\includegraphics[width=0.42\textwidth]{fig/alpha_s_at_T.pdf}
+\end{center}
+\onslide<2>
+\begin{center}
+\includegraphics[width=0.58\textwidth]{fig/mu-tune/{posterior-mu-high-pT-tau=0.3}.png}
+\includegraphics[width=0.42\textwidth]{fig/alpha_s_at_T.pdf}
+\end{center}
+\onslide<3>
+\begin{center}
+\includegraphics[width=0.58\textwidth]{fig/mu-tune/{posterior-mu-high-pT-tau=0.6}.png}
+\includegraphics[width=0.42\textwidth]{fig/alpha_s_at_T.pdf}
+\end{center}
+\end{overprint}
+\end{frame}
+
+\begin{frame}{Summary of one-parameter fit}
+\begin{itemize}
+\item The $\mu_0$ parameter, unlike K-factor, cannot arbitrarily increase the strength of interaction. $\mu_0 \sim 0.37$ as a lower bound.
+\item Elastic + inelastic process can fit high-$p_T$ $R_{AA}$.
+\item Flows are systemically lower than data.
+\item Nuclear PDF stongly affects low $p_T$ $R_{AA}$ but not flows.
+\item The best value of the $\mu_0$ parameter depends (not too strong) on the time we turn on the interaction ($\tau_0=0.3, 0.6$ fm/c).
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{For publication}
+New model: hybrid approach
+\begin{itemize}
+\item Pure pQCD approach with the benchmark fit.
+\item Pure diffusion, referring to Shanshan, Yingru's work. A well motivated parametization.
+\item A calibration on hybrid model, compared to Yingru's work.
+\item To answer a question on what else do we need apart from leading order pQCD interaction.
+\end{itemize}
+
+Pre-equilibrium effects, PCM, ... \\
+
+Continue heavy flavor $R_{AA}$ in proton-lead.\\
+
+
+\end{frame}
 
 
 \end{document}

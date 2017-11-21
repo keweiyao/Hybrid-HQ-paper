@@ -144,22 +144,55 @@ Nc, Nf = 3., 3.
 pf_g = 4.*np.pi/3.*(Nc+Nf/2.)
 alpha0 = 4.*np.pi/(11. - 2./3.*Nf)
 Lambda2 = 0.2**2
-def alpha_s(Q2, T):
-	scale2 = (2*np.pi*T)**2
+def alpha_s(Q2, T, mu):
+	scale2 = (mu*np.pi*T)**2
 	if Q2 < 0:
-		return alpha0/np.log(np.max([-Q2, scale2], axis=0)/Lambda2)
+		result = alpha0/np.log(np.max([-Q2, scale2])/Lambda2)
+		if result > alpha0 or result < 0.:
+			return alpha0
 	else:
-		return alpha0*(0.5 - np.arctan(np.log(np.max([Q2, scale2], axis=0)/Lambda2)/np.pi)/np.pi)
+		return alpha0*(0.5 - np.arctan(np.log(np.max([Q2, scale2])/Lambda2)/np.pi)/np.pi)
+alpha_s = np.vectorize(alpha_s)
 
-def mD2_LO_eq(m2, T, mu):
-	scale = -m2*mu
-	return alpha_s(scale)*6.*np.pi - m2/T/T
-def naive_LO_mD2(T, mu):
-	return alpha_s(0., T)*6.*np.pi*T*T
-naive_LO_mD2 = np.vectorize(naive_LO_mD2)
-def mD2_LO_sf(T, mu):
-	return brentq(mD2_LO_eq, 0.01, 100., args=(T, mu))
-mD2_LO_sf = np.vectorize(mD2_LO_sf)
+def mD2(T, mu):
+	return alpha_s(0., T, mu)*6.*np.pi*T*T
+mD2 = np.vectorize(mD2)
+
+@plot
+def alpha_s_at_T(args):
+	fig, ax = plt.subplots(nrows=1, ncols=1,
+							 figsize=(columnwidth, columnwidth))
+	Tc = 0.154
+	T = np.linspace(1, 4, 100)*Tc
+	for mu, num, c in zip([0.25, 0.5, 1, 2, 4], 
+		["1/4", "1/2", "1", "2", "4"], [cr,co,cg,cb,'k']):
+		ax.plot(T/Tc, alpha_s(0., T, mu), color=c, label=r"${:s}\pi T$".format(num))
+	ax.set_xlabel(r'$T/T_c$')
+	ax.set_ylabel(r'$\alpha_s(T)$')
+	ax.set_ylim(0,1)
+	ax.set_xlim(1,4)
+	ax.legend()
+	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.05, 0.04, 0.98, 0.98])
+
+
+@plot
+def Xapprox(args):
+	fig, ax = plt.subplots(nrows=1, ncols=1,
+							 figsize=(columnwidth, columnwidth))
+	Tc = 0.154
+	for num, c in zip([1,2,3,4], [cr,co,cg,cb]):
+		T = num*Tc
+		mu = np.linspace(0.01, 4.0, 100)
+		E = 20
+		X = T**3*alpha_s(0., T, mu)**2 * np.log(1+E/(6.*np.pi*np.e*T*alpha_s(0., T, mu)))
+		ax.plot(mu, X, color=c, label=r"$T/T_c = {:d}$".format(num))
+	ax.set_xlabel(r'$\mu$')
+	ax.set_ylabel(r'$\alpha_s(T)$')
+	ax.set_ylim(0,0.1)
+	ax.set_xlim(0,4)
+	ax.legend()
+	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.05, 0.04, 0.98, 0.98])
+
 
 @plot
 def tau_f():
