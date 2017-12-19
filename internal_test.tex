@@ -12,6 +12,9 @@
 %\institute{}
 %\date{}
 %\subject{}
+
+\usepackage{tikz}
+\def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;}
 \begin{document}
 
 \begin{frame}
@@ -43,7 +46,7 @@
 Elastic process: intermediate propagators are all screened by Debye mass.
 \begin{eqnarray}
 \nonumber
-\frac{1}{s}, \frac{1}{t}, \frac{1}{u} \rightarrow \frac{1}{s+m_D^2}, \frac{1}{t-m_D^2}, \frac{1}{u+m_D^2}
+\frac{1}{s}, \frac{1}{t}, \frac{1}{u} \rightarrow \frac{1}{\max\{s,m_D^2\}}, \frac{1}{\min\{t,-m_D^2\}}, \frac{1}{\min\{u,-m_D^2\}}
 \end{eqnarray}
 Debye mass: simplest leading order result.
 \begin{eqnarray}
@@ -346,8 +349,116 @@ Pre-equilibrium effects, PCM, ... \\
 
 Continue heavy flavor $R_{AA}$ in proton-lead.\\
 
+\end{frame}
+
+\begin{frame}{A correlation observable}
+\begin{itemize}
+\item Elastic and radiative has different energy loss $\Delta E$ fluctuation, given initial energy $E_0$, 
+\begin{eqnarray}
+\nonumber
+P_0(x|y) = P_0\left(\left.x = \frac{|\Delta E|}{E_0} \right| y = E_0\right)
+\end{eqnarray}
+\item Problem: $E_0$ is unknown.
+\item Goal: defined a quantity from final states to estimate $P_0$. 
+\end{itemize}
+One way is to use the correlation between initially back-to-back produced $\mathrm{D}$-$\bar{\mathrm{D}}$ pairs,
+\begin{eqnarray}
+\nonumber
+P(x|y) = P\left(\left.x = \frac{|\bar{p}_T - p_T|}{\max\{\bar{p}_T, p_T\}} \right| y = \max\{\bar{p}_T, p_T\} \right)
+\end{eqnarray}
+\end{frame}
+
+
+\begin{frame}{First, test with 0-10\% averaged hydro}
+\begin{overprint}
+\onslide<1>
+Without hadronization, this $P$ works very well approximating the underlying energy loss fluctuation $P_0$.
+\onslide<2>
+Fragmentation introduces large amount of fluctuation. $P$ is no longer close to $P_0$, but the difference between the two energy loss mechanism remains.
+\end{overprint}
+
+\begin{overprint}
+\onslide<1>
+\includegraphics[width=\textwidth]{fig/Event-avg-quark-fluct.png}
+\onslide<2>
+\includegraphics[width=\textwidth]{fig/Event-avg-meson-fluct.png}
+\end{overprint}
 
 \end{frame}
 
+\begin{frame}
+To better differentiate elastic and inelastic energy loss, we divide events into two categories $x<0.5$ and $x>0.5$, and then measure the yields $Y(A<0.5), Y(A>0.5)$ (call $x$ ``A"symmetry.).
+The final observable is ,
+\begin{eqnarray}
+\nonumber
+Y_{\textrm{Asym}} = \frac{Y(A<0.5) - Y(A>0.5)}{ Y(A<0.5) + Y(A>0.5)}
+\end{eqnarray}
+This form maybe useful for experiments as it cancels a lot of uncertainty.
+\begin{overprint}
+\onslide<1>
+\begin{center}
+\includegraphics[width=0.6\textwidth]{fig/Event-avg-phase-space-divided.png}
+\end{center}
+\onslide<2>
+\begin{center}
+\includegraphics[width=0.7\textwidth]{fig/Event-avg-Yasym.png}
+\end{center}
+\end{overprint}
+\end{frame}
+
+\begin{frame}{Test with EbE hydro + LBT ($\mu$)}
+Three cases both tuned to $R_{AA}$ and $v_2$ data @LHC Pb+Pb 5.02 TeV 
+\begin{itemize}
+\item Elastic only.
+\item Inelastic only.
+\item Elastic + Inelastic.
+\end{itemize}
+\begin{overprint}
+\onslide<1>
+\begin{center}
+\includegraphics[width=0.9\textwidth]{fig/mu-tune/El_obs.png}
+\end{center}
+\onslide<2>
+\begin{center}
+\includegraphics[width=0.9\textwidth]{fig/mu-tune/Inel_obs.png}
+\end{center}
+\onslide<3>
+\begin{center}
+\includegraphics[width=0.9\textwidth]{fig/mu-tune/El_inel_obs.png}
+\end{center}
+\end{overprint}
+\end{frame}
+
+\begin{frame}{Test with EbE hydro + LBT ($\mu$)}
+With $R_{AA}$ and $v_2$ tuned, study the prediction for the yield asymmetry.
+\begin{itemize}
+\item nCTEQ and EPS09 causes little difference
+\item In central collisions, this observables is sensitive to whether there is inelastic energy loss.
+\item A flaw: back-to-back initialization $p_{T, \textrm{init}} = -\bar{p}_{T, \textrm{init}}$. Can be improved to see if initial production imbalance of $p_T$ changes the signal.
+\end{itemize}
+\begin{overprint}
+\onslide<1>
+\begin{center}
+\includegraphics[width=\textwidth]{fig/mu-tune/Yasym_nCTEQ.png}
+\end{center}
+\onslide<2>
+\begin{center}
+\includegraphics[width=\textwidth]{fig/mu-tune/Yasym_EPS09.png}
+\end{center}
+\end{overprint}
+\end{frame}
+
+\begin{frame}{Source of LBT fluctuation}
+\begin{itemize}
+\item Initial production $\Delta\phi, p_T$ fluctuation. ??
+\item QGP induced collision / radiation. \checkmark
+\item Fragmentation fluctuation. \checkmark
+\item Hadronic stage fluctuation. \checkmark
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{fig/Source-of-fluct.png}
+\end{center}
+
+\end{frame}
 
 \end{document}
