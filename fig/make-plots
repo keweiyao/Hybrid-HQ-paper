@@ -140,11 +140,12 @@ def truncate_colormap(cmap, minval=0.0, maxval=1.0, n=100):
 TRENTO_LABEL = r'T\raisebox{-.5ex}{R}ENTo'
 
 
-Nc, Nf = 3., 3.
-pf_g = 4.*np.pi/3.*(Nc+Nf/2.)
-alpha0 = 4.*np.pi/(11. - 2./3.*Nf)
-Lambda2 = 0.2**2
+
 def alpha_s(Q2, T, mu):
+	Nc, Nf = 3., 3.
+	pf_g = 4.*np.pi/3.*(Nc+Nf/2.)
+	alpha0 = 4.*np.pi/(11. - 2./3.*Nf)
+	Lambda2 = 0.2**2
 	scale2 = (mu*np.pi*T)**2
 	if Q2 < 0:
 		result = alpha0/np.log(np.max([-Q2, scale2])/Lambda2)
@@ -174,28 +175,8 @@ def alpha_s_at_T(args):
 	ax.legend()
 	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.05, 0.04, 0.98, 0.98])
 
-
 @plot
-def Xapprox(args):
-	fig, ax = plt.subplots(nrows=1, ncols=1,
-							 figsize=(columnwidth, columnwidth))
-	Tc = 0.154
-	for num, c in zip([1,2,3,4], [cr,co,cg,cb]):
-		T = num*Tc
-		mu = np.linspace(0.01, 4.0, 100)
-		E = 20
-		X = T**3*alpha_s(0., T, mu)**2 * np.log(1+E/(6.*np.pi*np.e*T*alpha_s(0., T, mu)))
-		ax.plot(mu, X, color=c, label=r"$T/T_c = {:d}$".format(num))
-	ax.set_xlabel(r'$\mu$')
-	ax.set_ylabel(r'$\alpha_s(T)$')
-	ax.set_ylim(0,0.1)
-	ax.set_xlim(0,4)
-	ax.legend()
-	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.05, 0.04, 0.98, 0.98])
-
-
-@plot
-def tau_f():
+def tau_f(_):
 	fig, axes = plt.subplots(nrows=2, ncols=1, sharex=True,
 							 figsize=(columnwidth, 1.5*columnwidth))
 	M = 1.3
@@ -209,7 +190,7 @@ def tau_f():
 		if k >= pmax:
 			return 0.
 		else:
-			return 2.*k*(1.-xb)/(kperp**2 + (x*M)**2 + switch*(1.-xb)*0.5*mD2_LO_sf(T, 1.))
+			return 2.*k*(1.-xb)/(kperp**2 + (x*M)**2 + switch*(1.-xb)*0.5*mD2(T, 2.))
 	tau_f = np.vectorize(tau_f)
 
 	x = np.linspace(0, T*5, 100) # kperp
@@ -251,164 +232,90 @@ def tau_f():
 @plot
 def L_Eloss(quark):
 	M = 1.3 if quark == 'charm' else 4.2
-	fig, axes = plt.subplots(nrows=2, ncols=2, sharex=True, sharey=True,
-							 figsize=(columnwidth, 1.*columnwidth))
+	fig, axes = plt.subplots(nrows=3, ncols=3, sharex=True, #sharey=True,
+							 figsize=(textwidth, 1.3*columnwidth))
 
-	f = h5py.File('charm-data/LdE.hdf5','r')
-	f1 = h5py.File('hic-hvq-run-folder/LdE.hdf5','r')
-	dE_el_c = f['elastic']['dE'].value
-	dE_tot_c = f['elastic+inelastic']['dE'].value
-	dE_el_b = f['elastic']['dE'].value
-	dE_tot_b = f1['elastic+inelastic']['dE'].value
-	Ea = f['elastic'].attrs['E']
-	Ta = f['elastic'].attrs['Temp']
+	f = h5py.File('data/Eloss.h5','r')
+	rad = f['rad']
+	coll = f['coll']
+	T = rad.attrs['T']
+	E = rad.attrs['E']
+	L = rad.attrs['L']
+	
+	dL = L[1]-L[0]
+	L = L+dL
+
+	color = ['r', 'g']
+	line = ['-', '--']
+	for iE, eE in enumerate([E[1], E[9], E[19]]):
+		axes[0, iE].set_title(r"$E = {:1.1f}$ GeV".format(eE))
+		for iT, eT in enumerate(T[::2]):
+			name = '{}/{}'.format(iT*2, 1+iE*9)
+			dEr = rad[name].value
+			dEc = coll[name].value
+			# charm
+			l = r"$T = {:1.1f}$ GeV".format(eT)
+			axes[0, iE].plot(L, dEc/eE, line[iT], color=color[iT], label=l)
+			axes[1, iE].plot(L, dEr/eE, line[iT], color=color[iT], label=l)
+			axes[0, iE].set_ylim(0,0.22)
+			axes[1, iE].set_ylim(0,0.22)
+			axes[2, iE].plot(L, dEr/dEc, line[iT], color=color[iT], label=l)
+			axes[2, iE].plot(L, np.ones_like(L), 'k-')
+			axes[2, iE].set_ylim(0,3)
 	f.close()
 
-
-	L = np.linspace(0,5,41)
-	dL = L[1]-L[0]
-	color = [cb,co,cg]
-	line = ['-', '-.', '--']
-	L = L+dL
-	axes[0,1].plot([],[],label="E [GeV], T [GeV]", alpha=0.)
-	for iT, T in enumerate(Ta):
-		if iT == 1:
-			continue
-		for iE, E in enumerate(Ea):
-			if iE == 1:
-				continue
-			el_c = dE_el_c[iT, iE]
-			inel_c = dE_tot_c[iT, iE] - dE_el_c[iT, iE]
-			el_b = dE_el_b[iT, iE]
-			inel_b = dE_tot_b[iT, iE] - dE_el_b[iT, iE]
-			# charm
-			axes[0,0].plot(L, el_c/E, line[iT], color=color[iE])
-			axes[1,0].plot(L, inel_c/E, line[iT], color=color[iE])
-
-			# bottom
-			axes[0,1].plot(L, el_b/E, line[iT], color=color[iE], label=r"  ${:1.0f}$".format(E)+"  \t"+r"${:1.1f}$".format(T))
-			axes[1,1].plot(L, inel_b/E, line[iT], color=color[iE])
-
-	axes[0,0].set_title('Charm')
-	axes[0,1].set_title('Bottom')
-
-	axes[0,0].set_ylabel(r"Elastic $\Delta E / E$")
-
-	axes[0,1].legend(framealpha=0., loc=(0.01, 0.4), fontsize=7)
-
-	axes[1,0].set_xlabel(r"$L$ [fm]")
-	axes[1,0].set_ylabel(r"Inelastic $\Delta E / E$ ")
-
-
-	axes[1,1].set_xlabel(r"$L$ [fm]")
+	axes[0,0].set_ylabel(r"Coll. $\Delta E / E$")
+	axes[1,0].set_ylabel(r"Rad. $\Delta E / E$ ")
+	axes[2,0].set_ylabel(r"Rad. / Coll.")
+	axes[1,0].legend(framealpha=0., loc="upper left", fontsize=9)
+	axes[2,1].set_xlabel(r"$t$ [fm/c]")
 
 	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.01, 0.02, 0.99, 0.98])
 
 @plot
 def E_Eloss(quark):
 	M = 1.3 if quark == 'charm' else 4.2
-	fig, axes = plt.subplots(nrows=2, ncols=2, sharex=True, sharey=True,
-							 figsize=(columnwidth, 1.*columnwidth))
+	fig, axes = plt.subplots(nrows=3, ncols=3, sharex=True, #sharey=True,
+							 figsize=(textwidth, 1.3*columnwidth))
 
-	f = h5py.File('charm-data/EdE.hdf5','r')
-	ff = h5py.File('hic-hvq-run-folder/EdE.hdf5','r')
-	f1 = h5py.File('bottom-data/EdE.hdf5','r')
-	dE_el_c = f['elastic']['dE'].value
-	dE_tot_c = f['elastic+inelastic']['dE'].value
-	dE_el_b = f['elastic']['dE'].value
-	dE_tot_b = ff['elastic+inelastic']['dE'].value
-	La = f['elastic'].attrs['L']
-	Ta = f['elastic'].attrs['Temp']
-	f.close()
-
-	E = np.linspace(5,100,20)
-
-	color = [cb,co,cg]
-	line = ['-', '-.', '--']
-	axes[0,1].plot([],[],label="T [GeV], L [fm]", alpha=0.)
-	for iT, T in enumerate(Ta):
-		if iT == 1:
-			continue
-		for iL, L in enumerate(La):
-			if iL == 1:
-				continue
-			el_c = dE_el_c[iT, iL]
-			inel_c = dE_tot_c[iT, iL] - dE_el_c[iT, iL]
-			el_b = dE_el_b[iT, iL]
-			inel_b = dE_tot_b[iT, iL] - dE_el_b[iT, iL]
-			# charm
-			axes[0,0].plot(E, el_c/E, line[iT], color=color[iL])
-			axes[1,0].plot(E, inel_c/E, line[iT], color=color[iL])
-
-			# bottom
-			axes[0,0].plot(E, el_b/E, 'o', color=color[iL], label=r"  ${:1.1f}$".format(T)+"  \t"+r"${:1.1f}$".format(L))
-			axes[1,0].plot(E, inel_b/E, 'o', color=color[iL])
-
-	axes[0,0].set_title('Charm')
-	axes[0,1].set_title('Bottom')
-
-	axes[0,0].set_ylabel(r"Elastic $\Delta E / E$")
-
-	axes[0,1].legend(framealpha=0., loc=(0.1,0.4), fontsize=7)
-
-	axes[1,0].set_xlabel(r"$E$ [GeV]")
-	axes[1,0].set_ylabel(r"Inelastic $\Delta E / E$ ")
-
-
-	axes[1,1].set_xlabel(r"$E$ [GeV]")
-
-	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.01, 0.02, 0.99, 0.98])
-
-@plot
-def el_vs_inel(quark):
-	M = 1.3 if quark == 'charm' else 4.2
-	fig, axes = plt.subplots(nrows=1, ncols=2, sharey=True,
-							 figsize=(textwidth, 0.67*textwidth))
-
-	f = h5py.File(quark+'-data/EdE.hdf5','r')
-	EdE_el = f['elastic']['dE'].value[::2,::2]
-	EdE_tot = f['elastic+inelastic']['dE'].value[::2,::2]
-	L_E = f['elastic'].attrs['L'][::2]
-	T_E = f['elastic'].attrs['Temp'][::2]
-	A = EdE_el/EdE_tot
-	f.close()
-
-	f = h5py.File(quark+'-data/LdE.hdf5','r')
-	LdE_el = f['elastic']['dE'].value[::2,::2]
-	LdE_tot = f['elastic+inelastic']['dE'].value[::2,::2]
-	E_L = f['elastic'].attrs['E'][::2]
-	T_L = f['elastic'].attrs['Temp'][::2]
-	B = LdE_el/LdE_tot
-	f.close()
-
-	E = np.linspace(5,100,20)
-	L = np.linspace(0,5,41)
+	f = h5py.File('data/Eloss.h5','r')
+	rad = f['rad']
+	coll = f['coll']
+	T = rad.attrs['T']
+	E = rad.attrs['E']
+	L = rad.attrs['L']
+	
 	dL = L[1]-L[0]
 	L = L+dL
-	color = [cr, co, cg, cb]
-	axes[0].plot([],[], alpha=0.,label=r'$T$ [GeV]'+'\t'+r'$L$ [fm]')
-	for iT, eT in enumerate(T_E):
-		for iL, eL in enumerate(L_E):
-			axes[0].step(E, A[iT, iL], color=color[iT*2+iL],
-						label=r'${}$'.format(eT)+'\t\t  '+r'${:.0f}$'.format(eL))
-	axes[1].plot([],[], alpha=0.,label=r'$E$ [GeV]'+'\t'+r'$T$ [GeV]')
-	for iE, eE in enumerate(E_L):
-		for iT, eT in enumerate(T_L):
-			axes[1].step(L, B[iE, iT], color=color[iE*2+iT],
-						label=r'${:.0f}$'.format(eE)+'\t\t  '+r'${}$'.format(eT))
 
+	color = ['r', 'g']
+	line = ['-', '--']
+	index = [40, 60, 80]
+	for iL, eL in enumerate([L[40], L[60], L[80]]):
+		axes[0, iL].set_title(r"$t = {:1.1f}$ fm/c".format(eL))
+		for iT, eT in enumerate(T[::2]):
+			dEr = np.array([rad['{}/{}'.format(iT*2, iE)][index[iL]] 
+							for iE in range(len(E))])
+			dEc = np.array([coll['{}/{}'.format(iT*2, iE)][index[iL]] 
+							for iE in range(len(E))])
+			l = r"$T = {:1.1f}$ GeV".format(eT)
+			axes[0, iL].plot(E, dEc/E, line[iT], color=color[iT], label=l)
+			axes[1, iL].plot(E, dEr/E, line[iT], color=color[iT], label=l)
+			axes[0, iL].set_ylim(0,0.22)
+			axes[1, iL].set_ylim(0,0.22)
+			axes[2, iL].plot(E, dEr/dEc, line[iT], color=color[iT], label=l)
+			axes[2, iL].plot(E, np.ones_like(E), 'k-')
+			axes[2, iL].set_ylim(0,3)
+	f.close()
 
-	axes[0].set_xlabel(r"$E$ [GeV]", fontsize=15)
-	axes[0].set_ylabel(r"$\Delta E_{\mathrm{el}} / \Delta E_{\mathrm{tot}}$",
-																	fontsize=15)
-	axes[0].legend(framealpha=0.)
+	axes[0,0].set_ylabel(r"Coll. $\Delta E / E$")
+	axes[1,0].set_ylabel(r"Rad. $\Delta E / E$ ")
+	axes[2,0].set_ylabel(r"Rad. / Coll.")
+	
+	axes[1,0].legend(framealpha=0., loc="upper left", fontsize=9)
+	axes[2,1].set_xlabel(r"$E$ [GeV]")
 
-	axes[1].set_xlabel(r"$L$ [fm]", fontsize=15)
-	axes[1].legend(framealpha=0.)
-
-	axes[1].set_ylim(0.0,1.)
-	#axes[1].set_xlim(0.0,6.)
-	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.05, 0.04, 0.98, 0.98])
+	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.01, 0.02, 0.99, 0.98])
 
 @plot
 def X22_PS():
