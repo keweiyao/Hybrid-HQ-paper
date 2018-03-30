@@ -1,5 +1,5 @@
 \documentclass[aps, prc, reprint, amsmath, groupedaddress, nofootinbib]{revtex4-1}
-
+\usepackage[compat=1.1.0]{tikz-feynman}
 \usepackage[utf8]{inputenc}
 \usepackage{hyperref}
 \usepackage{amsmath}
@@ -20,6 +20,7 @@
   citecolor=theblue,
   urlcolor=theblue
 }
+
 
 
 \newcommand{\trento}{T\raisebox{-0.5ex}{R}ENTo}
@@ -78,32 +79,157 @@ Comparing to available D and B meson data, we constrain the diffusion constant o
 Heavy flavors are an ideal probe of the properties of the strongly coupled  quark-gluon plasma produced in relativistic heavy-ion collisions. 
 Due to their large mass ($m_c\sim 1.3$ GeV and $m_b\sim 4.2$ GeV) compared to the temperature scale achieved in the experiments [cite T est], thermal production of heavy quarks from medium is highly suppressed; therefore the dominant source of heavy flavors are initial hard production vertex.
 They are also flavor tagged
-\section{Heavy quark propagation in a QGP}
-\subsection{The linear Boltzmann equation and scatterings}
-Heavy quark's large mass ($M \gg T$) makes it a good quasi-particle with a dilute distribution $e^{-\beta M} \ll 1$ compared to other components of the QGP.
-Neglecting the back reaction from heavy quark to the medium, the full Boltzmann equations can be linearized for heavy quark propagation.
+\section{Understanding heavy quark propagation with a hybrid transport}
+Open flavor heavy quarks are flavor tagged probes with large masses compared to the typical energy scale of the medium produced in relativistic heavy-ion collisions ($M \gg T$).
+This enables one to treat heavy quarks as good quasi-participles and dilute in the medium.
+For the study of open flavor we neglect the back reaction from heavy quark to the medium. 
+In this approximation, the main features of heavy-flavor-medium interactions are captured in a linearized Boltzmann equation.
 \begin{eqnarray}
-  \frac{\partial}{\partial t}f_Q - \frac{\vec{p_1}}{E_1}\cdot\nabla f_Q  = C_i^{2\rightleftharpoons 2}[f_Q] + C_i^{2\rightleftharpoons 3}[f_Q]
+  \frac{\partial}{\partial t}f_Q - \frac{\vec{p_1}}{E_1}\cdot\nabla f_Q  = 
+\mathcal{C}[f_Q]
+%C_i^{2\rightleftharpoons 2}[f_Q] + C_i^{2\rightleftharpoons 3}[f_Q]
 \end{eqnarray}
-On the right, we include elastic and inelastic collision terms, involving heavy quark, light quark and gluon distribution functions and the scattering matrix elements.
-To solve the equation with an ensemble of test particles, each particles reacts with medium particles with collisions rates,
+The collision processes with medium particles change the heavy quarks' distribution function $f_Q(t, \vec{x}, \vec{p})$.
+
+The precise knowledge of the collision integral on the right is hard to obtain.
+In principal, these processes should be calculable from the fundamental theory using perturbative-QCD. 
+However, analyzing in-medium processes are much more complex than in vaccum even at leading order. 
+Also, the temperatures reached in current experiments are not high enough, which brings large ambiguity in the calculation through the scale dependence of the QCD coupling constant.
+Finally, a practical leading order pQCD cross-sections usually involves a relative large multiplicative $K$-factor to describe data.
+A different perspective of analyzing the collision integral starts with the assumption that medium kicks to heavy quark propagation are frequent and soft.
+This assumption reduces the linear Boltzmann equation to a Fokker-Plank equation where heavy quark undergoes diffusion dynamics. 
+The diffusion approximation has the advantage that the complex underlying dynamics are represented by a few transport coefficients--drag and diffusion. 
+It is easier to extract these numbers from empirical data than ab initio evaluation. 
+The drawbacks are it only works when interactions are indeed soft and frequent and the relation between the obtained empirical transport coefficients to the fundamental theory is hard to establish.
+
+In this paper, we would like to take advantages from both perspectives.
+We divided the collision term in the linear-Boltzmann equation into two parts.
+Part one--the scattering component--contains scattering processes that what we can calculate start from the fundamental theory.
+Part two--the diffusion component--solves diffusion dynamics with empirical transport coefficients that parametrize what is missing in part one to describe the data. 
+To avoid confusion, we shall call them residue transport coefficients in the sense that it contains interactions or corrections not included in part one.
+We have noticed that such a separation of matrix-element scattering and diffusion has been proposed for the study of jet propagation.
+The separation in \cite{} is based on momentum transfer and applied order-by-order to perturbative-QCD calculation of jet-medium interaction.
+In our study, we don't restrict the content of the residue transport coefficients to be of pQCD origin.
+In this way, our model build upon existing knowledge of the scattering matrix-element from pQCD and can be systematically improve the residue transport coefficient to describe the experiments while only varying parameter in pQCD within a reasonable range.
+
+\subsection{Part one, scattering dynamics}    
+\begin{center}
+\feynmandiagram [xscale=1.2, yscale=1., horizontal=p1 to p3] {
+  p2 [particle=$q$] -- [fermion, momentum=$p_2$] a -- [fermion, momentum=$p_4$] p4 [particle=$q$],
+  a -- [gluon, momentum=$q$] b,
+  p1 [particle=$Q$] -- [fermion, momentum=$p_1$] b -- [fermion, momentum=$p_3$] p3 [particle=$Q$],
+};
+\feynmandiagram [xscale=1.2, yscale=1., horizontal=p2 to p4] {
+  p2 [particle=$g$]-- [gluon] b -- [gluon] p4 [particle=$g$],
+  a -- [gluon] b,
+  p1 [particle=$Q$] -- [fermion] a -- [fermion] p3 [particle=$Q$],
+};
+\end{center}
+We include both elastic and inelastic processes for the cross-section based collision term.
+Heavy quark undergoes collisions according to the collision rates of different reaction channel.
+The collision rates for elastic scatterings, gluon radiation and gluon absorption are,
 \begin{eqnarray}
-    R_{i=q,\bar{q},g}^{1+2 \rightarrow 3+4} &=& \frac{d_i}{2E_1\nu_i !} \int d \Gamma_2 d \Gamma_3 d \Gamma_4 f_i(p_2) 
-   \nonumber
-  \\&& {(2\pi)}^4\delta^{(4)}(p_{\textrm{in}} - p_{\textrm{out}})  \overline{|M_{Q+i \rightleftharpoons Q+i}|^2},
+    R_{22} &=& \frac{D_{22}}{2E_1} \int d \Gamma_{p_3,p_4}^{p_2}(p_1) f_i(p_2)  \overline{|M_{22}|^2},
    \nonumber
   \\
-  R_{i=q,\bar{q},g}^{1+2 \rightarrow 3+4+k} &=& \frac{d_i}{2E_1\nu_i !} \int d \Gamma_2 d \Gamma_3 d \Gamma_4 d \Gamma_k f_i(p_2) 
-   \nonumber
-  \\&& {(2\pi)}^4\delta^{(4)}(p_{\textrm{in}} - p_{\textrm{out}})\overline{|M_{Q+i \rightleftharpoons Q+i+g}|^2},
+  R_{23} &=& \frac{D_{23}}{2E_1} \int d \Gamma_{p_3,p_4,k}^{p_2}(p_1) f_i(p_2) 
+\overline{|M_{23}|^2},
   	 \nonumber
   \\
-  R_{i=q,\bar{q},g}^{1+2+k \rightarrow 3+4} &=& \frac{d_i d_g}{2E_1\nu_i !} \int d \Gamma_2 d \Gamma_3 d \Gamma_4 d \Gamma_k f_i(p_2)f_g(k)
-   \nonumber
-  \\&& {(2\pi)}^4\delta^{(4)}(p_{\textrm{in}} - p_{\textrm{out}})\overline{|M_{Q+i \rightleftharpoons Q+i+g}|^2}.
+  R_{32} &=& \frac{D_{32}}{2E_1} \int d \Gamma_{p_3,p_4}^{p_2,k}(p_1) f_i(p_2)f_g(k)
+\overline{|M_{32}|^2}.
   	 \nonumber
 \end{eqnarray}
-$d\Gamma = dp^3/2E/(2\pi)^3$ is the invariant phase space integration, $d_i$ counts the degeneracy of the incoming medium particle and $\nu_i$ counts the number of identical particles in the initial / final state of the collision.
+Where the N-body phase-space integration,
+\begin{eqnarray}
+\nonumber
+d\Gamma_{\{\textrm{out}\}}^{\{\textrm{in}\}}(p_1) = \prod_{\{\textrm{in, out}\}} \frac{dp_i^3}{2E_i(2\pi)^3} (2\pi)^4\delta^4(p_1+P_{\text{in}} - P_{\textrm{out}})
+\end{eqnarray}
+ is the invariant phase space integration, $d_i$ counts the degeneracy of the incoming medium particle and $\nu_i$ counts the number of identical particles in the initial / final state of the collision.
+
+\begin{tikzpicture}
+  \begin{feynman}
+    \diagram [xscale=0.8, yscale=0.6, vertical=a to b] {     
+      i2 [particle=\(g\)]
+        -- [gluon] b
+        -- [gluon] f2 [particle=\(g\)]],
+      a -- [gluon] b,
+      i1 [particle=\(Q\)]
+        -- [fermion] a
+        -- [fermion] f1[particle=\(Q\)],
+    };
+
+    \vertex [above right=.7 cm and .4 cm of a, label=\(k\)] (r);
+    \draw [gluon] ($(i1)!0.7!(a)$) -- (r);
+  \end{feynman}
+\end{tikzpicture}
+\begin{tikzpicture}
+  \begin{feynman}
+    \diagram [xscale=0.8, yscale=.6, vertical=a to b] {     
+      i2 [particle=\(g\)]
+        -- [gluon] b
+        -- [gluon] f2 [particle=\(g\)]],
+      a -- [gluon] b,
+      i1 [particle=\(Q\)]
+        -- [fermion] a
+        -- [fermion] f1[particle=\(Q\)],
+    };
+
+    \vertex [below right=.2 cm and .8 cm of a, label=\(k\)] (r);
+    \draw [gluon] ($(a)!0.3!(f1)$) -- (r);
+  \end{feynman}
+\end{tikzpicture}
+\begin{tikzpicture}
+  \begin{feynman}
+    \diagram [xscale=0.8, yscale=.6, vertical=a to b] {     
+      i2 [particle=\(g\)]
+        -- [gluon] b
+        -- [gluon] f2 [particle=\(g\)]],
+      a -- [gluon] b,
+      i1 [particle=\(Q\)]
+        -- [fermion] a
+        -- [fermion] f1[particle=\(Q\)],
+    };
+
+    \vertex [below right=.0 cm and .8 cm of a, label=\(k\)] (r);
+    \draw [gluon] ($(a)!0.5!(b)$) -- (r);
+  \end{feynman}
+\end{tikzpicture}
+\begin{center}
+\begin{tikzpicture}
+  \begin{feynman}
+    \diagram [xscale=0.8, yscale=.5, vertical=a to b] {     
+      i2 [particle=\(g\)]
+        -- [gluon] b
+        -- [gluon] f2 [particle=\(g\)]],
+      a -- [gluon] b,
+      i1 [particle=\(Q\)]
+        -- [fermion] a
+        -- [fermion] f1[particle=\(Q\)],
+    };
+    \vertex [below right=.95 cm and .5 cm of b, label=\(k\)] (r);
+    \draw [gluon] ($(i2)!0.5!(b)$) -- (r);
+  \end{feynman}
+\end{tikzpicture}
+\begin{tikzpicture}
+  \begin{feynman}
+    \diagram [xscale=0.8, yscale=.5, vertical=a to b] {     
+      i2 [particle=\(g\)]
+        -- [gluon] b
+        -- [gluon] f2 [particle=\(g\)]],
+      a -- [gluon] b,
+      i1 [particle=\(Q\)]
+        -- [fermion] a
+        -- [fermion] f1[particle=\(Q\)],
+    };
+
+    \vertex [above right=.2 cm and .8 cm of b, label=\(k\)] (r);
+    \draw [gluon] ($(b)!0.3!(f2)$) -- (r);
+  \end{feynman}
+\end{tikzpicture}
+\end{center}
+
+
 The medium particle distribution functions are assumed to be classical and thermal, 
 \begin{eqnarray}
 f(p,x) = \exp\left(-\frac{p \cdot u(x)}{T(x)}\right).
@@ -136,9 +262,8 @@ The destructive interference of multiple collisions leads to a suppression to th
 However, coherence effect is hard to implement in a Boltzmann equation transport model, where scatterings are treated as independent and local.
 We adopt the way used in [Shanshan's paper] to effectively taking this into account via the formation time of the gluon,
 \begin{eqnarray}
-\tau_f = \frac{2x(1-x)E}{k_\perp^2 + x^2M^2 + (1-x)m_g^2}
+\tau_f = \frac{2(1-x)k}{k_\perp^2 + x^2M^2}
 \end{eqnarray}
-where $m_g = m_D/\sqrt{2}$ is the gluon thermal mass.
 This effective treatment of LPM effect restricts the phase space of the radiated/absorbed gluon in the calculation of scattering rates at time $t$,
 \begin{eqnarray}
 R(t) = \int (\cdots)d\Gamma_k \rightarrow \int (\cdots) 2\sin^2\left(\frac{t-t_0}{\tau_f}\right)d\Gamma_k,
@@ -150,7 +275,7 @@ Another consequences is that the inelastic collision term on the right-hand-side
 There is no guarantee that this modification does not alter the equilibrium solution.
 However, we checked and confirmed that that as long as absorption processes are included, the true thermal equilibrium can be reached with acceptable precision.
 
-\subsection{The diffusion dynamics}
+\subsection{Part two, diffusion dynamics}
 The diffusion equation dynamics is solved by the Langevin equations.
 In the post-point discretization scheme, these are,
 \begin{eqnarray}
@@ -205,8 +330,8 @@ To guarantee an ensemble of particles reaches the thermal equilibrium at $t\righ
 &-& \left. 16 \alpha_s(t, T)\alpha_s(s-M^2, T) \frac{(s-M^2)(-u+M^2)-M^2(s-u)}{(t-m_D^2)(-u+M^2+m_D^2)}\right\} \\
 \overline{|M_{Q+q\rightleftharpoons Q+q+g}|^2} &=& \overline{|M_{Q+g\rightleftharpoons Q+g}|^2} P_g \\
 \overline{|M_{Q+g\rightleftharpoons Q+g+g}|^2} &=& \overline{|M_{Q+g\rightleftharpoons Q+g, \textrm{t-channel only}}|^2} P_g \\
-P_g &=& 48 \pi \alpha_{s, \textrm{rad}} (1-\bar{x})^2 \left(\frac{\vec{k}_\perp}{k_\perp^2 + x^2 M^2 + (1-\bar{x})m_g^2} 
-+ \frac{\vec{q}_\perp - \vec{k}_\perp}{(\vec{q}_\perp-\vec{k}_\perp)^2 + x^2 M^2 + (1-\bar{x})m_g^2}
+P_g &=& 48 \pi \alpha_{s, \textrm{rad}} (1-\bar{x})^2 \left(\frac{\vec{k}_\perp}{k_\perp^2 + x^2 M^2} 
++ \frac{\vec{q}_\perp - \vec{k}_\perp}{(\vec{q}_\perp-\vec{k}_\perp)^2 + x^2 M^2 + m_D^2}
 \right)^2 
 \end{eqnarray}
 \end{widetext}
