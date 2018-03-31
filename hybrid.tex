@@ -112,31 +112,90 @@ The separation in \cite{} is based on momentum transfer and applied order-by-ord
 In our study, we don't restrict the content of the residue transport coefficients to be of pQCD origin.
 In this way, our model build upon existing knowledge of the scattering matrix-element from pQCD and can be systematically improve the residue transport coefficient to describe the experiments while only varying parameter in pQCD within a reasonable range.
 
-\subsection{Part one, scattering dynamics}    
-\begin{center}
-\feynmandiagram [xscale=1.2, yscale=1., horizontal=p1 to p3] {
-  p2 [particle=$q$] -- [fermion, momentum=$p_2$] a -- [fermion, momentum=$p_4$] p4 [particle=$q$],
-  a -- [gluon, momentum=$q$] b,
-  p1 [particle=$Q$] -- [fermion, momentum=$p_1$] b -- [fermion, momentum=$p_3$] p3 [particle=$Q$],
+\subsection{Part one, scattering dynamics}
+At lowest order in the coupling constant, heavy quarks can scattering elastically with a light quark (anti-quark) or a gluon f, as shown in Fig. \ref{plots:feyn-elastic}.
+We will keep use the term ``elastic" and later ``inelastic" to distinguish particle number conserving and particle number changing processes and their associated energy loss.
+For quark-gluon scattering, there are three diagrams corresponds to $s, t,$ and $u$ channel exchange; only $t$ channel contributes to quark-quark scattering.
+The matrix-elements for these processes are calculated at leading order pQCD (see \ref{appendix:matrix-element}).
+The $t$ channel gluon exchange in the vacuum causes divergence in cross-section as the momentum transfer vanishes,
+\begin{eqnarray}
+d\sigma \propto \frac{1}{t^2} dt,
+\end{eqnarray}
+but inside a quark-gluon plasma, those soft gluon exchange is screened by the surrounding color charges and the propagator is replaced by a hard-thermal loop propagator \cite{}.
+Here, we simply uses the leading order Debye mass as a regulator, $t \rightarrow t - m_D^2$.
+
+At high energy, inelastic processes which involves gluon radiation in the final state shown in Fig. \ref{plots:feyn-inelastic} becomes important.
+Although the inelastic processes seem to be one order higher in the coupling conspropagtion of the tant than the elastic processes, due to the divergence of the almost on-shell intermediate propagator, its contribution to energy loss increases with incident heavy quark energy and eventually dominates over elastic energy loss \cite{}.
+Boltzmann equation with only the gluon radiation radiation violates detail balance, and the theory won't have a correct thermal solution.
+To solve this issue, we include the reverse process of radiation, namely the gluon absorption process.
+The matrix-element for the absorption relates to the radiation matrix-element by bending the final state gluon emission line to the initial state ($k^\mu \rightarrow -k^\mu$).
+An additional gluon in the initial state brings an additional Boltzmann factor $e^{-k/T}$, so we expect it to be less important at high energy (low temperature) but essential for heavy quark thermalization.
+We shall study numerically that under what conditions that the inclusion of the gluon absorption process is important to energy loss.
+
+A complication for inelastic processes is that the radiated gluon takes finite amount of time to be fully resolved from the source. 
+Within the formation time, the effects of multiple soft collisions add up  coherently in a destructive way to suppress the gluon radiation, know as the Landau-Pomeranchuk-Migdal (LPM) effect \cite{}.
+With LPM effect, emission of a single gluon dependents on multiple collisions experienced by the heavy quark, but this is difficult to implement in a Boltzmann equation setup where scatterings are localized in space-time.
+In our model, we mimic the LPM effect by considering the physical interpretation of the gluon formation time $\tau_f$,
+\begin{eqnarray}
+\tau_f &=& \frac{2(1-x)k}{k_\perp^2 + x^2M^2} \\
+x &=& \frac{k^+}{E^+}
+\end{eqnarray}
+A gluon cannot be fully resolved from the heavy quark shorter than time scale, therefore we restrict the phase space integral of the emitted gluon   by a coherence factor,
+\begin{eqnarray}
+d\Gamma_k \rightarrow \left(1 - \cos\left(\Delta t/\tau_f\right) \right)d\Gamma_k,
+\end{eqnarray}
+where $\Delta t$ is the time elapsed from the last radiation.
+In the infinite time limit $\Delta t \rightarrow \infty$, the average of the coherence factor goes to $1$; while with finite $\Delta t$, the radiation of gluon that has not fully formed yet (i.e. $\tau_f > \Delta t$) is suppressed.
+With this prescription, the evolution of a heavy quark becomes history dependent. 
+It is not trivial to tell if the Boltzmann equation modified in this way should thermalize as $t\rightarrow \infty$, so we tested in actually simulations and confirm the model approaches correct thermal limit.
+
+\begin{figure}
+\feynmandiagram [xscale=.95, yscale=1, horizontal=a to b] {
+  p1 [particle=$Q$] -- [fermion] a--b[fermion] -- [fermion] p3 [particle=$Q$],
+  p2 [particle=$g$]-- [gluon] a,
+  p4 [particle=$g$]-- [gluon] b,
 };
-\feynmandiagram [xscale=1.2, yscale=1., horizontal=p2 to p4] {
+\begin{tikzpicture}[xscale=.95, yscale=1.]
+  \begin{feynman}
+    \diagram [horizontal=a to b] {
+      i1 [particle=\(Q\)]
+      -- [fermion] a
+      -- [draw=none] f1 [particle=\(g\)],
+      a -- [fermion] b,
+      i2 [particle=\(Q\)]
+      -- [anti fermion] b
+      -- [draw=none] f2 [particle=\(g\)],
+    };
+    \diagram* {
+      (a) -- [gluon] (f2),
+      (b) -- [gluon] (f1),
+    };
+  \end{feynman}
+\end{tikzpicture}
+\feynmandiagram [xscale=1.2, yscale=.8, horizontal=p2 to p4] {
   p2 [particle=$g$]-- [gluon] b -- [gluon] p4 [particle=$g$],
   a -- [gluon] b,
   p1 [particle=$Q$] -- [fermion] a -- [fermion] p3 [particle=$Q$],
 };
-\end{center}
-We include both elastic and inelastic processes for the cross-section based collision term.
-Heavy quark undergoes collisions according to the collision rates of different reaction channel.
+\feynmandiagram [xscale=1.2, yscale=.8, horizontal=p1 to p3] {
+  p2 [particle=$q$] -- [fermion, edge label=$p_2$] a -- [fermion, edge label=$p_4$] p4 [particle=$q$],
+  a -- [gluon, momentum=$q$] b,
+  p1 [particle=$Q$] -- [fermion, edge label=$p_1$] b -- [fermion, edge label=$p_3$] p3 [particle=$Q$],
+};
+\caption{Elastic processes. The first three diagrams contribute to heavy quark (Q) - gluon (g) scattering, the last one contributes to a light (anti-)quark (q) scattering. Intermediate propagators are screened by a Debye mass in case of soft divergence.}\label{plots:feyn-elastic}
+\end{figure}
+
+Given this scattering processes, the linear Boltzmann equation is solved by transport and an ensemble of heavy quark according to the collision rates of different reaction channels.
 The collision rates for elastic scatterings, gluon radiation and gluon absorption are,
 \begin{eqnarray}
-    R_{22} &=& \frac{D_{22}}{2E_1} \int d \Gamma_{p_3,p_4}^{p_2}(p_1) f_i(p_2)  \overline{|M_{22}|^2},
+    R_{22,i} &=& \frac{d_i/\nu_i!}{2E_1} \int d \Gamma_{p_3,p_4}^{p_2}(p_1) f_i(p_2)  \overline{|M_{22}|^2},
    \nonumber
   \\
-  R_{23} &=& \frac{D_{23}}{2E_1} \int d \Gamma_{p_3,p_4,k}^{p_2}(p_1) f_i(p_2) 
+  R_{23,i} &=& \frac{d_i/\nu_i!}{2E_1} \int d \Gamma_{p_3,p_4,k}^{p_2}(p_1) f_i(p_2) 
 \overline{|M_{23}|^2},
   	 \nonumber
   \\
-  R_{32} &=& \frac{D_{32}}{2E_1} \int d \Gamma_{p_3,p_4}^{p_2,k}(p_1) f_i(p_2)f_g(k)
+  R_{32,i} &=& \frac{d_i/\nu_i!}{2E_1} \int d \Gamma_{p_3,p_4}^{p_2,k}(p_1) f_i(p_2)f_g(k)
 \overline{|M_{32}|^2}.
   	 \nonumber
 \end{eqnarray}
@@ -145,8 +204,14 @@ Where the N-body phase-space integration,
 \nonumber
 d\Gamma_{\{\textrm{out}\}}^{\{\textrm{in}\}}(p_1) = \prod_{\{\textrm{in, out}\}} \frac{dp_i^3}{2E_i(2\pi)^3} (2\pi)^4\delta^4(p_1+P_{\text{in}} - P_{\textrm{out}})
 \end{eqnarray}
- is the invariant phase space integration, $d_i$ counts the degeneracy of the incoming medium particle and $\nu_i$ counts the number of identical particles in the initial / final state of the collision.
+$d_i$ counts the degeneracy of the incoming medium particle and $\nu_i$ counts the number of identical gluons in the initial / final state of the collision.
+The medium partons are assumed and reached thermal equilibrium with a Maxwell distribution function, 
+\begin{eqnarray}
+f(p,x) = \exp\left(-\frac{p \cdot u(x)}{T(x)}\right).
+\end{eqnarray}
+The space-time temperature $T$ and velocity $u$ profiles are obtained from the 2+1D viscous relativistic hydrodynamic calculations \cite.
 
+\begin{figure}
 \begin{tikzpicture}
   \begin{feynman}
     \diagram [xscale=0.8, yscale=0.6, vertical=a to b] {     
@@ -158,9 +223,10 @@ d\Gamma_{\{\textrm{out}\}}^{\{\textrm{in}\}}(p_1) = \prod_{\{\textrm{in, out}\}}
         -- [fermion] a
         -- [fermion] f1[particle=\(Q\)],
     };
-
     \vertex [above right=.7 cm and .4 cm of a, label=\(k\)] (r);
     \draw [gluon] ($(i1)!0.7!(a)$) -- (r);
+    \draw  (i2)--(b);
+     \draw  (b)--(f2);
   \end{feynman}
 \end{tikzpicture}
 \begin{tikzpicture}
@@ -174,9 +240,10 @@ d\Gamma_{\{\textrm{out}\}}^{\{\textrm{in}\}}(p_1) = \prod_{\{\textrm{in, out}\}}
         -- [fermion] a
         -- [fermion] f1[particle=\(Q\)],
     };
-
     \vertex [below right=.2 cm and .8 cm of a, label=\(k\)] (r);
     \draw [gluon] ($(a)!0.3!(f1)$) -- (r);
+    \draw  (i2)--(b);
+     \draw  (b)--(f2);
   \end{feynman}
 \end{tikzpicture}
 \begin{tikzpicture}
@@ -190,25 +257,10 @@ d\Gamma_{\{\textrm{out}\}}^{\{\textrm{in}\}}(p_1) = \prod_{\{\textrm{in, out}\}}
         -- [fermion] a
         -- [fermion] f1[particle=\(Q\)],
     };
-
     \vertex [below right=.0 cm and .8 cm of a, label=\(k\)] (r);
     \draw [gluon] ($(a)!0.5!(b)$) -- (r);
-  \end{feynman}
-\end{tikzpicture}
-\begin{center}
-\begin{tikzpicture}
-  \begin{feynman}
-    \diagram [xscale=0.8, yscale=.5, vertical=a to b] {     
-      i2 [particle=\(g\)]
-        -- [gluon] b
-        -- [gluon] f2 [particle=\(g\)]],
-      a -- [gluon] b,
-      i1 [particle=\(Q\)]
-        -- [fermion] a
-        -- [fermion] f1[particle=\(Q\)],
-    };
-    \vertex [below right=.95 cm and .5 cm of b, label=\(k\)] (r);
-    \draw [gluon] ($(i2)!0.5!(b)$) -- (r);
+    \draw  (i2)--(b);
+     \draw  (b)--(f2);
   \end{feynman}
 \end{tikzpicture}
 \begin{tikzpicture}
@@ -222,58 +274,47 @@ d\Gamma_{\{\textrm{out}\}}^{\{\textrm{in}\}}(p_1) = \prod_{\{\textrm{in, out}\}}
         -- [fermion] a
         -- [fermion] f1[particle=\(Q\)],
     };
-
+    \vertex [below right=.9 cm and .6 cm of b, label=\(k\)] (r);
+    \draw [gluon] ($(i2)!0.6!(b)$) -- (r);
+    \draw  (i2)--(b);
+     \draw  (b)--(f2);
+  \end{feynman}
+\end{tikzpicture}
+\begin{tikzpicture}
+  \begin{feynman}
+    \diagram [xscale=0.8, yscale=.5, vertical=a to b] {     
+      i2 [particle=\(g\)]
+        -- [gluon] b
+        -- [gluon] f2 [particle=\(g\)]],
+      a -- [gluon] b,
+      i1 [particle=\(Q\)]
+        -- [fermion] a
+        -- [fermion] f1[particle=\(Q\)],
+    };
     \vertex [above right=.2 cm and .8 cm of b, label=\(k\)] (r);
     \draw [gluon] ($(b)!0.3!(f2)$) -- (r);
+    \draw  (i2)--(b);
+     \draw  (b)--(f2);
   \end{feynman}
 \end{tikzpicture}
-\end{center}
+\caption{Inelastic process. Heavy quark collide with a meidum light (anti-)quark or gluon and radiates an additional gluon.}\label{plots:feyn-inelastic}
+\end{figure}
 
-
-The medium particle distribution functions are assumed to be classical and thermal, 
+Finally for the coupling constant in these matrix-elements, we utilize the leading order running coupling constant with three flavors of quark \cite{},
 \begin{eqnarray}
-f(p,x) = \exp\left(-\frac{p \cdot u(x)}{T(x)}\right).
-\end{eqnarray}
-The space-time profile temperature and velocity of the medium are obtained from the 2+1D viscous relativistic hydrodynamic calculations.
-
-The first collision rate is called "elastic" in the sense that it conserves particle number.
-Simiarly, the second and the third collision rates are "inelastic" as they do not conserve particle number, where heavy quark collide with meidum particle and at the same time radiates / absorbs a gluon.
-The matrix-elements for these processes are calculated at leading order pQCD (see \ref{appendix:matrix-element}), with a leading order Debye mass screening the gluon and quark propagator to remove the infrared divergence,
-\begin{eqnarray}
-m_D^2 = \frac{4\pi\alpha_s}{3}(Nc+\frac{N_f}{2})T^2
-\end{eqnarray}
-The Debye mass $\sim gT$ can also be treated as a soft cut-off so that the screened matrix-elements only handle momentum transfer $\gtrsim gT$.
-We used the leading order running coupling constant with three flavors of quark [cite BAMPS, etc] for the matrix-element,
-\begin{eqnarray}
-\alpha_s(\mu) = \frac{4\pi}{9}
+\alpha_s(\mu^2) = \frac{4\pi}{9}
 \begin{cases}
-\frac{1}{\ln\left(-\mu^2/\Lambda^2\right)},\hfill \mu^2 < 0 \\ 
+1/\ln\left(-\mu^2/\Lambda^2\right),\hfill \mu^2 < 0 \\ 
 \frac{1}{2} - \frac{1}{\pi}\arctan\left[\frac{\ln\left(\mu^2/\Lambda^2\right)}{\pi}\right],\mu^2 > 0
 \end{cases}
 \end{eqnarray}
-The QCD scale is chosen to be $\Lambda = 200$~MeV.
-In vacuum, the scale $\mu^2$ should be chosen as the typical momentum transfer $Q^2$ of that process.
-However, for scatterings inside a medium characterized by temperature $T$, the typical scale should be cut-off by $T$ and we choose $\mu = \max\{Q, \nu\pi T \}$, with $\nu$ the only parameter we tuned in the linear Boltzmann transport component.
-
-The inelastic processes that involve gluon radiation / absorption needs extra care. 
-A gluon radiating off a heavy quark takes a finite formation time $\tau_f$ to be fully resolved from the source quark. During this time, the effect from multiple soft collisions contribute coherently at leading order.
-Therefore, a proper treatment of the coherence needs careful re-summation of multiple soft collisions.
-The destructive interference of multiple collisions leads to a suppression to the rate of gluon emission, known a the Landau-Pomeranchuk-Migdal (LPM) effect.
-However, coherence effect is hard to implement in a Boltzmann equation transport model, where scatterings are treated as independent and local.
-We adopt the way used in [Shanshan's paper] to effectively taking this into account via the formation time of the gluon,
+The QCD scale is set at $\Lambda = 200$~MeV.
+For elastic scattering, we evaluate $\alpha_s$ at the typical momentum transfer of the process. For the gluon emission / absorption vertex in inelastic scatterings, we choose $\alpha_s(k_\perp^2)$ \cite{}.
+Inside a medium, there is an additional scale defined by the temperature $T$, we use it as a lowest cutoff for the energy scale of the process,
 \begin{eqnarray}
-\tau_f = \frac{2(1-x)k}{k_\perp^2 + x^2M^2}
+\alpha_s(Q^2) \rightarrow \alpha_s(Q, \nu T)
 \end{eqnarray}
-This effective treatment of LPM effect restricts the phase space of the radiated/absorbed gluon in the calculation of scattering rates at time $t$,
-\begin{eqnarray}
-R(t) = \int (\cdots)d\Gamma_k \rightarrow \int (\cdots) 2\sin^2\left(\frac{t-t_0}{\tau_f}\right)d\Gamma_k,
-\end{eqnarray}
-where $t_0$ is the time of last radiation / absorption of gluon.
-In this approach, a gluon radiation immediately after the last emission vertex is suppressed by the interference factor, and the differential scattering rate for gluon with momentum $k$ will not recover the incoherent limit until $t-t_i$ is comparable to $\tau_f$.
-This procedure is of course not perfect, but captures the main impact of a finite formation time, for example the non-linear path-length dependence of energy loss.
-Another consequences is that the inelastic collision term on the right-hand-side of the Boltzmann equation now depends on the history of evolution.
-There is no guarantee that this modification does not alter the equilibrium solution.
-However, we checked and confirmed that that as long as absorption processes are included, the true thermal equilibrium can be reached with acceptable precision.
+However, for scatterings inside a medium characterized  the typical scale should be cut-off by $T$ and we choose $\mu = \max\{Q, \nu\pi T \}$, with $\nu$ the only parameter we tuned in the linear Boltzmann transport component.
 
 \subsection{Part two, diffusion dynamics}
 The diffusion equation dynamics is solved by the Langevin equations.
@@ -371,36 +412,6 @@ Therefore, we design the following simulation procedure.
 \item[Step 2.] $(t, x, p^*)  \xrightarrow{\textrm{Diffusion}} (t+\Delta t, x', p')$.
 \end{itemize}
 \end{itemize}
-
-\section{Calculation of $\Raa$}
-$\Raa$ is the ratio of differential cross-sections in AA collision to the that of pp collision scaled by the average number of binary collision for a given centrality.
-The differential cross-sections has certain rapidity cuts.
-Take the D-meson $\Raa$ as an example,
-\begin{eqnarray}
-\Raa = \frac{\left\langle \frac{dN_{AA \rightarrow D}}{dp_T}  \right\rangle_{|y|<y_0}}{\left. \langle T_{AA}\rangle \frac{d\sigma_{pp \rightarrow D}}{dp_T}\right|_{|y|<y_0}}
-\end{eqnarray}
-The average is taken over all events that fulfilling the centrality selection criterion.
-
-This definition is straight forward in experiments because the differential cross-sections in the numerator and the denominator are measurable and $\langle T_{AA}\rangle$ is set of a model-dependent numbers.
-For theory calculations there is more involved due to hadronization.
-\begin{eqnarray}
-\Raa &=& \frac{\left\langle \frac{T_{AA}}{\langle T_{AA}\rangle} \frac{d\sigma_{n n \rightarrow D}^{|y|<y_0}}{dp_T} \right\rangle}{ \frac{\sigma_{pp \rightarrow D}^{|y|<y_0}}{dp_T}} \\
-&=& \frac{\left\langle \sigma_{nn \rightarrow D}^{|y|<y_0} \frac{d N_D^{|y|<y_0}}{dp_T} \right\rangle_{w=T_{AA}}}{\frac{d\sigma_{pp \rightarrow D}^{|y|<y_0}}{dp_T}}.
-\end{eqnarray}
-$d\sigma_{nn \rightarrow D}/dp_T$ is the D meson production within the rapidity cuts per binary collision.
-$d N_D/dp_T$ is the normalized distribution of D meson in the final states which can be obtained directly from the transport simulation.
-The average over events is then weighted by the nuclear overlapping function.
-The missing piece that connects our calculation with the observable is the actually yield per binary collision of D meson for each event $\sigma_{nn\rightarrow D}$.
-We relate this quantity to the initial charm production cross-section,
-\begin{eqnarray}
-\sigma_{nn\rightarrow D}^{|y|<y_0} &=& \sigma_{nn\rightarrow c}^{|y|<y_{max}} \frac{\sum_{|y|<y_0}w_D}{\sum_{|y|<y_{max}}w_c} \\
-&=&  \sigma_{nn\rightarrow c}^{|y|<y_{max}} r_{D/c}.
-\end{eqnarray}
-$r_{D/c}$ can be calculate for each individual theory event, with $y_{max}>2y_0$ in actual calculations.
-And the final theory calculation of $\Raa$ is,
-\begin{eqnarray}
-\Raa = \frac{\left\langle \sigma_{nn\rightarrow c}^{|y|<y_{max}} r_{D/c} \frac{d N_D^{|y|<y_0}}{dp_T} \right\rangle_{w=T_{AA}}}{\frac{d\sigma_{pp \rightarrow D}^{|y|<y_0}}{dp_T}}.
-\end{eqnarray}
 
 \section{Calculation of $v_n\{2\}$ and $v_2\{EP\}$}
 Cumulant method correlates a heavy meson with a light particle to estimate $v_n$.
