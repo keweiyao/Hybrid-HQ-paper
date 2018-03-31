@@ -49,15 +49,13 @@
 \newcommand{\Pperp}{\hat{P}^{\perp}}
 
 \begin{abstract}
-Open heavy-flavor production in relativistic heavy-ion collisions provides valuable information about the quark-gluon plasma (QGP).
 Current observation of open charm in heavy-ion collisions shows unexpectedly large momentum anisotropy and small nuclear modification factor, posing a challenge to the theoretical understanding of the nature of coupling between heavy quark and the medium.
 Linear Boltzmann transport and Langevin diffusion are two popular kinetic models for heavy quark in-medium propagation.
-In this work, we develop a hybrid heavy quark transport model that combines the strengths of each approach: 
-heavy quarks are evolved with Langevin diffusion using an empirical diffusion constant, while rare but important scattering processes are described using linear Boltzmann equations with perturbative matrix elements.
-In such a setup, the Langevin component can be understood as a complementary contribution to the linear Boltzmann equation in cases where perturbative calculation may be inadequate to describe all the interactions.
+In this work, we develop a hybrid heavy quark transport model that combines the strengths of both: 
+heavy quarks are evolved with Langevin diffusion using an empirical diffusion constant and scattering processes treated linear Boltzmann equations with perturbative matrix elements.
+The Langevin component is a complementary contribution to the linear Boltzmann equation when perturbative scattering is inadequate.
 Both elastic and inelastic scatterings are included in the Boltzmann component.
 The Landau-Pomeranchuk-Migdal effect is treated effectively via gluon formation time and detailed balance is imposed between gluon emission and absorption.
-Finally, the QGP evolution is obtained by a 2+1D relativisic viscous hydrodynamic calculation.
 With the hybrid model, we study the heavy flavor momentum anisotropic, nuclear modification factor, and correlation observables in A-A collisions at the RHIC and the LHC energies.
 Comparing to available D and B meson data, we constrain the diffusion constant of the Langevin component.
 
@@ -76,9 +74,15 @@ Comparing to available D and B meson data, we constrain the diffusion constant o
 \maketitle
 
 \section{Introduction}
-Heavy flavors are an ideal probe of the properties of the strongly coupled  quark-gluon plasma produced in relativistic heavy-ion collisions. 
-Due to their large mass ($m_c\sim 1.3$ GeV and $m_b\sim 4.2$ GeV) compared to the temperature scale achieved in the experiments [cite T est], thermal production of heavy quarks from medium is highly suppressed; therefore the dominant source of heavy flavors are initial hard production vertex.
-They are also flavor tagged
+Heavy flavors are an ideal probe of the properties of the strongly coupled  quark-gluon plasma produced in relativistic heavy-ion collisions.
+Due to their large mass compared to the temperature scale achieved in the experiments \cite{}, thermal production of heavy quarks from medium is highly suppressed; therefore the dominant source of heavy flavors are initial hard production vertex.
+Produced at early times of the collision, these flavor tagged probes experience the full time evolution of the quark-gluon plasma and their numbers is almost conserved.
+The mass effect sets an additional scale to the problem and brings rich physics to the heavy flavor sector.
+In the high transverse momentum region, heavy quarks can lose energy perturbatively and merge into the regime of jet energy loss study;
+in the low momentum region, the mass effect $M\gg T$ delays the heavy quark thermalization time, providing a window to study the non-equilibrium dynamics of QCD.
+Therefore the study of heavy flavor observables is a unique way to understand the dynamics of the quark-gluon plasma and the heavy quark in-medium propagation itself.
+
+
 \section{Understanding heavy quark propagation with a hybrid transport}
 Open flavor heavy quarks are flavor tagged probes with large masses compared to the typical energy scale of the medium produced in relativistic heavy-ion collisions ($M \gg T$).
 This enables one to treat heavy quarks as good quasi-participles and dilute in the medium.
@@ -312,66 +316,87 @@ The QCD scale is set at $\Lambda = 200$~MeV.
 For elastic scattering, we evaluate $\alpha_s$ at the typical momentum transfer of the process. For the gluon emission / absorption vertex in inelastic scatterings, we choose $\alpha_s(k_\perp^2)$ \cite{}.
 Inside a medium, there is an additional scale defined by the temperature $T$, we use it as a lowest cutoff for the energy scale of the process,
 \begin{eqnarray}
-\alpha_s(Q^2) \rightarrow \alpha_s(Q, \nu T)
+\alpha_s(Q^2) \rightarrow \alpha_s(\max\{Q,\nu T\})
 \end{eqnarray}
-However, for scatterings inside a medium characterized  the typical scale should be cut-off by $T$ and we choose $\mu = \max\{Q, \nu\pi T \}$, with $\nu$ the only parameter we tuned in the linear Boltzmann transport component.
+$\nu$ the only parameter we will tune in the scattering component of the model.
 
 \subsection{Part two, diffusion dynamics}
-The diffusion equation dynamics is solved by the Langevin equations.
-In the post-point discretization scheme, these are,
+The diffusion dynamics of the heavy quark is simulated by solving Langevin equations in the Ito-discretization scheme,
 \begin{eqnarray}
 \Delta \vec{x}_i &=& \frac{\vec{p}_i}{E} \Delta t	\\
-\Delta \vec{p}_i &=& -\Gamma \vec{p}_i \Delta t + \sqrt{\tensor{B}(p+\Delta p) \Delta t  }\vec{\xi}
+\Delta \vec{p}_i &=& -\Gamma \vec{p}_i \Delta t + \Delta t \vec{\xi}
 \end{eqnarray}
-$\Gamma$ is the Langevin drag term, and $\tensor{B}$ is the random force correlation matrix,
+The momentum change comes from a drag term with a momentum drag coefficient $\Gamma$ and a thermal random force $\vec{\xi}$. 
+The random force has zero mean and covariance structure:
 \begin{eqnarray}
-B_{ij} = \Kpara \frac{p_i p_j}{p^2} + \Kperp \left(\delta_{ij} - \frac{p_i p_j}{p^2}\right)
+\langle \xi_i \xi_j \rangle = \frac{1}{\Delta t}\left(\Kpara \frac{p_i p_j}{p^2} + \Kperp \left(\delta_{ij} - \frac{p_i p_j}{p^2}\right) \right)
 \end{eqnarray}
-To guarantee an ensemble of particles reaches the thermal equilibrium at $t\rightarrow \infty$, $\Gamma$ and $\kappa$ have to satisfy the Einstein relation in the post-point scheme,
+In this study, we assume the residue momentum diffusion is isotropic $\Kpara=\Kperp=\kappa$.
+The drag $\Gamma$ and the momentum diffusion coefficient $\kappa$ need to satisfy the Einstein relation to guarantee the correct thermal limit is reached as time approaches infinity,
 \begin{eqnarray}
-\Gamma &=& A + \frac{\partial \Kpara}{p^2} + \frac{2\sqrt{\Kpara\Kperp} - 2\Kperp}{p^2} \\
- &=& \frac{\Kpara}{2TE} - \frac{1}{p^2}\left( \sqrt{\Kpara} - \sqrt{\Kperp} \right)^2.
+\Gamma &=& \frac{\kappa}{2TE} - \frac{d\kappa}{dp^2}
 \end{eqnarray}
-
-\subsection{A hybrid model}
+We choose momentum diffusion $\kappa$ as the independent variable in our parametrization.
+If temperature is the only scale in the problem, we expect $\kappa$ to scale as $T^3$.
+Additional, we consider the possibility of non-perturbative contribution to the residue transport, which only happens at low energy and low temperature and arrived at this simple ansatz,
+\begin{eqnarray}
+\frac{\kappa}{T^3} = \left(A + \frac{B}{ET}\right)
+\end{eqnarray}
 
 \section{Benchmark calculation}
-\begin{figure}
-\includegraphics[width=\columnwidth]{charm-plot/avg_alphas.pdf}\\
-\includegraphics[width=\columnwidth]{charm-plot/Rscale.pdf}
-\end{figure}
-
+\subsection{Thermalization test}
+We first show our implementation of the above model gives the correct thermal limit. 
+The quantify the approach to equilibrium of an ensemble of heavy quarks in side a static medium with a fixed temperature $T_0$, we define the following quantity,
+\begin{eqnarray}
+\Delta S = \frac{1}{N}\sum_i \ln f_0(E_i) - \int f_0(p)\ln f_0(p) dp^3
+\end{eqnarray}
+$f_0 \propto \exp(-E/T)$ is the relativistic Boltzmann distribution function at temperature $T$. 
+The second term is the entropy at that temperature, while the first term is the ensemble average of one-particle entropy at that temperature.
+This difference $\Delta S$ defines a ``distance" towards the equilibrium state.
+If the ensemble is not far from thermal equilibrium and can be characterized by an effective temperature $T_{\textrm{eff}}$ that the distribution function $f(E)\sim \exp(-E/T_{\textrm{eff}})$, then
+\begin{eqnarray}
+\nonumber
+\Delta S &\sim& \frac{1}{T}\int  e^{-E/T_{\textrm{eff}}} E dp^3 - \frac{1}{T}\int e^{-E/T} E dp^3 \\
+&=& \frac{T_\textrm{eff}-T}{T}
+\end{eqnarray}
+is an estimate of the deviation of the effective temperature from the temperature of the thermal bath.
 \begin{figure}
 \includegraphics[width=\columnwidth]{charm-plot/thermalization.pdf}
 \end{figure}
 
+\subsection{Energy loss in a static medium}
 \begin{figure*}
-\includegraphics[width=\textwidth]{E_Eloss.pdf}\\
-\includegraphics[width=\textwidth]{L_Eloss.pdf}
+\includegraphics[width=.8\textwidth]{E_Eloss.pdf}\\
+\includegraphics[width=.8\textwidth]{L_Eloss.pdf}
 \end{figure*}
 
+\subsection{$R_{AA}$ in a static medium}
 \begin{figure}
 \includegraphics[width=\columnwidth]{Box_Raa.pdf}
 \end{figure}
 
-\section{Results}
+\subsection{$R_{AA}$ and $v_2$ in an event-averaged dynamical meidum}
+
+
+\section{Calibration of the model at LHC using Bayesian analysis}
 
 \begin{appendices}
 \section{Matrix elements}
 \label{appendix:matrix-element}
 \begin{widetext}
 \begin{eqnarray}
-\overline{|M_{Q+q\rightleftharpoons Q+q}|^2} &=& \frac{64\pi^2}{9}\alpha_s(t, T)^2 \frac{(u-M^2)^2 + (s-M^2)^2 + 2 M^2 t}{(t-m_D^2)^2}\\
-\overline{|M_{Q+g\rightleftharpoons Q+g}|^2} &=& \pi^2 \left\{
-32\alpha_s(t,T)^2 \frac{(s-M^2)(-u+M^2)}{(t-m_D^2)^2} \right. \\ \nonumber
-&+&\frac{64}{9}\alpha_s(s-M^2, T)^2 \frac{(s-M^2)(-u+M^2)+2M*2(s-M^2) + 4M^4}{(s-M^2+m_D^2)^2} \\ \nonumber
-&+&\frac{64}{9}\alpha_s(u-M^2, T)^2 \frac{(s-M^2)(-u+M^2)+2M*2(u-M^2) + 4M^4}{(-u+M^2+m_D^2)^2} \\ \nonumber
-&+&\frac{16}{9}\alpha_s(u-M^2, T)\alpha_s(s-M^2, T) \frac{M^2(4M^2 - t)}{(-u+M^2+m_D^2)(s-M^2+m_D^2)} \\ \nonumber
-&+& 16 \alpha_s(t, T)\alpha_s(s-M^2, T) \frac{(s-M^2)(-u+M^2)+M^2(s-u)}{(t-m_D^2)(s-M^2+m_D^2)} \\ \nonumber
-&-& \left. 16 \alpha_s(t, T)\alpha_s(s-M^2, T) \frac{(s-M^2)(-u+M^2)-M^2(s-u)}{(t-m_D^2)(-u+M^2+m_D^2)}\right\} \\
-\overline{|M_{Q+q\rightleftharpoons Q+q+g}|^2} &=& \overline{|M_{Q+g\rightleftharpoons Q+g}|^2} P_g \\
-\overline{|M_{Q+g\rightleftharpoons Q+g+g}|^2} &=& \overline{|M_{Q+g\rightleftharpoons Q+g, \textrm{t-channel only}}|^2} P_g \\
-P_g &=& 48 \pi \alpha_{s, \textrm{rad}} (1-\bar{x})^2 \left(\frac{\vec{k}_\perp}{k_\perp^2 + x^2 M^2} 
+\overline{|M_{Q+q\rightarrow Q+q}|^2} &=& \frac{64\pi^2}{9}\alpha_s^2 \frac{(u-M^2)^2 + (s-M^2)^2 + 2 M^2 t}{(t-m_D^2)^2}\\
+\overline{|M_{Q+g\rightarrow Q+g}|^2} &=& \pi^2 \left\{
+32\alpha_s^2 \frac{(s-M^2)(-u+M^2)}{(t-m_D^2)^2} \right. \\ \nonumber
+&+&\frac{64}{9}\alpha_s^2 \frac{(s-M^2)(-u+M^2)+2M*2(s-M^2) + 4M^4}{(s-M^2+m_D^2)^2} \\ \nonumber
+&+&\frac{64}{9}\alpha_s^2 \frac{(s-M^2)(-u+M^2)+2M*2(u-M^2) + 4M^4}{(-u+M^2+m_D^2)^2} \\ \nonumber
+&+&\frac{16}{9}\alpha_s^2 \frac{M^2(4M^2 - t)}{(-u+M^2+m_D^2)(s-M^2+m_D^2)} \\ \nonumber
+&+& 16 \alpha_s^2 \frac{(s-M^2)(-u+M^2)+M^2(s-u)}{(t-m_D^2)(s-M^2+m_D^2)} \\ \nonumber
+&-& \left. 16 \alpha_s^2 \frac{(s-M^2)(-u+M^2)-M^2(s-u)}{(t-m_D^2)(-u+M^2+m_D^2)}\right\} \\
+\overline{|M_{Q+q\rightarrow Q+q+g}|^2} &=& \overline{|M_{Q+q\rightarrow Q+q}|^2} 48 \pi \alpha_s (1-\bar{x})^2 \left(\frac{\vec{k}_\perp}{k_\perp^2 + x^2 M^2} 
++ \frac{\vec{q}_\perp - \vec{k}_\perp}{(\vec{q}_\perp-\vec{k}_\perp)^2 + x^2 M^2 + m_D^2}
+\right)^2 \\
+\overline{|M_{Q+g\rightarrow Q+g+g}|^2} &=& \overline{|M_{Q+g\rightarrow Q+g, \textrm{t-channel}}|^2} 48 \pi \alpha_s (1-\bar{x})^2 \left(\frac{\vec{k}_\perp}{k_\perp^2 + x^2 M^2} 
 + \frac{\vec{q}_\perp - \vec{k}_\perp}{(\vec{q}_\perp-\vec{k}_\perp)^2 + x^2 M^2 + m_D^2}
 \right)^2 
 \end{eqnarray}
