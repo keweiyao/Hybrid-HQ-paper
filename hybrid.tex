@@ -155,20 +155,20 @@ It is not trivial to tell if the Boltzmann equation modified in this way should 
 
 \begin{figure}
 \feynmandiagram [xscale=.95, yscale=1, horizontal=a to b] {
-  p1 [particle=$Q$] -- [fermion] a--b[fermion] -- [fermion] p3 [particle=$Q$],
-  p2 [particle=$g$]-- [gluon] a,
-  p4 [particle=$g$]-- [gluon] b,
+  p1 -- [fermion] a--b[fermion] -- [fermion] p3 ,
+  p2 -- [gluon] a,
+  p4 -- [gluon] b,
 };
 \begin{tikzpicture}[xscale=.95, yscale=1.]
   \begin{feynman}
     \diagram [horizontal=a to b] {
-      i1 [particle=\(Q\)]
+      i1 %[particle=\(Q\)]
       -- [fermion] a
-      -- [draw=none] f1 [particle=\(g\)],
+      -- [draw=none] f1,% [particle=\(g\)],
       a -- [fermion] b,
-      i2 [particle=\(Q\)]
+      i2 %[particle=\(Q\)]
       -- [anti fermion] b
-      -- [draw=none] f2 [particle=\(g\)],
+      -- [draw=none] f2,% [particle=\(g\)],
     };
     \diagram* {
       (a) -- [gluon] (f2),
@@ -218,31 +218,14 @@ The space-time temperature $T$ and velocity $u$ profiles are obtained from the 2
 \begin{figure}
 \begin{tikzpicture}
   \begin{feynman}
-    \diagram [xscale=0.8, yscale=0.6, vertical=a to b] {     
-      i2 [particle=\(g\)]
-        -- [gluon] b
-        -- [gluon] f2 [particle=\(g\)]],
-      a -- [gluon] b,
-      i1 [particle=\(Q\)]
-        -- [fermion] a
-        -- [fermion] f1[particle=\(Q\)],
-    };
-    \vertex [above right=.7 cm and .4 cm of a, label=\(k\)] (r);
-    \draw [gluon] ($(i1)!0.7!(a)$) -- (r);
-    \draw  (i2)--(b);
-     \draw  (b)--(f2);
-  \end{feynman}
-\end{tikzpicture}
-\begin{tikzpicture}
-  \begin{feynman}
     \diagram [xscale=0.8, yscale=.6, vertical=a to b] {     
-      i2 [particle=\(g\)]
+      i2 [particle=\(g/q\)]
         -- [gluon] b
-        -- [gluon] f2 [particle=\(g\)]],
-      a -- [gluon] b,
+        -- [gluon] f2 [particle=\(g/q\)]],
+      b -- [gluon, momentum=$q$] a,
       i1 [particle=\(Q\)]
         -- [fermion] a
-        -- [fermion] f1[particle=\(Q\)],
+        -- [fermion] f1 [particle=\(Q\)],
     };
     \vertex [below right=.2 cm and .8 cm of a, label=\(k\)] (r);
     \draw [gluon] ($(a)!0.3!(f1)$) -- (r);
@@ -252,16 +235,31 @@ The space-time temperature $T$ and velocity $u$ profiles are obtained from the 2
 \end{tikzpicture}
 \begin{tikzpicture}
   \begin{feynman}
-    \diagram [xscale=0.8, yscale=.6, vertical=a to b] {     
-      i2 [particle=\(g\)]
-        -- [gluon] b
-        -- [gluon] f2 [particle=\(g\)]],
+    \diagram [xscale=0.8, yscale=0.6, vertical=a to b] {     
+      i2  -- [gluon] b
+        -- [gluon] f2,
       a -- [gluon] b,
-      i1 [particle=\(Q\)]
-        -- [fermion] a
-        -- [fermion] f1[particle=\(Q\)],
+      i1 -- [fermion] a
+        -- [fermion] f1,
     };
-    \vertex [below right=.0 cm and .8 cm of a, label=\(k\)] (r);
+    \vertex [above right=.7 cm and .4 cm of a] (r);
+    \draw [gluon] ($(i1)!0.7!(a)$) -- (r);
+    \draw  (i2)--(b);
+     \draw  (b)--(f2);
+  \end{feynman}
+\end{tikzpicture}
+\begin{tikzpicture}
+  \begin{feynman}
+    \diagram [xscale=0.8, yscale=.6, vertical=a to b] {     
+      i2 %[particle=\(g\)]
+        -- [gluon] b
+        -- [gluon] f2, %[particle=\(g\)]],
+      a -- [gluon] b,
+      i1 %[particle=\(Q\)]
+        -- [fermion] a
+        -- [fermion] f1, %[particle=\(Q\)],
+    };
+    \vertex [below right=.0 cm and .8 cm of a] (r);
     \draw [gluon] ($(a)!0.5!(b)$) -- (r);
     \draw  (i2)--(b);
      \draw  (b)--(f2);
@@ -269,16 +267,16 @@ The space-time temperature $T$ and velocity $u$ profiles are obtained from the 2
 \end{tikzpicture}
 \begin{tikzpicture}
   \begin{feynman}
-    \diagram [xscale=0.8, yscale=.5, vertical=a to b] {     
-      i2 [particle=\(g\)]
+    \diagram [xscale=0.8, yscale=.6, vertical=a to b] {     
+      i2 %[particle=\(g\)]
         -- [gluon] b
-        -- [gluon] f2 [particle=\(g\)]],
+        -- [gluon] f2, %[particle=\(g\)]],
       a -- [gluon] b,
-      i1 [particle=\(Q\)]
+      i1 %[particle=\(Q\)]
         -- [fermion] a
-        -- [fermion] f1[particle=\(Q\)],
+        -- [fermion] f1, %[particle=\(Q\)],
     };
-    \vertex [below right=.9 cm and .6 cm of b, label=\(k\)] (r);
+    \vertex [below right=.75 cm and .35 cm of b] (r);
     \draw [gluon] ($(i2)!0.6!(b)$) -- (r);
     \draw  (i2)--(b);
      \draw  (b)--(f2);
@@ -286,16 +284,16 @@ The space-time temperature $T$ and velocity $u$ profiles are obtained from the 2
 \end{tikzpicture}
 \begin{tikzpicture}
   \begin{feynman}
-    \diagram [xscale=0.8, yscale=.5, vertical=a to b] {     
-      i2 [particle=\(g\)]
+    \diagram [xscale=0.8, yscale=.6, vertical=a to b] {     
+      i2 %[particle=\(g\)]
         -- [gluon] b
-        -- [gluon] f2 [particle=\(g\)]],
+        -- [gluon] f2, %[particle=\(g\)]],
       a -- [gluon] b,
-      i1 [particle=\(Q\)]
+      i1 %[particle=\(Q\)]
         -- [fermion] a
-        -- [fermion] f1[particle=\(Q\)],
+        -- [fermion] f1, %[particle=\(Q\)],
     };
-    \vertex [above right=.2 cm and .8 cm of b, label=\(k\)] (r);
+    \vertex [above right=.2 cm and .8 cm of b] (r);
     \draw [gluon] ($(b)!0.3!(f2)$) -- (r);
     \draw  (i2)--(b);
      \draw  (b)--(f2);
@@ -343,8 +341,12 @@ Additional, we consider the possibility of non-perturbative contribution to the 
 \frac{\kappa}{T^3} = \left(A + \frac{B}{ET}\right)
 \end{eqnarray}
 
-\section{Benchmark calculation}
-\subsection{Thermalization test}
+\section{Tests in a static medium}
+\subsection{Thermalization}
+\begin{figure}
+\includegraphics[width=\columnwidth]{charm-plot/thermalization.pdf}
+\caption{The approach to thermalization of the linear Boltzmann equation with elastic processes only (red dot), elastic with radiation processes (green dashed), and elastic with both radaition and absorption processes (blue solid). The static medium has a temperature $T = 0.4$ GeV. $10^4$ heavy quarks are initialized with $E = 10$ GeV at $t = 0$.}\label{plots:thermalization}
+\end{figure}
 We first show our implementation of the above model gives the correct thermal limit. 
 The quantify the approach to equilibrium of an ensemble of heavy quarks in side a static medium with a fixed temperature $T_0$, we define the following quantity,
 \begin{eqnarray}
@@ -352,7 +354,7 @@ The quantify the approach to equilibrium of an ensemble of heavy quarks in side 
 \end{eqnarray}
 $f_0 \propto \exp(-E/T)$ is the relativistic Boltzmann distribution function at temperature $T$. 
 The second term is the entropy at that temperature, while the first term is the ensemble average of one-particle entropy at that temperature.
-This difference $\Delta S$ defines a ``distance" towards the equilibrium state.
+This difference $\Delta S$ defines a ``distance" towards the equilibrium state, and vanishes when the thermal equilibrium is reached.
 If the ensemble is not far from thermal equilibrium and can be characterized by an effective temperature $T_{\textrm{eff}}$ that the distribution function $f(E)\sim \exp(-E/T_{\textrm{eff}})$, then
 \begin{eqnarray}
 \nonumber
@@ -360,13 +362,28 @@ If the ensemble is not far from thermal equilibrium and can be characterized by 
 &=& \frac{T_\textrm{eff}-T}{T}
 \end{eqnarray}
 is an estimate of the deviation of the effective temperature from the temperature of the thermal bath.
-\begin{figure}
-\includegraphics[width=\columnwidth]{charm-plot/thermalization.pdf}
-\end{figure}
+Figure \ref{plots:thermalization} shows the time-evolution of $Delta S$ of heavy quarks inside thermal bath $T=0.4$ GeV with initial energy $E_0 = 10$ GeV.
+With elastic process only, the system thermalize after about $150$ fm/$c$.
+If we further turn on radiation process, the equilibrium is reached in a shorter amount of time, but it is wrong equilibrium.
+The effective temperature is lower than the temperature of the thermal bath.
+This is the consequence from breaking detailed balance with radiation process only.
+By adding the absorption processes, the correct equilibrium is reached.
+We also point out that the inclusion of absorption processes only start to make difference when the system is not far from equilibrium.
 
-\subsection{Energy loss in a static medium}
+\subsection{Energy loss}
+From the Monte Calro simulation, we can extract the energy loss of a heavy quark.
+The energy loss through the medium generally dependent on the incident energy ($E$), medium temperature ($T$) and the medium size (path length $L$).
+In Figure \ref{plots:dE-E}, we plot energy loss fraction $\Delta E/E$ for elastic process (first row) and inelastic process (second row) as function of $E$ for different path length and temperature.
+For the case of inelastic energy loss, we study the effect of gluon absorption process by comparing $\Delta E/E$ with radiation process only and with both radiation and absorption processes.
+We find that gluon absorption process does not affect the energy loss at low temperature or high energy heavy quark as expected.
+For high temperature such as $T=0.6$ GeV and energy below $10$ GeV, the gluon absorption process makes a notable difference.
+Radiation process always leads to a positive average energy loss, but with absorption process, heavy quarks with very low energy actually on average gain energy from the medium.
 \begin{figure*}
-\includegraphics[width=.8\textwidth]{E_Eloss.pdf}\\
+\includegraphics[width=.8\textwidth]{E_Eloss.pdf}
+\caption{}\label{plots:dE-E}
+\end{figure*}
+
+\begin{figure*}
 \includegraphics[width=.8\textwidth]{L_Eloss.pdf}
 \end{figure*}
 
@@ -380,12 +397,15 @@ is an estimate of the deviation of the effective temperature from the temperatur
 
 \section{Calibration of the model at LHC using Bayesian analysis}
 
+
 \begin{appendices}
 \section{Matrix elements}
 \label{appendix:matrix-element}
 \begin{widetext}
 \begin{eqnarray}
-\overline{|M_{Q+q\rightarrow Q+q}|^2} &=& \frac{64\pi^2}{9}\alpha_s^2 \frac{(u-M^2)^2 + (s-M^2)^2 + 2 M^2 t}{(t-m_D^2)^2}\\
+\overline{|M_{Q+q\rightarrow Q+q}|^2} &=& \frac{64\pi^2}{9}\alpha_s^2 \frac{(u-M^2)^2 + (s-M^2)^2 + 2 M^2 t}{(t-m_D^2)^2}
+\end{eqnarray}
+\begin{eqnarray}
 \overline{|M_{Q+g\rightarrow Q+g}|^2} &=& \pi^2 \left\{
 32\alpha_s^2 \frac{(s-M^2)(-u+M^2)}{(t-m_D^2)^2} \right. \\ \nonumber
 &+&\frac{64}{9}\alpha_s^2 \frac{(s-M^2)(-u+M^2)+2M*2(s-M^2) + 4M^4}{(s-M^2+m_D^2)^2} \\ \nonumber
@@ -395,7 +415,9 @@ is an estimate of the deviation of the effective temperature from the temperatur
 &-& \left. 16 \alpha_s^2 \frac{(s-M^2)(-u+M^2)-M^2(s-u)}{(t-m_D^2)(-u+M^2+m_D^2)}\right\} \\
 \overline{|M_{Q+q\rightarrow Q+q+g}|^2} &=& \overline{|M_{Q+q\rightarrow Q+q}|^2} 48 \pi \alpha_s (1-\bar{x})^2 \left(\frac{\vec{k}_\perp}{k_\perp^2 + x^2 M^2} 
 + \frac{\vec{q}_\perp - \vec{k}_\perp}{(\vec{q}_\perp-\vec{k}_\perp)^2 + x^2 M^2 + m_D^2}
-\right)^2 \\
+\right)^2 
+\end{eqnarray}
+\begin{eqnarray}
 \overline{|M_{Q+g\rightarrow Q+g+g}|^2} &=& \overline{|M_{Q+g\rightarrow Q+g, \textrm{t-channel}}|^2} 48 \pi \alpha_s (1-\bar{x})^2 \left(\frac{\vec{k}_\perp}{k_\perp^2 + x^2 M^2} 
 + \frac{\vec{q}_\perp - \vec{k}_\perp}{(\vec{q}_\perp-\vec{k}_\perp)^2 + x^2 M^2 + m_D^2}
 \right)^2 
