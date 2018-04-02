@@ -259,10 +259,61 @@ def tau_f(_):
 	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.98, 0.98])
 
 @plot
+def BoxRate(quark):
+	M = 1.3 if quark == 'charm' else 4.2
+	fig, axes = plt.subplots(nrows=2, ncols=3, sharex=True, #sharey=True,
+							 figsize=(textwidth, 1.2*columnwidth))
+
+	f = h5py.File('data/BoxRate.h5','r')
+	coll = f['coll']
+	rad_abs = f['rad-abs']
+	T = coll.attrs['T']
+	E = coll.attrs['E']
+	L = coll.attrs['L']
+	dt = L[1] - L[0]
+	color = ['b', 'r','g']
+	line = ['-', '--', '-.']
+	Eindex = [5, 10, 19]
+	for iE, eE in enumerate([E[5], E[10], E[19]]):
+		axes[0, iE].set_title(r"$E = {:1.1f}$ GeV".format(eE))
+		for iT, eT in enumerate(T[:]):
+			name = '{}/{}'.format(iT, Eindex[iE])
+			Rra = np.sum(rad_abs[name].value[:,2::], axis=1)/dt
+			Rc= np.sum(coll[name].value[:,:2], axis=1)/dt
+			# charm
+			l = r"$T = {:1.1f}$ GeV".format(eT)
+			axes[0, iE].plot(L[::2]*eT, (Rc[::2]+Rc[1::2])/2./eT, line[iT], color=color[iT], label=l+', coll')
+			axes[1, iE].plot(L[::2]*eT, (Rra[::2]+Rra[1::2])/2./eT, line[iT], color=color[iT], label=l+', rad+abs')
+			#axes[1, iE].plot(L*eT*5.026, dEra/L/eT/5.026, 'o'+line[iT], color=color[iT], label=l+', rad+abs')
+			axes[0, iE].set_ylim(0,4.5)
+			axes[1, iE].set_ylim(0,1.4)
+			#axes[1, iE].set_xlim(0,15)
+			#axes[2, iE].plot(L, dEr/dEc, line[iT], color=color[iT], label=l+",rad/coll")
+			#axes[2, iE].plot(L, dEra/dEc, 'o'+line[iT], color=color[iT], label=l+",(rad+abs)/coll")
+			#axes[2, iE].plot(L, np.ones_like(L), 'k-')
+			#axes[2, iE].set_ylim(0,3.5)
+	f.close()
+
+	axes[0,0].set_ylabel(r"Elastic $R/T$")
+	axes[1,0].set_ylabel(r"Inelastic $R/T$ ")
+	#axes[2,0].set_ylabel(r"Inelastic / Elastic")
+	axes[0,2].legend(framealpha=0., loc="upper right", fontsize=8)
+	axes[1,2].legend(framealpha=0., loc="upper left", fontsize=8)
+	#axes[2,0].legend(framealpha=0., loc="upper left", fontsize=8)
+	axes[1,1].set_xlabel(r"$LT$")
+	#for i in [1,2]:
+	#	for j in [0,1,2]:
+	#		axes[j,i].set_yticks([])
+	#		axes[2-i,j].set_xticks([])
+	plt.tight_layout(True)
+	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.01, 0.02, 0.99, 0.98])
+
+
+@plot
 def L_Eloss(quark):
 	M = 1.3 if quark == 'charm' else 4.2
-	fig, axes = plt.subplots(nrows=3, ncols=3, #sharex=True, #sharey=True,
-							 figsize=(textwidth, 1.5*columnwidth))
+	fig, axes = plt.subplots(nrows=2, ncols=3, sharex=True, #sharey=True,
+							 figsize=(textwidth, 1.2*columnwidth))
 
 	f = h5py.File('data/Eloss.h5','r')
 	coll = f['coll']
@@ -271,47 +322,49 @@ def L_Eloss(quark):
 	T = rad.attrs['T']
 	E = rad.attrs['E']
 	L = rad.attrs['L']
-	color = ['b', 'r']
-	line = ['-', '--']
-	Eindex = [4, 9, 19]
-	for iE, eE in enumerate([E[4], E[9], E[19]]):
+	color = ['b', 'r','g']
+	line = ['-', '--', '-.']
+	Eindex = [5, 10, 19]
+	for iE, eE in enumerate([E[5], E[10], E[19]]):
 		axes[0, iE].set_title(r"$E = {:1.1f}$ GeV".format(eE))
-		for iT, eT in enumerate(T[::2]):
-			name = '{}/{}'.format(iT*2, Eindex[iE])
+		for iT, eT in enumerate(T[:]):
+			name = '{}/{}'.format(iT, Eindex[iE])
 			dEra = rad_abs[name].value
 			dEr = rad[name].value
 			dEc = coll[name].value
 			# charm
 			l = r"$T = {:1.1f}$ GeV".format(eT)
-			axes[0, iE].plot(L, dEc/eE, line[iT], color=color[iT], label=l+', coll')
-			axes[1, iE].plot(L, dEr/eE, line[iT], color=color[iT], label=l+', rad')
-			axes[1, iE].plot(L, dEra/eE, 'o'+line[iT], color=color[iT], label=l+', rad+abs')
-			axes[0, iE].set_ylim(0,0.3)
-			axes[1, iE].set_ylim(0,0.45)
-			axes[2, iE].plot(L, dEr/dEc, line[iT], color=color[iT], label=l+",rad/coll")
-			axes[2, iE].plot(L, dEra/dEc, 'o'+line[iT], color=color[iT], label=l+",(rad+abs)/coll")
-			axes[2, iE].plot(L, np.ones_like(L), 'k-')
-			axes[2, iE].set_ylim(0,3.5)
+			axes[0, iE].plot(L*eT*5.026, dEc/eE/L/eT/5.026, 'o', color=color[iT], label=l+', coll')
+			axes[1, iE].plot(L*eT*5.026, dEra/eE/L/eT/5.026, 'o', color=color[iT], label=l+', rad+abs')
+			#axes[1, iE].plot(L*eT*5.026, dEra/L/eT/5.026, 'o'+line[iT], color=color[iT], label=l+', rad+abs')
+			axes[0, iE].set_ylim(0,0.05)
+			axes[1, iE].set_ylim(0,0.04)
+			axes[1, iE].set_xlim(0,15)
+			#axes[2, iE].plot(L, dEr/dEc, line[iT], color=color[iT], label=l+",rad/coll")
+			#axes[2, iE].plot(L, dEra/dEc, 'o'+line[iT], color=color[iT], label=l+",(rad+abs)/coll")
+			#axes[2, iE].plot(L, np.ones_like(L), 'k-')
+			#axes[2, iE].set_ylim(0,3.5)
 	f.close()
 
-	axes[0,0].set_ylabel(r"Elastic $\Delta E / E$")
-	axes[1,0].set_ylabel(r"Inelastic $\Delta E / E$ ")
-	axes[2,0].set_ylabel(r"Inelastic / Elastic")
+	axes[0,0].set_ylabel(r"Elastic $(\Delta E/E) /(LT)$")
+	axes[1,0].set_ylabel(r"Inelastic $(\Delta E/E) /(LT)$ ")
+	#axes[2,0].set_ylabel(r"Inelastic / Elastic")
 	axes[0,0].legend(framealpha=0., loc="upper left", fontsize=8)
 	axes[1,0].legend(framealpha=0., loc="upper left", fontsize=8)
-	axes[2,0].legend(framealpha=0., loc="upper left", fontsize=8)
-	axes[2,1].set_xlabel(r"$t$ [fm/c]")
-	for i in [1,2]:
-		for j in [0,1,2]:
-			axes[j,i].set_yticks([])
-			axes[2-i,j].set_xticks([])
+	#axes[2,0].legend(framealpha=0., loc="upper left", fontsize=8)
+	axes[1,1].set_xlabel(r"$LT$")
+	#for i in [1,2]:
+	#	for j in [0,1,2]:
+	#		axes[j,i].set_yticks([])
+	#		axes[2-i,j].set_xticks([])
+	plt.tight_layout(True)
 	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.01, 0.02, 0.99, 0.98])
 
 @plot
 def E_Eloss(quark):
 	M = 1.3 if quark == 'charm' else 4.2
-	fig, axes = plt.subplots(nrows=3, ncols=3, #sharex=True, sharey=True,
-							 figsize=(textwidth, 1.5*columnwidth))
+	fig, axes = plt.subplots(nrows=2, ncols=3, sharex=True, sharey=True,
+							 figsize=(textwidth, 1.2*columnwidth))
 
 	f = h5py.File('data/Eloss.h5','r')
 	coll = f['coll']
@@ -339,25 +392,24 @@ def E_Eloss(quark):
 			axes[1, iL].plot(E, dEra/E, 'o'+line[iT], color=color[iT], label=l+', rad+abs')
 			axes[0, iL].set_ylim(-.1, 0.3)
 			axes[1, iL].set_ylim(-.15, 0.35)
-			axes[2, iL].plot(E, dEr/dEc, line[iT], color=color[iT], label=l+', rad/coll')
-			axes[2, iL].plot(E, dEra/dEc, 'o'+line[iT], color=color[iT], label=l+', (rad+abs)/coll')
-			axes[2, iL].plot(E, np.ones_like(E), 'k-')
-			axes[2, iL].set_ylim(0,3)
-			for i in range(3):
+			#axes[2, iL].plot(E, dEr/(dEc+dEr), line[iT], color=color[iT], label=l+', rad/coll')
+			#axes[2, iL].plot(E, dEra/(dEc+dEra), 'o'+line[iT], color=color[iT], label=l+', (rad+abs)/coll')
+			#axes[2, iL].plot(E, np.ones_like(E), 'k-')
+			#axes[2, iL].set_ylim(0,1)
+			for i in range(2):
 				axes[i, iL].semilogx()
 	f.close()
 
 	axes[0,0].set_ylabel(r"Elastic $\Delta E / E$")
 	axes[1,0].set_ylabel(r"Inelastic $\Delta E / E$ ")
-	axes[2,0].set_ylabel(r"Inelastic / Elastic")
 	axes[0,0].legend(framealpha=0., loc="upper left", fontsize=8)
 	axes[1,0].legend(framealpha=0., loc="upper left", fontsize=8)
-	axes[2,0].legend(framealpha=0., loc="upper left", fontsize=8)
-	axes[2,1].set_xlabel(r"$E$ [GeV]")
-	for i in [1,2]:
-		for j in [0,1,2]:
-			axes[j,i].set_yticks([])
-			axes[2-i,j].set_xticks([])
+	axes[1,1].set_xlabel(r"$E$ [GeV]")
+	#for i in range(3):
+	#	axes[0,i].set_xticks([])
+	#for i in range(2):
+	#	for j in range(1,3):
+	#		axes[i,j].set_yticks([])
 
 	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.01, 0.02, 0.99, 0.98])
 

@@ -370,21 +370,45 @@ This is the consequence from breaking detailed balance with radiation process on
 By adding the absorption processes, the correct equilibrium is reached.
 We also point out that the inclusion of absorption processes only start to make difference when the system is not far from equilibrium.
 
-\subsection{Energy loss}
-From the Monte Calro simulation, we can extract the energy loss of a heavy quark.
-The energy loss through the medium generally dependent on the incident energy ($E$), medium temperature ($T$) and the medium size (path length $L$).
+\subsection{Collision rates and Energy loss}
+We can integrate collision rates using Equations \ref{•}, and calculate energy loss of a heavy quark by inserting $\Delta E$ into the integration of differential rates.
+This is straight forward for elastic processes, but since the rates of inelastic processes depend on collision history, a meaningful rate and energy loss in side a medium can only be obtained by an actually Monte Carlo simulation.
+Moreover, this history dependence is the reason that our rates and energy loss is not only a function of the incident energy ($E$) and medium temperature ($T$) but also the medium size (path length $L$).
+
+\begin{figure*}
+\includegraphics[width=\textwidth]{BoxRate.pdf}
+\caption{}\label{plots:BoxRate}
+\end{figure*}
+
 In Figure \ref{plots:dE-E}, we plot energy loss fraction $\Delta E/E$ for elastic process (first row) and inelastic process (second row) as function of $E$ for different path length and temperature.
+The elastic energy loss fraction increases as temperature and decreases for large energy.
+At low energy, the heavy quark starts to gain net energy from the medium as which manifests as $\Delta E < 0$.
 For the case of inelastic energy loss, we study the effect of gluon absorption process by comparing $\Delta E/E$ with radiation process only and with both radiation and absorption processes.
 We find that gluon absorption process does not affect the energy loss at low temperature or high energy heavy quark as expected.
 For high temperature such as $T=0.6$ GeV and energy below $10$ GeV, the gluon absorption process makes a notable difference.
 Radiation process always leads to a positive average energy loss, but with absorption process, heavy quarks with very low energy actually on average gain energy from the medium.
+
+In Figure \ref{plots:dE-L}, we show the path length dependence of the two energy loss mechanism.
+Here, we plot the energy loss fraction per unit length, with length measured in units of inverse temperature.
+The key observation is that elastic energy loss per unit length is a constant while for inelastic energy loss, this quantity first increases from zero for small path length and then gradually approaching a limit for large path length, showing a different medium size dependence of energy loss from the elastic process.
+The non-linear path length dependence $\Delta E \propto L^2$ is actually a characteristic behavior of the coherence effect in a finite length medium \cite{}. 
+In our effective implementation of LPM, this behavior arises because gluon radiation with
+\begin{eqnarray}
+\tau_f \ll L.
+\end{eqnarray}
+is suppressed, and therefore the inelastic energy loss for a thin medium is very small.
+As $L$ increases, a high energy heavy quark could have radiated gluons with formation time $\tau_f$ multiples times $N \propto L/\tau_f$ where each radiation carries off a typical amount of energy. 
+As a result the energy loss grows again linearly with path length.
+
+
 \begin{figure*}
-\includegraphics[width=.8\textwidth]{E_Eloss.pdf}
+\includegraphics[width=\textwidth]{E_Eloss.pdf}
 \caption{}\label{plots:dE-E}
 \end{figure*}
 
 \begin{figure*}
-\includegraphics[width=.8\textwidth]{L_Eloss.pdf}
+\includegraphics[width=\textwidth]{L_Eloss.pdf}
+\caption{}\label{plots:dE-L}
 \end{figure*}
 
 \subsection{$R_{AA}$ in a static medium}
@@ -392,8 +416,8 @@ Radiation process always leads to a positive average energy loss, but with absor
 \includegraphics[width=\columnwidth]{Box_Raa.pdf}
 \end{figure}
 
-\subsection{$R_{AA}$ and $v_2$ in an event-averaged dynamical meidum}
-
+\subsection{$R_{AA}$ in a static medium}
+Finally, for our study in a static medium, we calculate the $R_{AA}$ of charm and bottom quark in a medium $T=0.4$ GeV of size $L=4$ fm.
 
 \section{Calibration of the model at LHC using Bayesian analysis}
 
