@@ -259,6 +259,45 @@ def tau_f(_):
 	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.98, 0.98])
 
 @plot
+def diffRate(quark):
+	M = 1.3 if quark == 'charm' else 4.2
+	fig, axes = plt.subplots(nrows=2, ncols=2, sharex=True, #sharey=True,
+							 figsize=(textwidth, 1.2*columnwidth))
+
+	f = h5py.File('data/DiffBoxRate.h5','r')
+	rad1 = f['diff-rate-rad-3GeV']
+	rad2 = f['diff-rate-rad-8GeV']
+	T = rad1.attrs['T']
+	E = rad1.attrs['E']
+	L = rad1.attrs['L']
+	dt = (L[1] - L[0])
+	color = ['b', 'r','g']
+	line = ['-', '--', '-.']
+	Eindex = [0,1,2]
+	ylim = [[[0,0.02]],[0,0.04]], [[0,0.003],[0,0.01]]
+	approx = [[0.0076],[0.019]], [[0.0016],[0.004]]
+	for ir, (rad, dk) in enumerate(zip([rad1, rad2],[0.5, 1.0])):
+		for iT, eT in enumerate(T[:2]):
+			axes[ir, iT].set_title(r"$T = {:1.1f}$ GeV".format(eT),)
+			name = '{}/1'.format(iT)
+			dRdk = np.mean(rad[name].value.reshape(-1,20), axis=1)/dt/5.026/dk
+			axes[ir, iT].plot(L[::20], dRdk, linewidth=2., color='r')
+			axes[ir, iT].set_ylim(*ylim[ir][iT])
+			ap = approx[ir][iT]
+			axes[ir, iT].plot([0,5],[ap,ap],'k--')
+	f.close()
+
+	axes[0,0].set_ylabel(r"$dR/dk(k=3 \mathrm{GeV})$")
+	axes[1,0].set_ylabel(r"$dR/dk(k=8 \mathrm{GeV})$")
+	axes[1,0].set_xlabel(r"$t$ [fm/c]")
+	axes[1,1].set_xlabel(r"$t$ [fm/c]")
+	plt.suptitle(r"$E = 16$ GeV, $M=0.2$ GeV, dead-cone effect off, $\alpha_s = 0.3$")
+
+	plt.tight_layout(True)
+	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.01, 0.02, 0.99, 0.98])
+
+
+@plot
 def BoxRate(quark):
 	M = 1.3 if quark == 'charm' else 4.2
 	fig, axes = plt.subplots(nrows=2, ncols=3, sharex=True, #sharey=True,
@@ -266,11 +305,11 @@ def BoxRate(quark):
 
 	f = h5py.File('data/BoxRate.h5','r')
 	coll = f['coll']
-	rad_abs = f['rad-abs']
+	rad_abs = f['rad+abs']
 	T = coll.attrs['T']
 	E = coll.attrs['E']
 	L = coll.attrs['L']
-	dt = L[1] - L[0]
+	dt = (L[1] - L[0])
 	color = ['b', 'r','g']
 	line = ['-', '--', '-.']
 	Eindex = [5, 10, 19]
@@ -278,15 +317,16 @@ def BoxRate(quark):
 		axes[0, iE].set_title(r"$E = {:1.1f}$ GeV".format(eE))
 		for iT, eT in enumerate(T[:]):
 			name = '{}/{}'.format(iT, Eindex[iE])
-			Rra = np.sum(rad_abs[name].value[:,2::], axis=1)/dt
-			Rc= np.sum(coll[name].value[:,:2], axis=1)/dt
+
+			Rra = np.mean(rad_abs[name].value.reshape(-1,20), axis=1)/dt/5.026/eT
+			Rc= np.mean(coll[name].value.reshape(-1,20), axis=1)/dt/5.026/eT
 			# charm
 			l = r"$T = {:1.1f}$ GeV".format(eT)
-			axes[0, iE].plot(L[::2]*eT, (Rc[::2]+Rc[1::2])/2./eT, line[iT], color=color[iT], label=l+', coll')
-			axes[1, iE].plot(L[::2]*eT, (Rra[::2]+Rra[1::2])/2./eT, line[iT], color=color[iT], label=l+', rad+abs')
+			axes[0, iE].plot(L[::20]*eT*5.026, Rc, line[iT], linewidth=2., color=color[iT], label=l+', coll')
+			axes[1, iE].plot(L[::20]*eT*5.026, Rra, line[iT], linewidth=2., color=color[iT], label=l+', rad+abs')
 			#axes[1, iE].plot(L*eT*5.026, dEra/L/eT/5.026, 'o'+line[iT], color=color[iT], label=l+', rad+abs')
-			axes[0, iE].set_ylim(0,4.5)
-			axes[1, iE].set_ylim(0,1.4)
+			axes[0, iE].set_ylim(0,3)
+			axes[1, iE].set_ylim(0,1.)
 			#axes[1, iE].set_xlim(0,15)
 			#axes[2, iE].plot(L, dEr/dEc, line[iT], color=color[iT], label=l+",rad/coll")
 			#axes[2, iE].plot(L, dEra/dEc, 'o'+line[iT], color=color[iT], label=l+",(rad+abs)/coll")
@@ -318,10 +358,12 @@ def L_Eloss(quark):
 	f = h5py.File('data/Eloss.h5','r')
 	coll = f['coll']
 	rad = f['rad']
-	rad_abs = f['rad-abs']
+	rad_abs = f['rad+abs']
 	T = rad.attrs['T']
 	E = rad.attrs['E']
 	L = rad.attrs['L']
+	dL = L[1]-L[0]
+	L = L
 	color = ['b', 'r','g']
 	line = ['-', '--', '-.']
 	Eindex = [5, 10, 19]
@@ -334,18 +376,17 @@ def L_Eloss(quark):
 			dEc = coll[name].value
 			# charm
 			l = r"$T = {:1.1f}$ GeV".format(eT)
-			axes[0, iE].plot(L*eT*5.026, dEc/eE/L/eT/5.026, 'o', color=color[iT], label=l+', coll')
-			axes[1, iE].plot(L*eT*5.026, dEra/eE/L/eT/5.026, 'o', color=color[iT], label=l+', rad+abs')
+			axes[0, iE].plot(L*eT*5.026, dEc/eE/L/eT/5.026, line[iT], linewidth=2., color=color[iT], label=l+', coll')
+			axes[1, iE].plot(L*eT*5.026, dEra/eE/L/eT/5.026, line[iT], linewidth=2., color=color[iT], label=l+', rad+abs')
 			#axes[1, iE].plot(L*eT*5.026, dEra/L/eT/5.026, 'o'+line[iT], color=color[iT], label=l+', rad+abs')
-			axes[0, iE].set_ylim(0,0.05)
-			axes[1, iE].set_ylim(0,0.04)
+			axes[0, iE].set_ylim(0,0.1)
+			axes[1, iE].set_ylim(0,0.07)
 			axes[1, iE].set_xlim(0,15)
 			#axes[2, iE].plot(L, dEr/dEc, line[iT], color=color[iT], label=l+",rad/coll")
 			#axes[2, iE].plot(L, dEra/dEc, 'o'+line[iT], color=color[iT], label=l+",(rad+abs)/coll")
 			#axes[2, iE].plot(L, np.ones_like(L), 'k-')
 			#axes[2, iE].set_ylim(0,3.5)
 	f.close()
-
 	axes[0,0].set_ylabel(r"Elastic $(\Delta E/E) /(LT)$")
 	axes[1,0].set_ylabel(r"Inelastic $(\Delta E/E) /(LT)$ ")
 	#axes[2,0].set_ylabel(r"Inelastic / Elastic")
@@ -363,38 +404,39 @@ def L_Eloss(quark):
 @plot
 def E_Eloss(quark):
 	M = 1.3 if quark == 'charm' else 4.2
-	fig, axes = plt.subplots(nrows=2, ncols=3, sharex=True, sharey=True,
+	fig, axes = plt.subplots(nrows=2, ncols=3, sharex=True, #sharey=True,
 							 figsize=(textwidth, 1.2*columnwidth))
 
 	f = h5py.File('data/Eloss.h5','r')
 	coll = f['coll']
 	rad = f['rad']
-	rad_abs = f['rad-abs']
+	rad_abs = f['rad+abs']
 	T = rad.attrs['T']
 	E = rad.attrs['E']
 	L = rad.attrs['L']
-	color = ['b', 'r']
-	line = ['-', '--']
-	index = [10, 30, 49]
-	for iL, eL in enumerate([L[10], L[30], L[49]]):
+	color = ['b', 'r','g']
+	line = ['-', '--', '-.']
+	index = [40, 80, 199]
+	for iL, eL in enumerate([L[40], L[80], L[199]]):
 		axes[0, iL].set_title(r"$t = {:1.1f}$ fm/c".format(eL))
-		for iT, eT in enumerate(T[::2]):
-			dEra = np.array([rad_abs['{}/{}'.format(iT*2, iE)][index[iL]]
+		for iT, eT in enumerate(T[:]):
+			dEra = np.array([rad_abs['{}/{}'.format(iT, iE)][index[iL]]
 							for iE in range(len(E))])
-			dEr = np.array([rad['{}/{}'.format(iT*2, iE)][index[iL]]
+			dEr = np.array([rad['{}/{}'.format(iT, iE)][index[iL]]
 							for iE in range(len(E))])
-			dEc = np.array([coll['{}/{}'.format(iT*2, iE)][index[iL]]
+			dEc = np.array([coll['{}/{}'.format(iT, iE)][index[iL]]
 							for iE in range(len(E))])
 			print(dEra)
 			l = r"$T = {:1.1f}$ GeV".format(eT)
 			axes[0, iL].plot(E, dEc/E, line[iT], color=color[iT], label=l+', coll')
 			axes[1, iL].plot(E, dEr/E, line[iT], color=color[iT], label=l+', rad')
 			axes[1, iL].plot(E, dEra/E, 'o'+line[iT], color=color[iT], label=l+', rad+abs')
-			axes[0, iL].set_ylim(-.1, 0.3)
-			axes[1, iL].set_ylim(-.15, 0.35)
+			axes[0, iL].set_ylim(-.1, 0.8)
+			axes[1, iL].set_ylim(-.15, 0.8)
 			#axes[2, iL].plot(E, dEr/(dEc+dEr), line[iT], color=color[iT], label=l+', rad/coll')
 			#axes[2, iL].plot(E, dEra/(dEc+dEra), 'o'+line[iT], color=color[iT], label=l+', (rad+abs)/coll')
-			#axes[2, iL].plot(E, np.ones_like(E), 'k-')
+			axes[0, iL].plot(E, np.zeros_like(E), 'k-')
+			axes[1, iL].plot(E, np.zeros_like(E), 'k-')
 			#axes[2, iL].set_ylim(0,1)
 			for i in range(2):
 				axes[i, iL].semilogx()
@@ -414,34 +456,33 @@ def E_Eloss(quark):
 	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.01, 0.02, 0.99, 0.98])
 
 @plot
-def thermalization(quark):
-	mass = 1.3 if quark == 'charm' else 4.2
-	def norm_boltzmann(T):
+def thermalization(_):
+	def norm_boltzmann(T, mass):
 		E = np.linspace(1, 10, 1000)*mass
 		dfdE = np.exp(-E/T)*E*np.sqrt(E**2-mass**2)*4.*np.pi
 		return np.sum(dfdE)*(E[1]-E[0])
-	def thermal_dfdE(T):
+	def thermal_dfdE(T, mass):
 		E = np.linspace(1, 10., 1000)*mass
 		dfdE = np.exp(-E/T)*E*np.sqrt(E**2-mass**2)*4.*np.pi
-		return E, dfdE/norm_boltzmann(T)
-	def S_diff(E, T):
-		values = np.log(norm_boltzmann(T)) + E/T
+		return E, dfdE/norm_boltzmann(T, mass)
+	def S_diff(E, T, M):
+		values = np.log(norm_boltzmann(T, M)) + E/T
 		return np.mean(values), np.std(values)/np.sqrt(len(E)*1.)
-	def S_same(T):
+	def S_same(T, mass):
 		E = np.linspace(1, 10., 1000)*mass
-		norm = norm_boltzmann(T)
+		norm = norm_boltzmann(T, mass)
 		y = (E/T + np.log(norm))*np.exp(-E/T)*E*np.sqrt(E**2-mass**2)*4.*np.pi/norm
 		return np.sum(y)*(E[1]-E[0])
-	def get_xy(ds):
+	def get_xy(ds, mass):
 		E0 = 10.
 		Temp = 0.4
 		dt = 1.0
-		S0 = S_same(Temp)
+		S0 = S_same(Temp, mass)
 		t = np.linspace(0,len(ds)-1,len(ds))
 		S = []
 		for i in range(len(t)):
 			E = ds['{:d}'.format(i)].value[0]
-			S.append(S_diff(E, Temp))
+			S.append(S_diff(E, Temp, mass))
 		S = np.array(S).T
 		return t, S[0]-S0, S[1]
 
@@ -452,13 +493,14 @@ def thermalization(quark):
 	width, height = 0.4, 0.3
 	axes2 = fig.add_axes([left, bottom, width, height])
 	for name, fmt, c, label in \
-		zip(['coll', 'coll+rad', 'coll+rad+abs'],
-			[':', '--', '-'], [cr, cg, cb],
-			['Elastic', 'Elastic + rad.',
-			'Elastic + rad. + abs.']):
-		t, S, dS = get_xy(f[name])
-		for ia, (ax, ylim) in enumerate(zip([axes1, axes2], [[-2,30], [-1,2]])):
-			ax.plot(t, S, fmt, color=c, label=label)
+		zip(['coll', 'coll-rad', 'coll-rad-abs','bottom-coll-rad-abs'],
+			[':', '--', '-', '-'], [cr, cg, cb, 'orange'],
+			['charm, coll', 'charm, coll+rad',
+			'charm, coll+rad+abs', 'bottom, coll+rad+abs']):
+		mass = 1.3 if 'charm' in label else 4.2
+		t, S, dS = get_xy(f[name], mass)
+		for ia, (ax, ylim) in enumerate(zip([axes1, axes2], [[-2,25], [-1,2]])):
+			ax.plot(t[::2], S[::2], fmt, color=c, label=label, linewidth=1.5)
 			ax.fill_between(t, S-dS*2, S+dS*2, color=c, alpha=0.4)
 			ax.set_ylim(*ylim)
 			ax.plot(t, np.zeros_like(t),'k:')
@@ -763,62 +805,31 @@ def Box_Raa(quark):
 	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.95, 0.95])
 
 @plot
-def Raa_32(quark):
-	def dN_dp_init(quark, pabs):
-		# https://arxiv.org/pdf/1205.2396.pdf
-		Lambda = 2.1 if quark == 'charm' else 7.5 # [GeV]
-		power = 3.9 if quark == 'charm' else 4.9#4.9
-		return pabs/(pabs**2+Lambda**2)**power
-
-	def plot_1Raa(quark, ax, type, c, l, label):
-		mass = 1.3 if quark == 'charm' else 4.2
-		f = h5py.File(quark+"-data/{}-Box-Raa.hdf5".format(quark), 'r')
-		y = []
-		for pre in ['2piT-']:
-			p0abs, p1abs = f[pre+type].value.T
-			W = dN_dp_init(quark, p0abs)
-			H00, bins = np.histogram(p0abs, 50, weights=W, normed=True, range=[0,105])
-			H1, bins = np.histogram(p1abs, 50, weights=W, normed=True, range=[0,105])
-			x = (bins[1:] + bins[:-1])/2.
-			norm = dN_dp_init(quark, np.linspace(0,100,2000)).sum()*100./2000.
-			H0 = np.array([dN_dp_init(quark,
-					np.linspace(bins[i], bins[i+1], 20)).mean()/norm
-							for i in range(len(x))])
-			y.append(H1/H00)
-		"""
-		ax.fill_between(x, y[0], y[2],
-						facecolor='white' if '23' not in type else c,
-						edgecolor=c,
-						hatch='///' if '23' not in type else '',
-						alpha=0.5,
-						label=label if quark == 'bottom' else '')
-		"""
-		ax.plot(x, y[0],l, color=c, label=label)
-		ax.set_ylim(0, 1.2)
-		ax.legend(fontsize=12, loc='upper right')
-		if quark=='charm':
-			ax.set_ylabel(r'$R_{AA}$, quark', fontsize=15)
-			ax.annotate('Charm\n'+ r'$\frac{dN}{dp_T^2}\propto \frac{1}{\left(p_T^2 + 2.1^2\right)^{3.9}}$',
-			 			xy=(40, 0.15), fontsize=15)
-		else:
-			ax.annotate('Bottom\n'+ r'$\frac{dN}{dp_T^2}\propto \frac{1}{\left(p_T^2 + 7.5^2\right)^{4.9}}$',
-			 			xy=(40, 0.15), fontsize=15)
-		ax.set_xlabel(r'$p_T$ [GeV]', fontsize=15)
-
+def BoxRaa(quark):
+	x1, y1 = np.loadtxt("./data/BoxRaa-mu1-charm-coll-rad.dat").T
+	x2, y2 = np.loadtxt("./data/BoxRaa-mu1-charm-coll-rad-abs.dat").T
 	# plots
-	fig, axes = plt.subplots(nrows=1, ncols=1, sharex=True, sharey=True,
-							 figsize=(columnwidth*1.3, columnwidth*1.3))
-	for quark, ax in zip(['charm'], [axes]):
-		plot_1Raa(quark, ax,'T3004fm-22', cr, '--',label='Elastic')
-		plot_1Raa(quark, ax,'T3004fm-22-23', cb, '-', label='Elastic+23')
-		plot_1Raa(quark, ax,'T3004fm-22-23-32', cb, ':', label='Elastic+23+32')
+	fig, ax = plt.subplots(nrows=1, ncols=1, sharex=True, sharey=True,
+						 figsize=(columnwidth*1.3, columnwidth*1.3))
+	ax.plot(x1[:-10], y1[:-10], '--',color='blue', linewidth=2., label='coll+rad')
+	ax.plot(x2[:-10], y2[:-10], '-',color='blue', linewidth=2., label='coll+rad+abs')
+	ax.set_ylim(0, 1.4)
+	ax.legend(fontsize=12, loc='upper right')
+
+	ax.set_ylabel(r'$R_{AA}$, quark', fontsize=15)
+	ax.annotate('Charm\n'+ r'$\frac{dN}{dp_T^2} \propto \frac{1}{\left(p_T^2 + 2.1^2\right)^{3.9}}$',
+			 			xy=(0.5, 0.15), fontsize=15)
+	#ax.annotate('Bottom\n'+ r'$\frac{dN}{dp_T^2}\propto \frac{1}{\left(p_T^2 + 7.5^2\right)^{4.9}}$',
+	#		 			xy=(40, 0.15), fontsize=15)
+	ax.set_xlabel(r'$p_T$ [GeV]', fontsize=15)
+
 	plt.subplots_adjust(wspace=0.)
-	plt.suptitle(r'$T=300$' +'[GeV]' + r', $\Delta t=4$' +'[fm/c]', fontsize=15)
+	plt.semilogx()
+	plt.suptitle(r'$T=0.4$' +'[GeV]' + r', $\Delta t=3$' +'[fm/c]', fontsize=15)
 	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.95, 0.95])
 
-
 @plot
-def qhat(dummy):
+def qhat(_):
 	def plot(ax, quark, a, b, c):
 		M = 1.3 if quark == 'charm' else 4.2
 		Lambda = 0.2
