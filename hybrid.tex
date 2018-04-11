@@ -19,7 +19,7 @@
   linkcolor=theblue,
   citecolor=theblue,
   urlcolor=theblue
-}
+} 
 
 
 
@@ -75,7 +75,7 @@ Comparing to available D and B meson data, we constrain the diffusion constant o
 
 \section{Introduction}
 Heavy flavors are an ideal probe of the properties of the strongly coupled  quark-gluon plasma produced in relativistic heavy-ion collisions.
-Due to their large mass compared to the temperature scale achieved in the experiments \cite{}, thermal production of heavy quarks from medium is highly suppressed; therefore the dominant source of heavy flavors are initial hard production vertex.
+Due to their large mass compared to the temperature scale achieved in the experiments [CITE], thermal production of heavy quarks from medium is highly suppressed; therefore the dominant source of heavy flavors are initial hard production vertex.
 Produced at early times of the collision, these flavor tagged probes experience the full time evolution of the quark-gluon plasma and their numbers is almost conserved.
 The mass effect sets an additional scale to the problem and brings rich physics to the heavy flavor sector.
 In the high transverse momentum region, heavy quarks can lose energy perturbatively and merge into the regime of jet energy loss study;
@@ -85,9 +85,9 @@ Therefore the study of heavy flavor observables is a unique way to understand th
 
 \section{Understanding heavy quark propagation with a hybrid transport}
 Open flavor heavy quarks are flavor tagged probes with large masses compared to the typical energy scale of the medium produced in relativistic heavy-ion collisions ($M \gg T$).
-This enables one to treat heavy quarks as good quasi-participles and dilute in the medium.
+These properties allow the treatment of heavy quarks as dilute quasi-participles in the medium.
 For the study of open flavor we neglect the back reaction from heavy quark to the medium. 
-In this approximation, the main features of heavy-flavor-medium interactions are captured in a linearized Boltzmann equation.
+In this approximation, heavy-flavor in-medium propagation is cast into a linearized Boltzmann equation.
 \begin{eqnarray}
   \frac{\partial}{\partial t}f_Q - \frac{\vec{p_1}}{E_1}\cdot\nabla f_Q  = 
 \mathcal{C}[f_Q]
@@ -112,7 +112,7 @@ Part one--the scattering component--contains scattering processes that what we c
 Part two--the diffusion component--solves diffusion dynamics with empirical transport coefficients that parametrize what is missing in part one to describe the data. 
 To avoid confusion, we shall call them residue transport coefficients in the sense that it contains interactions or corrections not included in part one.
 We have noticed that such a separation of matrix-element scattering and diffusion has been proposed for the study of jet propagation.
-The separation in \cite{} is based on momentum transfer and applied order-by-order to perturbative-QCD calculation of jet-medium interaction.
+The separation in [CITE] is based on momentum transfer and applied order-by-order to perturbative-QCD calculation of jet-medium interaction.
 In our study, we don't restrict the content of the residue transport coefficients to be of pQCD origin.
 In this way, our model build upon existing knowledge of the scattering matrix-element from pQCD and can be systematically improve the residue transport coefficient to describe the experiments while only varying parameter in pQCD within a reasonable range.
 
@@ -125,11 +125,11 @@ The $t$ channel gluon exchange in the vacuum causes divergence in cross-section 
 \begin{eqnarray}
 d\sigma \propto \frac{1}{t^2} dt,
 \end{eqnarray}
-but inside a quark-gluon plasma, those soft gluon exchange is screened by the surrounding color charges and the propagator is replaced by a hard-thermal loop propagator \cite{}.
+but inside a quark-gluon plasma, those soft gluon exchange is screened by the surrounding color charges and the propagator is replaced by a hard-thermal loop propagator [CITE].
 Here, we simply uses the leading order Debye mass as a regulator, $t \rightarrow t - m_D^2$.
 
 At high energy, inelastic processes which involves gluon radiation in the final state shown in Fig. \ref{plots:feyn-inelastic} becomes important.
-Although the inelastic processes seem to be one order higher in the coupling conspropagtion of the tant than the elastic processes, due to the divergence of the almost on-shell intermediate propagator, its contribution to energy loss increases with incident heavy quark energy and eventually dominates over elastic energy loss \cite{}.
+Although the inelastic processes seem to be one order higher in the coupling conspropagtion of the tant than the elastic processes, due to the divergence of the almost on-shell intermediate propagator, its contribution to energy loss increases with incident heavy quark energy and eventually dominates over elastic energy loss [CITE].
 Boltzmann equation with only the gluon radiation radiation violates detail balance, and the theory won't have a correct thermal solution.
 To solve this issue, we include the reverse process of radiation, namely the gluon absorption process.
 The matrix-element for the absorption relates to the radiation matrix-element by bending the final state gluon emission line to the initial state ($k^\mu \rightarrow -k^\mu$).
@@ -137,19 +137,20 @@ An additional gluon in the initial state brings an additional Boltzmann factor $
 We shall study numerically that under what conditions that the inclusion of the gluon absorption process is important to energy loss.
 
 A complication for inelastic processes is that the radiated gluon takes finite amount of time to be fully resolved from the source. 
-Within the formation time, the effects of multiple soft collisions add up  coherently in a destructive way to suppress the gluon radiation, know as the Landau-Pomeranchuk-Migdal (LPM) effect \cite{}.
+Within the formation time, the effects of multiple soft collisions add up  coherently in a destructive way to suppress the gluon radiation, know as the Landau-Pomeranchuk-Migdal (LPM) effect [CITE].
 With LPM effect, emission of a single gluon dependents on multiple collisions experienced by the heavy quark, but this is difficult to implement in a Boltzmann equation setup where scatterings are localized in space-time.
 In our model, we mimic the LPM effect by considering the physical interpretation of the gluon formation time $\tau_f$,
 \begin{eqnarray}
-\tau_f &=& \frac{2(1-x)k}{k_\perp^2 + x^2M^2} \\
+\tau_f &=& \frac{2(1-x)k}{k_\perp^2 + x^2M^2 + (1-x)\mu^2} \\
 x &=& \frac{k^+}{E^+}
 \end{eqnarray}
 A gluon cannot be fully resolved from the heavy quark shorter than time scale, therefore we restrict the phase space integral of the emitted gluon   by a coherence factor,
 \begin{eqnarray}
-d\Gamma_k \rightarrow \left(1 - \cos\left(\Delta t/\tau_f\right) \right)d\Gamma_k,
+d\Gamma_k \rightarrow 2\left(1 - \cos\left(\Delta t/\tau_f\right) \right)d\Gamma_k,
 \end{eqnarray}
-where $\Delta t$ is the time elapsed from the last radiation.
-In the infinite time limit $\Delta t \rightarrow \infty$, the average of the coherence factor goes to $1$; while with finite $\Delta t$, the radiation of gluon that has not fully formed yet (i.e. $\tau_f > \Delta t$) is suppressed.
+where $\Delta t$ is the time elapsed from the last radiation. 
+This factor is determined by requiring that the radiation rate reduces to the formula used in [shanshan's diffusion] in the limit of soft medium collision.
+The radiation of gluon that has not fully formed yet (i.e. $\tau_f > \Delta t$) is suppressed.
 With this prescription, the evolution of a heavy quark becomes history dependent. 
 It is not trivial to tell if the Boltzmann equation modified in this way should thermalize as $t\rightarrow \infty$, so we tested in actually simulations and confirm the model approaches correct thermal limit.
 
@@ -191,7 +192,7 @@ It is not trivial to tell if the Boltzmann equation modified in this way should 
 
 Given this scattering processes, the linear Boltzmann equation is solved by transport and an ensemble of heavy quark according to the collision rates of different reaction channels.
 The collision rates for elastic scatterings, gluon radiation and gluon absorption are,
-\begin{eqnarray}
+\begin{eqnarray}\label{eq:rate}
     R_{22,i} &=& \frac{d_i/\nu_i!}{2E_1} \int d \Gamma_{p_3,p_4}^{p_2}(p_1) f_i(p_2)  \overline{|M_{22}|^2},
    \nonumber
   \\
@@ -213,7 +214,7 @@ The medium partons are assumed and reached thermal equilibrium with a Maxwell di
 \begin{eqnarray}
 f(p,x) = \exp\left(-\frac{p \cdot u(x)}{T(x)}\right).
 \end{eqnarray}
-The space-time temperature $T$ and velocity $u$ profiles are obtained from the 2+1D viscous relativistic hydrodynamic calculations \cite.
+The space-time temperature $T$ and velocity $u$ profiles are obtained from the 2+1D viscous relativistic hydrodynamic calculations [CITE].
 
 \begin{figure}
 \begin{tikzpicture}
@@ -302,7 +303,7 @@ The space-time temperature $T$ and velocity $u$ profiles are obtained from the 2
 \caption{Inelastic process. Heavy quark collide with a meidum light (anti-)quark or gluon and radiates an additional gluon.}\label{plots:feyn-inelastic}
 \end{figure}
 
-Finally for the coupling constant in these matrix-elements, we utilize the leading order running coupling constant with three flavors of quark \cite{},
+Finally for the coupling constant in these matrix-elements, we utilize the leading order running coupling constant with three flavors of quark [CITE],
 \begin{eqnarray}
 \alpha_s(\mu^2) = \frac{4\pi}{9}
 \begin{cases}
@@ -311,7 +312,7 @@ Finally for the coupling constant in these matrix-elements, we utilize the leadi
 \end{cases}
 \end{eqnarray}
 The QCD scale is set at $\Lambda = 200$~MeV.
-For elastic scattering, we evaluate $\alpha_s$ at the typical momentum transfer of the process. For the gluon emission / absorption vertex in inelastic scatterings, we choose $\alpha_s(k_\perp^2)$ \cite{}.
+For elastic scattering, we evaluate $\alpha_s$ at the typical momentum transfer of the process. For the gluon emission / absorption vertex in inelastic scatterings, we choose $\alpha_s(k_\perp^2)$ [CITE].
 Inside a medium, there is an additional scale defined by the temperature $T$, we use it as a lowest cutoff for the energy scale of the process,
 \begin{eqnarray}
 \alpha_s(Q^2) \rightarrow \alpha_s(\max\{Q,\nu T\})
@@ -344,7 +345,7 @@ Additional, we consider the possibility of non-perturbative contribution to the 
 \section{Tests in a static medium}
 \subsection{Thermalization}
 \begin{figure}
-\includegraphics[width=\columnwidth]{charm-plot/thermalization.pdf}
+\includegraphics[width=\columnwidth]{thermalization.pdf}
 \caption{The approach to thermalization of the linear Boltzmann equation with elastic processes only (red dot), elastic with radiation processes (green dashed), and elastic with both radaition and absorption processes (blue solid). The static medium has a temperature $T = 0.4$ GeV. $10^4$ heavy quarks are initialized with $E = 10$ GeV at $t = 0$.}\label{plots:thermalization}
 \end{figure}
 We first show our implementation of the above model gives the correct thermal limit. 
@@ -370,32 +371,65 @@ This is the consequence from breaking detailed balance with radiation process on
 By adding the absorption processes, the correct equilibrium is reached.
 We also point out that the inclusion of absorption processes only start to make difference when the system is not far from equilibrium.
 
-\subsection{Energy loss}
-From the Monte Calro simulation, we can extract the energy loss of a heavy quark.
-The energy loss through the medium generally dependent on the incident energy ($E$), medium temperature ($T$) and the medium size (path length $L$).
+\subsection{Heavy quark energy loss}
+We can integrate collision rates using Equations \ref{eq:rate}, and calculate energy loss of a heavy quark by inserting $\Delta E$ into the integration of differential rates.
+This is straight forward for elastic processes, but since the rates of inelastic processes depend on collision history, a meaningful rate and energy loss in side a medium can only be obtained by an actually Monte Carlo simulation.
+Moreover, this history dependence is the reason that our rates and energy loss is not only a function of the incident energy ($E$) and medium temperature ($T$) but also the medium size (path length $L$).
+
 In Figure \ref{plots:dE-E}, we plot energy loss fraction $\Delta E/E$ for elastic process (first row) and inelastic process (second row) as function of $E$ for different path length and temperature.
+The elastic energy loss fraction increases as temperature and decreases for large energy.
+At low energy, the heavy quark starts to gain net energy from the medium as which manifests as $\Delta E < 0$.
 For the case of inelastic energy loss, we study the effect of gluon absorption process by comparing $\Delta E/E$ with radiation process only and with both radiation and absorption processes.
 We find that gluon absorption process does not affect the energy loss at low temperature or high energy heavy quark as expected.
 For high temperature such as $T=0.6$ GeV and energy below $10$ GeV, the gluon absorption process makes a notable difference.
 Radiation process always leads to a positive average energy loss, but with absorption process, heavy quarks with very low energy actually on average gain energy from the medium.
+
+In Figure \ref{plots:dE-L}, we show the path length dependence of the two energy loss mechanism.
+Here, we plot the energy loss fraction per unit length, with length measured in units of inverse temperature.
+The key observation is that elastic energy loss per unit length is a constant while for inelastic energy loss, this quantity first increases from zero for small path length and then gradually approaching a limit for large path length, showing a different medium size dependence of energy loss from the elastic process.
+The non-linear path length dependence $\Delta E \propto L^2$ is actually a characteristic behavior of the coherence effect in a finite length medium [CITE]. 
+In our effective implementation of LPM, this behavior arises because gluon radiation with
+\begin{eqnarray}
+\tau_f \ll L.
+\end{eqnarray}
+is suppressed, and therefore the inelastic energy loss for a thin medium is very small.
+As $L$ increases, a high energy heavy quark could have radiated gluons with formation time $\tau_f$ multiples times $N \propto L/\tau_f$ where each radiation carries off a typical amount of energy. 
+As a result the energy loss grows again linearly with path length.
+
+
 \begin{figure*}
-\includegraphics[width=.8\textwidth]{E_Eloss.pdf}
+\includegraphics[width=\textwidth]{E_Eloss.pdf}
 \caption{}\label{plots:dE-E}
 \end{figure*}
 
 \begin{figure*}
-\includegraphics[width=.8\textwidth]{L_Eloss.pdf}
+\includegraphics[width=\textwidth]{L_Eloss.pdf}
+\caption{}\label{plots:dE-L}
 \end{figure*}
 
-\subsection{$R_{AA}$ in a static medium}
 \begin{figure}
-\includegraphics[width=\columnwidth]{Box_Raa.pdf}
+\includegraphics[width=\columnwidth]{BoxRaa.pdf}
 \end{figure}
 
-\subsection{$R_{AA}$ and $v_2$ in an event-averaged dynamical meidum}
+Finally, for our study in a static medium, we calculate the $R_{AA}$ of charm and bottom quark in a medium $T=0.4$ GeV after evolving $3$ fm/c.
+Here we initialize the charm quark spectra with the parametrization provided by [cite].
+The heavy quarks looses a significant amount of energy in this static medium setup.
+Again, we see that the gluon absorption process only affects $R_{AA}$ for relatively low momentum $p_T < 10$ GeV.
+The mass plays an important role in the intermediate $p_T$ region.
 
 
 \section{Calibration of the model at LHC using Bayesian analysis}
+This hybrid transport model contains three parameters right now ($\mu$ for scattering component and $A$ and $B$ for diffusion component).
+By systematic comparison to experimental measurements of heavy-flavors in AA collisions, one can extract the these parameters with uncertainties.
+The calculation of heavy flavor observables requires a multi-stage modeling including
+\begin{itemize}
+\item The soft medium production and evolution modeling.
+\item Initial production spectra of heavy quarks (HQ).
+\item HQ energy loss in the pre-equilibrium stage.
+\item HQ energy loss in the quark-gluon plasma phase.
+\item HQ hadronization.
+\item HQ energy loss in the hadronic phase.
+\end{itemize}
 
 
 \begin{appendices}
@@ -412,14 +446,14 @@ Radiation process always leads to a positive average energy loss, but with absor
 &+&\frac{64}{9}\alpha_s^2 \frac{(s-M^2)(-u+M^2)+2M*2(u-M^2) + 4M^4}{(-u+M^2+m_D^2)^2} \\ \nonumber
 &+&\frac{16}{9}\alpha_s^2 \frac{M^2(4M^2 - t)}{(-u+M^2+m_D^2)(s-M^2+m_D^2)} \\ \nonumber
 &+& 16 \alpha_s^2 \frac{(s-M^2)(-u+M^2)+M^2(s-u)}{(t-m_D^2)(s-M^2+m_D^2)} \\ \nonumber
-&-& \left. 16 \alpha_s^2 \frac{(s-M^2)(-u+M^2)-M^2(s-u)}{(t-m_D^2)(-u+M^2+m_D^2)}\right\} \\
-\overline{|M_{Q+q\rightarrow Q+q+g}|^2} &=& \overline{|M_{Q+q\rightarrow Q+q}|^2} 48 \pi \alpha_s (1-\bar{x})^2 \left(\frac{\vec{k}_\perp}{k_\perp^2 + x^2 M^2} 
-+ \frac{\vec{q}_\perp - \vec{k}_\perp}{(\vec{q}_\perp-\vec{k}_\perp)^2 + x^2 M^2 + m_D^2}
-\right)^2 
+&-& \left. 16 \alpha_s^2 \frac{(s-M^2)(-u+M^2)-M^2(s-u)}{(t-m_D^2)(-u+M^2+m_D^2)}\right\} 
 \end{eqnarray}
 \begin{eqnarray}
-\overline{|M_{Q+g\rightarrow Q+g+g}|^2} &=& \overline{|M_{Q+g\rightarrow Q+g, \textrm{t-channel}}|^2} 48 \pi \alpha_s (1-\bar{x})^2 \left(\frac{\vec{k}_\perp}{k_\perp^2 + x^2 M^2} 
-+ \frac{\vec{q}_\perp - \vec{k}_\perp}{(\vec{q}_\perp-\vec{k}_\perp)^2 + x^2 M^2 + m_D^2}
+\frac{\overline{|M_{Q+q\rightarrow Q+q+g}|^2}}{\overline{|M_{Q+q\rightarrow Q+q}|^2}} &=&  \frac{\overline{|M_{Q+g\rightarrow Q+g+g}|^2}}{\overline{|M_{Q+g\rightarrow Q+g, \textrm{t-channel}}|^2}} = P_g
+\end{eqnarray}
+\begin{eqnarray}
+P_g = 48 \pi \alpha_s (1-\bar{x})^2 \left(\frac{\vec{k}_\perp}{k_\perp^2 + x^2 M^2 + (1-\bar{x})\mu^2} 
++ \frac{\vec{q}_\perp - \vec{k}_\perp}{(\vec{q}_\perp-\vec{k}_\perp)^2 + x^2 M^2 + (1-\bar{x})\mu^2}
 \right)^2 
 \end{eqnarray}
 \end{widetext}
