@@ -74,85 +74,135 @@ Comparing to available D and B meson data, we constrain the diffusion constant o
 \maketitle
 
 \section{Introduction}
-Heavy flavors are an ideal probe of the properties of the strongly coupled  quark-gluon plasma produced in relativistic heavy-ion collisions.
-Due to their large mass compared to the temperature scale achieved in the experiments [CITE], thermal production of heavy quarks from medium is highly suppressed; therefore the dominant source of heavy flavors are initial hard production vertex.
-Produced at early times of the collision, these flavor tagged probes experience the full time evolution of the quark-gluon plasma and their numbers is almost conserved.
-The mass effect sets an additional scale to the problem and brings rich physics to the heavy flavor sector.
-In the high transverse momentum region, heavy quarks can lose energy perturbatively and merge into the regime of jet energy loss study;
-in the low momentum region, the mass effect $M\gg T$ delays the heavy quark thermalization time, providing a window to study the non-equilibrium dynamics of QCD.
-Therefore the study of heavy flavor observables is a unique way to understand the dynamics of the quark-gluon plasma and the heavy quark in-medium propagation itself.
+In recent years, Relativistic Heavy-Ion Collider (RHIC) at Brookhaven National Laboratory and later the Large Hadron Collider (LHC) at CERN discovered a new state of matter, namely the strongly coupled quark-gluon plasma (sQGP), in ultra-relativistic heavy-ion collisions.
+Two key signatures in the discoveries of sQGP are the collective flows and the jet quenching.
+The collective flows reveal the surprising fact that the bulk medium of sQGP undergoes a strong collective expansion after being produced and the behaviors can be explained in great details by viscous hydrodynamics with the smallest specific viscosity ($\eta/s$) ever discovered in nature.
+The jet quenching refers to that the yield of high transverse momentum hadrons in nuclear collisions are strongly suppressed compared to the yield in proton proton collision where medium effects should be small.
+Calculations have shown that this suppression is a consequences of jet losing energy to the hot, dense and color-deconfined medium. 
 
+Open heavy flavors (charm and bottom) as probes of sQGP partly belong to the jet observables but they are also unique because of the large masses and flavors.
+Since the temperatures achieved in the experiments are still much smaller than charm and bottom masses, their thermal productions are highly suppressed; 
+therefore the dominant production mechanism is production through initial hard process.
+Heavy flavors are rare in heavy ion collisions even at low transverse momentum due to the mass, so they barely annihilate or recombine with their anti-particles, roughly conserving its number during the time-scale of sQGP.
+These two features are particular attractive to theorists as heavy quarks experienced the medium full-time evolution and flavor-tagged particles are much easier to track in the calculations than the evolution of a full jet.
+Finally, the mass sets an additional energy scale to the problem and brings rich physics to the heavy flavor sector.
+In the high transverse momentum region, heavy quarks lose energy mainly through radiative process and this merge into the regime of jet energy loss study;
+in the low momentum region, mass effect delays its thermalization time, providing a window to study the equilibration process.
+Heavy flavors are therefore an ideal and unique probe to study the sQGP properties.
 
-\section{Understanding heavy quark propagation with a hybrid transport}
-Open flavor heavy quarks are flavor tagged probes with large masses compared to the typical energy scale of the medium produced in relativistic heavy-ion collisions ($M \gg T$).
-These properties allow the treatment of heavy quarks as dilute quasi-participles in the medium.
-For the study of open flavor we neglect the back reaction from heavy quark to the medium. 
-In this approximation, heavy-flavor in-medium propagation is cast into a linearized Boltzmann equation.
+The in-medium propagation of heavy flavors is often studied in a kinetic approach that is linearized with respect to heavy quark distribution function. 
+This linearization means any back reactions from heavy quark to the medium are neglected.
+Linearized Boltzmann transport equation and Langevin equation are both widely used linearized models but focus on different levels of description of the interaction.
+The linearized Boltzmsport equation is built on elementary scattering processes that can be directly related to fundamental calculations.
+In principal, perturbative-QCD (pQCD) can predict the cross-section of these elementary scatterings.
+However, these calculation in the presence of a medium is extremely complicated even at leading order.
+Also, the pQCD processes are often plagued by soft divergence that need to be regulated by a medium scale proportional to the temperature, but with current collision energies the relevent temperature scale is not high enough that brings large ambiguity to pQCD calculation through the scale dependence of the strong coupling constant $\alpha_s(\mu T)$.
+The Langevin equation takes a different perspective. 
+It assumes that heavy quark receives frequent but soft momentum kicks from the medium, then a statistical description in terms of "drag" and "diffusion" coefficients of the interaction is possible.
+These transport coefficients encode the first and second momentums of the momentum exchange rate but are agnostic to further details of the elementary processes.
+One can again evaluate these transport coefficients from first principals, but for us focusing on learning these properties from experiment data, it is the vast flexibility to parametrize these quantities that the Langevin equation is most useful.
+Of course, in this way it is not clear how to establish a direct relation between the extracted values and a more fundamental understanding.
+In this work, we would like to combine the strengths of both approaches
+and we have developed a hybrid heavy quark transport model described as follows.
+The heavy quark scatters off medium particles in a linear Boltzmann equations with pQCD matrix elements (the scattering component), and between scatterings heavy quark is propagated by a Langevin equation (the diffusion component) with empirical transport coefficient mimicing the interaction missing from the above scattering picture.
+Both elastic and inelastic scatterings are included in the scattering component with soft divergence screened by a Debye mass $m_D^2 \sim \alpha_s T^2$ and Landau-Pomeranchuk-Migdal (LPM) effect taken into account effectively.
+The renormalization scale $\mu$ is the only parameter in the scattering component and the diffusion component has several parameters which carries an implicit dependence on $\mu$ once we tuned the model to data.
+The effect of small momentum transfer scatterings that may suffer too much from the scale ambiguity is assumed to be compensated by the diffusion component. 
+In addition, the diffusion component may conceptually receive other diffusion-like contributions such as non-perturbative effects.
+We have noticed that a rigorous separation of matrix-element scattering and diffusion has been proposed for the study of jet energy loss up to next-to-leading order within the context of pQCD.
+In our study, we don't require the content of the diffusion component to be pQCD in nature.
+In fact, we can understand this hybrid approach in the following way, given that a major part of the heavy quark medium interaction is explained by pQCD, what is still needed for the theory to describe the data is parameterized in diffusion component that can be learned from data.
+
+To learn the knowledge in the context of relativistic heavy-ion collisions, we calibrated all model parameters by comparing model calculation to experimental data to see how the system must behave.
+The calibration involves evaluating a multi-stage and multi-component model of the medium plus heavy flavor evolution over a high dimensional parameter space.
+The dimensionality of the problem makes it impossible to be tuned by hands.
+To solve this problem, our group have been developing powerful statistical tools based on Bayesian methodology to conduct systematic model to data comparisons.
+This approach treats experimental uncertainties seriously and explores the probability likelihood function of the model parameters given the experimental data.
+Usually among all the parameters, some parameters are physical such as transport coefficients and others are non-physical such as cut-off parameters. 
+And very often, we are interested in a few or a certain combination of the physical parameters.
+For this purpose, the Bayesian technique marginalizes over (integrates out) other parameters and computes the probability distribution for the parameters of interest. 
+The marginalization provides a parameter range that is not only preferred by the experiments, but also already includes uncertainties of in the marginalized parameters.
+Therefore the Bayesian technique really tells what can be actually learned from the data, considering both experimental accuracy and model parameter uncertainties.
+This procedure has been successfully applied to extracting initial condition and bulk transport coefficients from soft observables and to the heavy quark sector extracting heavy quark momentum diffusion parameter $\hat{q}$ using a radiation improved Langevin equation.
+In this work, we provide another extraction of heavy quark transport properties using the hybrid model and demonstrate how the use of different models affects the results of parameter extraction.
+
+The paper is organized as follows. We describe the hybrid model in detail in section \ref{section:model}. In section \ref{section:test}, the model is tested in a static medium to provide straightforward characterization. We calibrate the model parameters in section \ref{section:calibration} and with high likelihood parameter sets novel observables are predicted in section \ref{section:prediction}. Finally, section \ref{section:conclusion} contains summary and discussion of results.
+
+\section{Heavy quark propagation in a hybrid transport model}\label{section:model}
+\subsection{Scattering component}
+Elementary scatterings of heavy-flavor with medium particles are treated in a linearized Boltzmann equation,
 \begin{eqnarray}
-  \frac{\partial}{\partial t}f_Q - \frac{\vec{p_1}}{E_1}\cdot\nabla f_Q  = 
+  \frac{\partial}{\partial t}f_Q - \frac{\vec{p}}{E}\cdot\nabla f_Q  = 
 \mathcal{C}[f_Q]
 %C_i^{2\rightleftharpoons 2}[f_Q] + C_i^{2\rightleftharpoons 3}[f_Q]
 \end{eqnarray}
-The collision processes with medium particles change the heavy quarks' distribution function $f_Q(t, \vec{x}, \vec{p})$.
-
-The precise knowledge of the collision integral on the right is hard to obtain.
-In principal, these processes should be calculable from the fundamental theory using perturbative-QCD. 
-However, analyzing in-medium processes are much more complex than in vaccum even at leading order. 
-Also, the temperatures reached in current experiments are not high enough, which brings large ambiguity in the calculation through the scale dependence of the QCD coupling constant.
-Finally, a practical leading order pQCD cross-sections usually involves a relative large multiplicative $K$-factor to describe data.
-A different perspective of analyzing the collision integral starts with the assumption that medium kicks to heavy quark propagation are frequent and soft.
-This assumption reduces the linear Boltzmann equation to a Fokker-Plank equation where heavy quark undergoes diffusion dynamics. 
-The diffusion approximation has the advantage that the complex underlying dynamics are represented by a few transport coefficients--drag and diffusion. 
-It is easier to extract these numbers from empirical data than ab initio evaluation. 
-The drawbacks are it only works when interactions are indeed soft and frequent and the relation between the obtained empirical transport coefficients to the fundamental theory is hard to establish.
-
-In this paper, we would like to take advantages from both perspectives.
-We divided the collision term in the linear-Boltzmann equation into two parts.
-Part one--the scattering component--contains scattering processes that what we can calculate start from the fundamental theory.
-Part two--the diffusion component--solves diffusion dynamics with empirical transport coefficients that parametrize what is missing in part one to describe the data. 
-To avoid confusion, we shall call them residue transport coefficients in the sense that it contains interactions or corrections not included in part one.
-We have noticed that such a separation of matrix-element scattering and diffusion has been proposed for the study of jet propagation.
-The separation in [CITE] is based on momentum transfer and applied order-by-order to perturbative-QCD calculation of jet-medium interaction.
-In our study, we don't restrict the content of the residue transport coefficients to be of pQCD origin.
-In this way, our model build upon existing knowledge of the scattering matrix-element from pQCD and can be systematically improve the residue transport coefficient to describe the experiments while only varying parameter in pQCD within a reasonable range.
-
-\subsection{Part one, scattering dynamics}
-At lowest order in the coupling constant, heavy quarks can scattering elastically with a light quark (anti-quark) or a gluon f, as shown in Fig. \ref{plots:feyn-elastic}.
-We will keep use the term ``elastic" and later ``inelastic" to distinguish particle number conserving and particle number changing processes and their associated energy loss.
-For quark-gluon scattering, there are three diagrams corresponds to $s, t,$ and $u$ channel exchange; only $t$ channel contributes to quark-quark scattering.
-The matrix-elements for these processes are calculated at leading order pQCD (see \ref{appendix:matrix-element}).
-The $t$ channel gluon exchange in the vacuum causes divergence in cross-section as the momentum transfer vanishes,
+The left hand side represents free transport of the heavy quark distribution function. 
+Scatterings with medium partons change the distribution via the collision integral on the right.
+The medium parton distribution function are assumed to follow a Maxwell--J\"uttner distribution, 
 \begin{eqnarray}
-d\sigma \propto \frac{1}{t^2} dt,
+f_{q,\bar{q}, g} = \exp\left(-\frac{p \cdot u(x)}{T(x)}\right),
 \end{eqnarray}
-but inside a quark-gluon plasma, those soft gluon exchange is screened by the surrounding color charges and the propagator is replaced by a hard-thermal loop propagator [CITE].
-Here, we simply uses the leading order Debye mass as a regulator, $t \rightarrow t - m_D^2$.
-
-At high energy, inelastic processes which involves gluon radiation in the final state shown in Fig. \ref{plots:feyn-inelastic} becomes important.
-Although the inelastic processes seem to be one order higher in the coupling conspropagtion of the tant than the elastic processes, due to the divergence of the almost on-shell intermediate propagator, its contribution to energy loss increases with incident heavy quark energy and eventually dominates over elastic energy loss [CITE].
-Boltzmann equation with only the gluon radiation radiation violates detail balance, and the theory won't have a correct thermal solution.
-To solve this issue, we include the reverse process of radiation, namely the gluon absorption process.
-The matrix-element for the absorption relates to the radiation matrix-element by bending the final state gluon emission line to the initial state ($k^\mu \rightarrow -k^\mu$).
-An additional gluon in the initial state brings an additional Boltzmann factor $e^{-k/T}$, so we expect it to be less important at high energy (low temperature) but essential for heavy quark thermalization.
-We shall study numerically that under what conditions that the inclusion of the gluon absorption process is important to energy loss.
-
-A complication for inelastic processes is that the radiated gluon takes finite amount of time to be fully resolved from the source. 
-Within the formation time, the effects of multiple soft collisions add up  coherently in a destructive way to suppress the gluon radiation, know as the Landau-Pomeranchuk-Migdal (LPM) effect [CITE].
-With LPM effect, emission of a single gluon dependents on multiple collisions experienced by the heavy quark, but this is difficult to implement in a Boltzmann equation setup where scatterings are localized in space-time.
-In our model, we mimic the LPM effect by considering the physical interpretation of the gluon formation time $\tau_f$,
+and any off-equilibrium corrections to the medium partions are neglected.
+The space-time evolution of the temperature field $T$ and velocity field $u^\mu$ are obtained in an event-by-event 2+1D viscous relativistic hydrodynamic calculation.
+We solve $f_Q(x, p, t)$ in a Monte Carlo way by representing the distribution function with an ensemble of heavy quarks.
+Each heavy quark can freestream or scatter within a given time step $dt$.
+In each collision, the heavy quark collide a few medium particles that together forms an $n$-body initial state $\{\textrm{in}\}$, and the outgoing particles after the collision forms the $m$-body final satte $\{\textrm{out}\}$.
+The scattering probability $P$ of a certain channel for a heavy quark with energy $E_1$ inside a medium with temperature $T$ from $t$ to $t+dt$ is calculated from the scattering rate $R$,
+\begin{eqnarray}\label{eq:rate}
+    P(E_1,T,t,dt) &=& R(E_1, T, t) dt \\
+    &=& \frac{d}{\nu} \frac{\delta}{\delta f_Q(p_1)}\int d \Gamma \prod_{\textrm{\{in\}}} f_i(p_i) 
+\overline{|M|^2},
+  	 \nonumber
+\end{eqnarray}
+where the $d\Gamma$ is the $(n+m)$-body phase-space integration,
 \begin{eqnarray}
-\tau_f &=& \frac{2(1-x)k}{k_\perp^2 + x^2M^2 + (1-x)\mu^2} \\
-x &=& \frac{k^+}{E^+}
+\nonumber
+d\Gamma = (2\pi)^4\delta^4\left(\sum_{\textrm{\{in\}}}p_{i} - \sum_{\textrm{\{out\}}}p_{i}\right)\prod_{\{\textrm{in, out}\}} \frac{dp_i^3}{2E_i(2\pi)^3} 
 \end{eqnarray}
-A gluon cannot be fully resolved from the heavy quark shorter than time scale, therefore we restrict the phase space integral of the emitted gluon   by a coherence factor,
+$\overline{|M|^2}$ is the initial state spin-color averaged scattering matrix-element square.
+$d$ counts the degeneracy of the incoming medium particle and $\nu$ is the symmetry factor of identical gluons in the initial / final state of the collision.
+If one determines heavy quarks scatters via certain channel within $dt$ according to the probablity $P$, the details of the initial and final states can be obtained by sampling the differential scattering rate over the phase space.
+The time step $dt$ is chosen small enough so that the probability of multiple scatterings within $dt$ is negligible. 
+
+Now, we focus on what processes to be included in the collision term.
+It has been shown that at lowest order in the coupling constant, heavy quarks can scatter elastically with light parton (quark, anti-quark or gluon) or emitting collinear gluon triggered by soft collisions which we call an inelastic process based on its particle number changing nature.
+We will keep use the term ``elastic" and later ``inelastic" to distinguish these two types of processes and their associated energy loss.
+For quark-gluon scattering, there are three diagrams corresponds to $s, t,$ and $u$ channel exchange; only $t$ channel contributes to quark-quark scattering as shown in Fig. \ref{plots:feyn-elastic}.
+The matrix-elements for these processes in vacuum are available at leading order pQCD (see \ref{appendix:matrix-element}).
+In these expressions, the characteristic $t-$channel gluon propagator causes divergence in cross-section as the momentum transfer vanishes,
+\begin{eqnarray}
+d\sigma \propto \frac{1}{t^2} dt.
+\end{eqnarray}
+But inside a quark-gluon plasma, those soft exchanging gluon will constantly interact with medium particles and this divergence should be  screened by a Debye mass in the case of static scattering center.
+Generally, the gluon propagator should be replaced by a hard-thermal loop (HTL) propagator.
+But this HTL propagator involves a complicated self energy that depends on the medium reference frame, so it is hard for us to apply it in a cross-section based Monte-Carlo approach where it is easiest to calculate and sample in the two- or three-body center of mass frame.
+Hence we choose to adopt the simple replacement $t^2 \rightarrow (t-\Lambda_{QCD}^2)(t - m_D^2)$ (up to an additional $\Lambda_{QCD}^2$) that taken into account dynamical medium effects.
+At high energy, inelastic processes shown in Fig. \ref{plots:feyn-inelastic} becomes important.
+Although it seems to be one order higher in coupling constant than the elastic processes, because of the divergence in emitting soft gluon which we screened by the asymptotic gluon thermal mass $m_D/\sqrt{2}$, it actually contributes at the same order as elastic energy loss.
+The available phase space for radiating a gluon also grows with heavy quark incident energy and it eventually becomes the dominate energy loss mechanism at high energies.
+Boltzmann equation with only the gluon radiation ($2\rightarrow 3$) process violates detailed balance, we also include the reverse process namely the medium gluon absorption ($3\rightarrow 2$) process so that the model approaches the correct thermal equilibrium at large time.
+The matrix-element for the absorption relates to the radiation matrix-element by sending the final state gluon emission line to the initial state ($k^\mu \rightarrow -k^\mu$).
+This medium gluon in the initial state brings an additional Boltzmann factor $e^{-k/T}$ and it is not easy for a fast moving heavy quark to absorb a low energy gluon, so we expect it to be less relevant for high incident energy heavy quarks propagates in low temperature medium. 
+But this is essential for the region close to thermalization when low energy heavy quark effectively absorbs gluon with $k \sim T$.
+We shall study numerically in the next section to answer under what conditions the medium gluon absorption process is important.
+
+A complication for inelastic processes is that the radiated (absorbed) gluon takes finite amount of time to be fully resolved from (merged into) the heavy quark.
+This typical time scale is called the gluon formation time $\tau_f$, during which the effects of multiple soft collisions add up coherently in a destructive way to suppress the gluon emission spectrum.
+This is known know as the LPM effect.
+The formation time for a heavy quark to radiate a gluon is,
+\begin{eqnarray}
+\tau_f &=& \frac{2x(1-x)E}{k_\perp^2 + x^2M^2 + (1-x)m_D^2/2}, x = \frac{k^+}{E^+}
+\end{eqnarray}
+The gluon emission probability now dependents on multiple collisions along the trajectory of the heavy quark and the problem becomes non-local.
+This is particularly difficult to implement in the collision term of the linearized Boltzmann equation, because all scatterings are treated as localized in space-time.
+In our model, we mimic the LPM effect by restricting the phase space integral of this additional gluon with a coherence factor,
 \begin{eqnarray}
 d\Gamma_k \rightarrow 2\left(1 - \cos\left(\Delta t/\tau_f\right) \right)d\Gamma_k,
 \end{eqnarray}
-where $\Delta t$ is the time elapsed from the last radiation. 
-This factor is determined by requiring that the radiation rate reduces to the formula used in [shanshan's diffusion] in the limit of soft medium collision.
-The radiation of gluon that has not fully formed yet (i.e. $\tau_f > \Delta t$) is suppressed.
-With this prescription, the evolution of a heavy quark becomes history dependent. 
-It is not trivial to tell if the Boltzmann equation modified in this way should thermalize as $t\rightarrow \infty$, so we tested in actually simulations and confirm the model approaches correct thermal limit.
+where $\Delta t$ is the time elapsed from the last radiation.
+This factor is determined by requiring that the differential radiation rate reduces to the formula used by [] when gluon transverse momentum is much large than the momentum transfer from medium ($k_\perp^2 \gg q_\perp^2$).
+With this prescription, gluon with formation time is greater than $\Delta t$ is suppressed, at the expense that the collision rate becomes history dependent.
+It is not trivial to tell if the Boltzmann equation with a history-dependent rate should thermalize as $t\rightarrow \infty$, so we test and confirm the model approaches correct thermal limit in the next section.
 
 \begin{figure}
 \feynmandiagram [xscale=.95, yscale=1, horizontal=a to b] {
@@ -189,32 +239,6 @@ It is not trivial to tell if the Boltzmann equation modified in this way should 
 };
 \caption{Elastic processes. The first three diagrams contribute to heavy quark (Q) - gluon (g) scattering, the last one contributes to a light (anti-)quark (q) scattering. Intermediate propagators are screened by a Debye mass in case of soft divergence.}\label{plots:feyn-elastic}
 \end{figure}
-
-Given this scattering processes, the linear Boltzmann equation is solved by transport and an ensemble of heavy quark according to the collision rates of different reaction channels.
-The collision rates for elastic scatterings, gluon radiation and gluon absorption are,
-\begin{eqnarray}\label{eq:rate}
-    R_{22,i} &=& \frac{d_i/\nu_i!}{2E_1} \int d \Gamma_{p_3,p_4}^{p_2}(p_1) f_i(p_2)  \overline{|M_{22}|^2},
-   \nonumber
-  \\
-  R_{23,i} &=& \frac{d_i/\nu_i!}{2E_1} \int d \Gamma_{p_3,p_4,k}^{p_2}(p_1) f_i(p_2) 
-\overline{|M_{23}|^2},
-  	 \nonumber
-  \\
-  R_{32,i} &=& \frac{d_i/\nu_i!}{2E_1} \int d \Gamma_{p_3,p_4}^{p_2,k}(p_1) f_i(p_2)f_g(k)
-\overline{|M_{32}|^2}.
-  	 \nonumber
-\end{eqnarray}
-Where the N-body phase-space integration,
-\begin{eqnarray}
-\nonumber
-d\Gamma_{\{\textrm{out}\}}^{\{\textrm{in}\}}(p_1) = \prod_{\{\textrm{in, out}\}} \frac{dp_i^3}{2E_i(2\pi)^3} (2\pi)^4\delta^4(p_1+P_{\text{in}} - P_{\textrm{out}})
-\end{eqnarray}
-$d_i$ counts the degeneracy of the incoming medium particle and $\nu_i$ counts the number of identical gluons in the initial / final state of the collision.
-The medium partons are assumed and reached thermal equilibrium with a Maxwell distribution function, 
-\begin{eqnarray}
-f(p,x) = \exp\left(-\frac{p \cdot u(x)}{T(x)}\right).
-\end{eqnarray}
-The space-time temperature $T$ and velocity $u$ profiles are obtained from the 2+1D viscous relativistic hydrodynamic calculations [CITE].
 
 \begin{figure}
 \begin{tikzpicture}
@@ -303,51 +327,50 @@ The space-time temperature $T$ and velocity $u$ profiles are obtained from the 2
 \caption{Inelastic process. Heavy quark collide with a meidum light (anti-)quark or gluon and radiates an additional gluon.}\label{plots:feyn-inelastic}
 \end{figure}
 
-Finally for the coupling constant in these matrix-elements, we utilize the leading order running coupling constant with three flavors of quark [CITE],
-\begin{eqnarray}
-\alpha_s(\mu^2) = \frac{4\pi}{9}
-\begin{cases}
-1/\ln\left(-\mu^2/\Lambda^2\right),\hfill \mu^2 < 0 \\ 
-\frac{1}{2} - \frac{1}{\pi}\arctan\left[\frac{\ln\left(\mu^2/\Lambda^2\right)}{\pi}\right],\mu^2 > 0
-\end{cases}
-\end{eqnarray}
-The QCD scale is set at $\Lambda = 200$~MeV.
-For elastic scattering, we evaluate $\alpha_s$ at the typical momentum transfer of the process. For the gluon emission / absorption vertex in inelastic scatterings, we choose $\alpha_s(k_\perp^2)$ [CITE].
-Inside a medium, there is an additional scale defined by the temperature $T$, we use it as a lowest cutoff for the energy scale of the process,
-\begin{eqnarray}
-\alpha_s(Q^2) \rightarrow \alpha_s(\max\{Q,\nu T\})
-\end{eqnarray}
-$\nu$ the only parameter we will tune in the scattering component of the model.
-
-\subsection{Part two, diffusion dynamics}
-The diffusion dynamics of the heavy quark is simulated by solving Langevin equations in the Ito-discretization scheme,
+\subsection{Diffusion component}
+The diffusive motion of heavy quarks are solved in Langevin equations in terms of drag and diffusion.
+The Langevin equations in the Ito scheme are,
 \begin{eqnarray}
 \Delta \vec{x}_i &=& \frac{\vec{p}_i}{E} \Delta t	\\
 \Delta \vec{p}_i &=& -\Gamma \vec{p}_i \Delta t + \Delta t \vec{\xi}
 \end{eqnarray}
-The momentum change comes from a drag term with a momentum drag coefficient $\Gamma$ and a thermal random force $\vec{\xi}$. 
-The random force has zero mean and covariance structure:
+The first equation is the transport part.
+The second equation changes the momentum by a drag term with coefficient $\Gamma$ and a thermal random force $\vec{\xi}$. 
+The random force has zero mean and the covariance structure:
 \begin{eqnarray}
 \langle \xi_i \xi_j \rangle = \frac{1}{\Delta t}\left(\Kpara \frac{p_i p_j}{p^2} + \Kperp \left(\delta_{ij} - \frac{p_i p_j}{p^2}\right) \right)
 \end{eqnarray}
-In this study, we assume the residue momentum diffusion is isotropic $\Kpara=\Kperp=\kappa$.
-The drag $\Gamma$ and the momentum diffusion coefficient $\kappa$ need to satisfy the Einstein relation to guarantee the correct thermal limit is reached as time approaches infinity,
+In this study, we assume the diffusion component is isotropic $\Kpara=\Kperp=\kappa$.
+The drag coefficient $\Gamma$ and the momentum diffusion coefficient $\kappa$ need to satisfy the Einstein relation in Ito scheme to guarantee reaching the correct thermal equilibrium at large time,
 \begin{eqnarray}
 \Gamma &=& \frac{\kappa}{2TE} - \frac{d\kappa}{dp^2}
 \end{eqnarray}
 We choose momentum diffusion $\kappa$ as the independent variable in our parametrization.
 If temperature is the only scale in the problem, we expect $\kappa$ to scale as $T^3$.
-Additional, we consider the possibility of non-perturbative contribution to the residue transport, which only happens at low energy and low temperature and arrived at this simple ansatz,
+Additional, we consider the possibility of non-perturbative contribution to the diffusion component, which only happens at low energy and low temperature and we arrive at this simple ansatz,
 \begin{eqnarray}
-\frac{\kappa}{T^3} = \left(A + \frac{B}{ET}\right)
+\frac{\kappa}{T^3} = A\left(x + (1-x)\frac{[1\textrm{ GeV}]^2}{ET}\right)
 \end{eqnarray}
 
-\section{Tests in a static medium}
-\subsection{Thermalization}
+\section{Tests in a static medium}\label{section:test}
 \begin{figure}
 \includegraphics[width=\columnwidth]{thermalization.pdf}
 \caption{The approach to thermalization of the linear Boltzmann equation with elastic processes only (red dot), elastic with radiation processes (green dashed), and elastic with both radaition and absorption processes (blue solid). The static medium has a temperature $T = 0.4$ GeV. $10^4$ heavy quarks are initialized with $E = 10$ GeV at $t = 0$.}\label{plots:thermalization}
 \end{figure}
+\begin{figure*}
+\includegraphics[width=\textwidth]{E_Eloss.pdf}
+\caption{}\label{plots:dE-E}
+\end{figure*}
+
+\begin{figure*}
+\includegraphics[width=\textwidth]{L_Eloss.pdf}
+\caption{}\label{plots:dE-L}
+\end{figure*}
+
+\begin{figure}
+\includegraphics[width=\columnwidth]{BoxRaa.pdf}
+\end{figure}
+
 We first show our implementation of the above model gives the correct thermal limit. 
 The quantify the approach to equilibrium of an ensemble of heavy quarks in side a static medium with a fixed temperature $T_0$, we define the following quantity,
 \begin{eqnarray}
@@ -371,7 +394,6 @@ This is the consequence from breaking detailed balance with radiation process on
 By adding the absorption processes, the correct equilibrium is reached.
 We also point out that the inclusion of absorption processes only start to make difference when the system is not far from equilibrium.
 
-\subsection{Heavy quark energy loss}
 We can integrate collision rates using Equations \ref{eq:rate}, and calculate energy loss of a heavy quark by inserting $\Delta E$ into the integration of differential rates.
 This is straight forward for elastic processes, but since the rates of inelastic processes depend on collision history, a meaningful rate and energy loss in side a medium can only be obtained by an actually Monte Carlo simulation.
 Moreover, this history dependence is the reason that our rates and energy loss is not only a function of the incident energy ($E$) and medium temperature ($T$) but also the medium size (path length $L$).
@@ -396,21 +418,6 @@ is suppressed, and therefore the inelastic energy loss for a thin medium is very
 As $L$ increases, a high energy heavy quark could have radiated gluons with formation time $\tau_f$ multiples times $N \propto L/\tau_f$ where each radiation carries off a typical amount of energy. 
 As a result the energy loss grows again linearly with path length.
 
-
-\begin{figure*}
-\includegraphics[width=\textwidth]{E_Eloss.pdf}
-\caption{}\label{plots:dE-E}
-\end{figure*}
-
-\begin{figure*}
-\includegraphics[width=\textwidth]{L_Eloss.pdf}
-\caption{}\label{plots:dE-L}
-\end{figure*}
-
-\begin{figure}
-\includegraphics[width=\columnwidth]{BoxRaa.pdf}
-\end{figure}
-
 Finally, for our study in a static medium, we calculate the $R_{AA}$ of charm and bottom quark in a medium $T=0.4$ GeV after evolving $3$ fm/c.
 Here we initialize the charm quark spectra with the parametrization provided by [cite].
 The heavy quarks looses a significant amount of energy in this static medium setup.
@@ -418,7 +425,7 @@ Again, we see that the gluon absorption process only affects $R_{AA}$ for relati
 The mass plays an important role in the intermediate $p_T$ region.
 
 
-\section{Calibration of the model at LHC using Bayesian analysis}
+\section{Calibration of the model at LHC using Bayesian analysis}\label{section:calibration}
 This hybrid transport model contains three parameters right now ($\mu$ for scattering component and $A$ and $B$ for diffusion component).
 By systematic comparison to experimental measurements of heavy-flavors in AA collisions, one can extract the these parameters with uncertainties.
 The calculation of heavy flavor observables requires a multi-stage modeling including
@@ -432,7 +439,59 @@ The calculation of heavy flavor observables requires a multi-stage modeling incl
 \end{itemize}
 
 
+\begin{figure}
+\includegraphics[width=\columnwidth]{baseline.pdf}
+\caption{...}\label{plots:baseline}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=\columnwidth]{qhat_p_T.pdf}
+\caption{...}\label{plots:posterior_qhat}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=\columnwidth]{Ds_posterior.pdf}
+\caption{...}\label{plots:posterior_Ds}
+\end{figure}
+
+
+\begin{figure*}
+\includegraphics[width=.49\textwidth]{observables_design.pdf}
+\includegraphics[width=.49\textwidth]{observables_posterior.pdf}
+\caption{...}\label{plots:deisgn_posterior_obs}
+\end{figure*}
+
+
+\section{Calibration of the model at LHC using Bayesian analysis}\label{section:prediction}
+
+\begin{figure*}
+\includegraphics[width=\textwidth]{posterior.pdf}
+\caption{...}\label{plots:posterior}
+\end{figure*}
+\begin{figure*}
+\includegraphics[width=\textwidth]{find_map.pdf}
+\caption{...}\label{plots:posterior}
+\end{figure*}
+
+\section{Conclusion}\label{section:conclusion}
+
+
 \begin{appendices}
+\section{Running coupling}
+We use the leading order running coupling constant with three flavors of quark,
+\begin{eqnarray}
+\alpha_s(Q^2) = \frac{4\pi}{9 \ln\left(Q^2/\Lambda^2\right) }
+\end{eqnarray}
+The QCD scale is set at $\Lambda = 0.2$~GeV.
+Inside a medium, the temperature $T$ defines the medium scale, it is used as a lower cutoff for $Q^2$ of all process, and the running coupling is actually,
+\begin{eqnarray}
+\alpha_s = \alpha_s(\max\{Q^2,(\mu T)^2\})
+\end{eqnarray}
+$\mu$ the only parameter we tuned in the scattering component of the hybrid model.
+For elastic scattering, $Q^2$ is chosen as the momentum exchange squared for $s,t,u$ channel.
+For the gluon emission / absorption vertex, we choose $Q^2 = k_\perp^2$.
+
+
 \section{Matrix elements}
 \label{appendix:matrix-element}
 \begin{widetext}
@@ -495,7 +554,7 @@ Therefore, we design the following simulation procedure.
 \end{itemize}
 
 \section{Calculation of $v_n\{2\}$ and $v_2\{EP\}$}
-Cumulant method correlates a heavy meson with a light particle to estimate $v_n$.
+Cumulant method correlates a heavy meson with a light particle to estimate $v_n$. 
 \begin{eqnarray}
 v_n\{2\} &=& \frac{d_n\{2\}}{\sqrt{c_n\{2\}} } \\
 d_n\{2\} &=& \left\langle \frac{\Re\{pQ^*\}}{mM} \right\rangle_{w = mM} \\

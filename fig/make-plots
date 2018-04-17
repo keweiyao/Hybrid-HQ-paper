@@ -17,7 +17,6 @@ from matplotlib import ticker
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib import patches
 from matplotlib import gridspec
-from pyfeyn.user import *
 
 aspect = 1/1.618
 resolution = 72.27
@@ -159,33 +158,6 @@ alpha_s = np.vectorize(alpha_s)
 def mD2(T, mu):
 	return alpha_s(0., T, mu)*6.*np.pi*T*T
 mD2 = np.vectorize(mD2)
-
-@plot
-def feyn_Qq2Qq(_):
-	processOptions()
-	fd = FeynDiagram()
-
-	in1 = Point(-4,  2)
-	in2 = Point(-4, -2)
-	out1 = Point(4, -2)
-	out2 = Point(4,  2)
-	in_vtx = Vertex(-2, 0, mark=CIRCLE)
-	out_vtx = Vertex(2, 0, mark=CIRCLE)
-
-	l1 = Label("Drell-Yan QCD vertex correction", x=0, y=2)
-
-	fa1 = Fermion(in1, in_vtx).addArrow().addLabel(r"\Pelectron")
-	fa2 = Fermion(in_vtx, in2).addArrow().addLabel(r"\Ppositron")
-	fa2.addParallelArrow(size=0.1, displace=-0.06, sense=-1)
-	bos = Photon(in_vtx, out_vtx).addLabel(r"\Pphoton/\PZ")
-	fb1 = Fermion(out1, out_vtx).addArrow(0.2).addLabel(r"\APquark")
-	fb1.addParallelArrow(size=0.1, displace=-0.06, sense=-1)
-	fb2 = Fermion(out_vtx, out2).addArrow(0.8).addLabel(r"\Pquark")
-	glu = Gluon(midpoint(out_vtx, out1), midpoint(out_vtx, out2)).set3D()
-	glu.invert().bend(0.5).addLabel("\Pgluon", displace=0.35)
-	glu.addParallelArrow(size=0.1, displace=0.2, sense=-1)
-
-	fd.draw("pyfeyn-test1.pdf")
 
 @plot
 def alpha_s_at_T(args):
@@ -493,11 +465,12 @@ def thermalization(_):
 	width, height = 0.4, 0.3
 	axes2 = fig.add_axes([left, bottom, width, height])
 	for name, fmt, c, label in \
-		zip(['coll', 'coll-rad', 'coll-rad-abs','bottom-coll-rad-abs'],
+		zip(['coll', 'coll-rad', 'coll-rad-abs'],
 			[':', '--', '-', '-'], [cr, cg, cb, 'orange'],
 			['charm, coll', 'charm, coll+rad',
 			'charm, coll+rad+abs', 'bottom, coll+rad+abs']):
 		mass = 1.3 if 'charm' in label else 4.2
+		print(mass)
 		t, S, dS = get_xy(f[name], mass)
 		for ia, (ax, ylim) in enumerate(zip([axes1, axes2], [[-2,25], [-1,2]])):
 			ax.plot(t[::2], S[::2], fmt, color=c, label=label, linewidth=1.5)
@@ -514,295 +487,6 @@ def thermalization(_):
 				ax.set_xlabel(r'$t$ [fm/c]')
 	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.98, 0.98])
 
-@plot
-def hybrid_thermalization(quark):
-	mass = 1.3 if quark == 'charm' else 4.2
-	def norm_boltzmann(T):
-		E = np.linspace(1, 10, 1000)*mass
-		dfdE = np.exp(-E/T)*E*np.sqrt(E**2-mass**2)*4.*np.pi
-		return np.sum(dfdE)*(E[1]-E[0])
-	def thermal_dfdE(T):
-		E = np.linspace(1, 10., 1000)*mass
-		dfdE = np.exp(-E/T)*E*np.sqrt(E**2-mass**2)*4.*np.pi
-		return E, dfdE/norm_boltzmann(T)
-	def S_diff(E, T):
-		values = np.log(norm_boltzmann(T)) + E/T
-		return np.mean(values), np.std(values)/np.sqrt(len(E)*1.)
-	def S_same(T):
-		E = np.linspace(1, 10., 1000)*mass
-		norm = norm_boltzmann(T)
-		y = (E/T + np.log(norm))*np.exp(-E/T)*E*np.sqrt(E**2-mass**2)*4.*np.pi/norm
-		return np.sum(y)*(E[1]-E[0])
-	def get_xy(ds):
-		E0 = ds.attrs['E']
-		Temp = ds.attrs['T']
-		dt = ds.attrs['dt']
-		S0 = S_same(Temp)
-		tarray = (np.array(range(len(ds.value)))+1.)*dt
-		sarray = np.array([S_diff(si, Temp) \
-							for si in ds.value[::5,:,0]]).T
-		return tarray[::5], sarray[0]-S0, sarray[1]
-
-	fig, axes = plt.subplots(nrows=2, ncols=1,
-							 figsize=(columnwidth, columnwidth))
-	f = h5py.File("hybrid_thermalization.hdf5", 'r')
-
-	for name, fmt, c, label in \
-		zip(['T300E10-lgv', 'T300E10-elastic', 'T300E10-lgv-B-elastic'],
-			[':', '--', '-', '-.'], [cr, cg, cb, co],
-			['Diffusion', 'Diff + elastic', 'Diff-B + elastic']):
-		t, S, dS = get_xy(f[name])
-		for ia, (ax, ylim) in enumerate(zip(axes, [[-2,30], [-1,2]])):
-			ax.plot(t, S, fmt, color=c, label=label)
-			ax.fill_between(t, S-dS*2, S+dS*2, color=c, alpha=0.4)
-			ax.set_ylim(*ylim)
-			ax.plot(t, np.zeros_like(t),'k:')
-			if ia==1:
-				ax.set_xlabel(r'$t$ [fm/c]')
-				ax.annotate(r"$E_0 = 10.0$ [GeV]" + "\n"	\
-							+"$T = 0.3$ [GeV]", xy=(80,-0.8))
-			else:
-				ax.legend(loc='upper right')
-			ax.set_ylabel(r'$\Delta S$')
-	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.98, 0.98])
-
-
-@plot
-def static_process(quark):
-	mass = 1.3 if quark == 'charm' else 4.2
-	def norm_boltzmann(T):
-		E = np.linspace(1, 4, 1000)*mass
-		dfdE = np.exp(-E/T)*E*np.sqrt(E**2-mass**2)*4.*np.pi
-		return np.sum(dfdE)*(E[1]-E[0])
-	def thermal_dfdE(T):
-		E = np.linspace(1, 4., 1000)*mass
-		dfdE = np.exp(-E/T)*E*np.sqrt(E**2-mass**2)*4.*np.pi
-		return E, dfdE/norm_boltzmann(T)
-
-	fig, axes = plt.subplots(nrows=3, ncols=1, sharex=True, sharey=True,
-							 figsize=(columnwidth, columnwidth*1.3))
-	f = h5py.File(quark+"-data/thermalization.hdf5", 'r')
-	labels = ['Elastic', 'Elastic + rad.', 'Elastic + rad. + abs.']
-	labels2 = [r'$t = 1$ [fm/c]', r'$t = 10$ [fm/c]', \
-				r'$t = 50$ [fm/c]', r'$t = 150$ [fm/c]']
-	names = ['T300E10-22', 'T300E10-22-23', 'T300E10-22-23-32']
-	colors = [cr, co, cg, cb]
-	times = [1, 9, 99, 299]
-	for i in range(3):
-		ds = f[names[i]]
-		E0 = ds.attrs['E']
-		Temp = ds.attrs['T']
-		dt = ds.attrs['dt']
-		ax = axes[i]
-		ax.plot([E0, E0], [0.0, 1.5], 'k-', label="Initial" if i==0 else '')
-		ax.plot(*thermal_dfdE(Temp), 'k--', label="Boltzmann, $T = 0.3$ [GeV]"\
-		 													if i==0 else '')
-		ax.set_title(labels[i])
-		for j in range(4):
-			E = ds.value[times[j],:,0]
-			ax.hist(E, range=[1.3, 11], bins=100, normed=True,
-					histtype='step', color=colors[j],
-					label=labels2[j] if i==2 else '')
-		ax.legend(fontsize=textiny)
-		ax.set_xlim(mass-0.1,11)
-		ax.set_ylim(0,2)
-		if i==2:
-			ax.set_xlabel(r'$E$ [GeV]')
-		if i==1:
-			ax.set_ylabel(r'$df/dE$ [GeV${}^{-1}$]')
-	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.98, 0.98])
-
-@plot
-def static_hybrid_process(quark):
-	mass = 1.3 if quark == 'charm' else 4.2
-	def norm_boltzmann(T):
-		E = np.linspace(1, 4, 1000)*mass
-		dfdE = np.exp(-E/T)*E*np.sqrt(E**2-mass**2)*4.*np.pi
-		return np.sum(dfdE)*(E[1]-E[0])
-	def thermal_dfdE(T):
-		E = np.linspace(1, 4., 1000)*mass
-		dfdE = np.exp(-E/T)*E*np.sqrt(E**2-mass**2)*4.*np.pi
-		return E, dfdE/norm_boltzmann(T)
-
-	fig, axes = plt.subplots(nrows=2, ncols=1, sharex=True, sharey=True,
-							 figsize=(columnwidth, columnwidth))
-	f = h5py.File("hybrid_thermalization.hdf5", 'r')
-	labels = ['Diffusion-A', 'Diffusion-B', 'Diff + el', 'Diff + el + inelastic']
-	labels2 = [r'$t = 1$ [fm/c]', r'$t = 5$ [fm/c]', \
-				r'$t = 20$ [fm/c]', r'$t = 100$ [fm/c]']
-	names = ['T300E10-lgv', 'T300E10-lgv-B'] #, 'T300E10-22', 'T300E10-lgv-elastic', 'T300E10-lgv-elastic-23-32']
-	colors = [cr, co, cg, cb]
-	times = [1, 9, 39, 199]
-	for i, ax in enumerate(axes):
-		ds = f[names[i]]
-		E0 = ds.attrs['E']
-		Temp = ds.attrs['T']
-		dt = ds.attrs['dt']
-		ax.plot([E0, E0], [0.0, 10], 'k-', label="Initial" if i==0 else '')
-		ax.plot(*thermal_dfdE(Temp), 'k--', label="Boltzmann, $T = 0.3$ [GeV]"\
-		 													if i==0 else '')
-		ax.set_title(labels[i])
-		for j in range(4):
-			E = ds.value[times[j],:,0]
-			ax.hist(E, range=[1.3, 11], bins=100, normed=True,
-					histtype='step', color=colors[j],
-					label=labels2[j] if i==1 else '')
-		ax.legend(fontsize=textiny)
-		ax.set_xlim(mass-0.1,11)
-		ax.set_ylim(0,2)
-		if i==1:
-			ax.set_xlabel(r'$E$ [GeV]')
-		if i==1:
-			ax.set_ylabel(r'$df/dE$ [GeV${}^{-1}$]')
-	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.98, 0.98])
-
-@plot
-def avg_alphas(quark):
-	def get_a(muset):
-		name = 'Rates-tab'
-		f = h5py.File(quark+'-data/avg-alpha_s/RQq2Qq-{}.hdf5'.format(muset), 'r')
-		R0 = f[name].value
-		f = h5py.File(quark+'-data/avg-alpha_s/RQg2Qg-{}.hdf5'.format(muset), 'r')
-		R0 += f[name].value
-		f = h5py.File(quark+'-data/avg-alpha_s/aRQq2Qq-{}.hdf5'.format(muset), 'r')
-		aR0 = f[name].value
-		f = h5py.File(quark+'-data/avg-alpha_s/aRQg2Qg-{}.hdf5'.format(muset), 'r')
-		aR0 += f[name].value
-
-		NT = f[name].attrs['N_T']
-		TH = f[name].attrs['T_high']
-		TL = f[name].attrs['T_low']
-		NE = f[name].attrs['N_E1']
-		EH = f[name].attrs['E1_high']
-		EL = f[name].attrs['E1_low']
-		T = np.linspace(TL, TH, NT)
-		E = np.linspace(EL, EH, NE)
-		mE, mT = np.meshgrid(E, T)
-		mE = mE.T
-		mT = mT.T
-		return mE, mT, aR0/R0
-
-	from matplotlib import cm
-	from mpl_toolkits.mplot3d import Axes3D
-	fig = plt.figure(figsize=(columnwidth, columnwidth))
-	ax = fig.add_subplot(1, 1, 1, projection='3d')
-
-	for muset, cmm in zip(['1piT', '2piT', '4piT'], ['Red', 'Green', 'Blue']):
-		E, T, data = get_a(muset)
-		ax.plot_surface(np.log10(E), T, data, rstride=1, cstride=1,
-						color=cmm, alpha=0.4,
-                        linewidth=0, antialiased=False)
-	ax.set_xlabel(r'$E$ [GeV]')
-	ax.set_ylabel(r'$T$ [GeV]')
-	ax.set_zlim(0, 1.0)
-	ax.set_zlabel(r'$\langle\alpha_s(\mu^2)\rangle$')
-	ax.set_xticks([np.log10(1.3),np.log10(10),np.log10(100)])
-	ax.set_yticks([0.2, 0.4, 0.6])
-	ax.set_xticklabels(['1.3', '10', '100'])
-	ax.view_init(5, 150)
-	ax.text(1, 0.8, 0.33, r"$n=1$", (-1,0 ,0), fontsize=8)
-	ax.text(1, 0.8, 0.225, r"$n=2$", (-1,0,0), fontsize=8)
-	ax.text(1, 0.8, 0.12, r"$n=4$", (-1, 0,0), fontsize=8)
-	fig.subplots_adjust(left=0.05, right=0.85, top=0.9)
-	ax.set_title(r'Rate averaged $\alpha_s(\mu)$, screened propagator' + '\n'\
-		+ r'$\mu=\mathrm{max}\{Q, n\pi T\}$')
-@plot
-def Rscale(quark):
-	def get_R(muset):
-		name = 'Rates-tab'
-		f = h5py.File(quark+'-data/avg-alpha_s/RQq2Qq-{}.hdf5'.format(muset), 'r')
-		R = f[name].value
-		f = h5py.File(quark+'-data/avg-alpha_s/RQg2Qg-{}.hdf5'.format(muset), 'r')
-		R += f[name].value
-		NT = f[name].attrs['N_T']
-		TH = f[name].attrs['T_high']
-		TL = f[name].attrs['T_low']
-		NE = f[name].attrs['N_E1']
-		EH = f[name].attrs['E1_high']
-		EL = f[name].attrs['E1_low']
-		T = np.linspace(TL, TH, NT)
-		E = np.linspace(EL, EH, NE)
-		mE, mT = np.meshgrid(E, T)
-		mE = mE.T
-		mT = mT.T
-		return mE, mT, R
-
-	from matplotlib import cm
-	from mpl_toolkits.mplot3d import Axes3D
-	fig = plt.figure(figsize=(columnwidth, columnwidth))
-	ax = fig.add_subplot(1, 1, 1, projection='3d')
-
-	E, T, R1 = get_R('1piT')
-	E, T, R2 = get_R('2piT')
-	E, T, R4 = get_R('4piT')
-	ax.plot_surface(np.log10(E), T, R1/R2, rstride=1, cstride=1,
-							color='red', alpha=0.5,
-	                       linewidth=0, antialiased=False)
-	ax.plot_surface(np.log10(E), T, R2/R2, rstride=1, cstride=1,
-							color='green', alpha=0.5,
-	                       linewidth=0, antialiased=False)
-	ax.plot_surface(np.log10(E), T, R4/R2, rstride=1, cstride=1,
-							color='blue', alpha=0.5,
-	                       linewidth=0, antialiased=False)
-	ax.set_xlabel(r'$E$ [GeV]')
-	ax.set_ylabel(r'$T$ [GeV]')
-
-	ax.set_zlim(0, 3.0)
-	ax.set_zlabel(r'$R(n \pi T)/R(2\pi T)$')
-	ax.set_xticks([np.log10(1.3),np.log10(10),np.log10(100)])
-	ax.set_yticks([0.2, 0.4, 0.6])
-	ax.set_xticklabels(['1.3', '10', '100'])
-	ax.view_init(5, 150)
-	ax.text(1., 0.8, 1.4, r"$n=1$", (1,0,0), fontsize=8)
-	ax.text(1., 0.8, 1.0, r"$n=2$", (1,0,0), fontsize=8)
-	ax.text(1., 0.8, 0.6, r"$n=4$", (1,0,0), fontsize=8)
-	fig.subplots_adjust(left=0.02, right=0.85, top=0.92, bottom=0.02)
-	ax.set_title('Change of scattering rates varying scales' + '\n'\
-		+ r'$\alpha_s (\mu = \mathrm{max}\{Q, n\pi T\} )$')
-
-@plot
-def Box_Raa(quark):
-	def dN_dp_init(quark, pabs):
-
-		Lambda = 2.1 if quark == 'charm' else 7.5 # [GeV]
-		power = 3.9 if quark == 'charm' else 4.9
-		return pabs/(pabs**2+Lambda**2)**power
-	fig, axes = plt.subplots(nrows=1, ncols=1, sharex=True, sharey=True,
-							 figsize=(columnwidth, columnwidth))
-	Raa = {'c':{1: np.loadtxt("./data/BoxRaa-mu1-charm.dat").T,
-				2: np.loadtxt("./data/BoxRaa-mu2-charm.dat").T},
-		   'b':{1: np.loadtxt("./data/BoxRaa-mu1-bottom.dat").T,
-				2: np.loadtxt("./data/BoxRaa-mu2-bottom.dat").T}}
-	ax = axes
-	for s in ['c', 'b']:
-		x, y1 = Raa[s][1]
-		x, y2 = Raa[s][2]
-		color = 'red' if s=='c' else 'blue'
-		ax.fill_between(x, y1, y2,
-						facecolor='white',
-						edgecolor=color,
-						hatch='///',
-						alpha=0.5,
-						label="charm" if s=='c' else "bottom")
-
-		ax.plot(x, y1,'-', color=color)
-		ax.plot(x, y2,'--', color=color)
-
-		ax.set_ylim(0, 1.2)
-		ax.legend(fontsize=10, loc='upper right')
-		if s=='c':
-			ax.set_ylabel(r'$R_{AA}$, quark', fontsize=10)
-			ax.annotate(r'$\frac{dN}{dp_T^2}\propto \frac{1}{\left(p_T^2 + a^2\right)^{b}}$'+'\n'+'charm: $a = 2.1, b = 3.9$\n'+'bottom: $a = 7.5, b = 4.9$',
-			 			xy=(30, 0.15), fontsize=10)
-			ax.annotate(r"$\mu = 1\pi T$", xy=(80,0.45), fontsize=10)
-			ax.annotate(r"$\mu = 2\pi T$", xy=(80,0.75), fontsize=10)
-
-		ax.set_xlabel(r'$p_T$ [GeV]', fontsize=10)
-
-	# plots
-	plt.subplots_adjust(wspace=0.)
-	plt.suptitle(r'$T=0.4$' +' GeV' + r', $\Delta t=4$' +' fm/c', fontsize=10)
-	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.95, 0.95])
 
 @plot
 def BoxRaa(quark):
@@ -827,38 +511,6 @@ def BoxRaa(quark):
 	plt.semilogx()
 	plt.suptitle(r'$T=0.4$' +'[GeV]' + r', $\Delta t=3$' +'[fm/c]', fontsize=15)
 	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.02, 0.02, 0.95, 0.95])
-
-@plot
-def qhat(_):
-	def plot(ax, quark, a, b, c):
-		M = 1.3 if quark == 'charm' else 4.2
-		Lambda = 0.2
-		T = np.linspace(0.1, 0.7, 50)
-		E = np.linspace(1, 100, 50)*M
-		E, T = np.meshgrid(E, T)
-		E = E.T
-		T = T.T
-		qhatT3 = a*(1/T)**2 + b/E/T
-		D2piT = 8.*np.pi/qhatT3
-		ax.plot_surface(np.log10(np.sqrt(E**2-M**2)), T, D2piT, rstride=1, cstride=1,
-								color=c, alpha=0.5,
-		                        linewidth=0, antialiased=False)
-	from matplotlib import cm
-	from mpl_toolkits.mplot3d import Axes3D
-	fig = plt.figure(figsize=(columnwidth, columnwidth))
-	ax = fig.add_subplot(1, 1, 1, projection='3d')
-	plot(ax, 'charm', .0, 1.0, 'Blue')
-	plot(ax, 'bottom', .0, 1.0, 'Red')
-	ax.set_xlabel(r'$p$ [GeV]')
-	ax.set_ylabel(r'$T$ [GeV]')
-	ax.set_zlabel(r'$\hat{q}/T^3$')
-	#ax.set_zlim(0, 15)
-	ax.set_xticks([np.log10(1),np.log10(10),np.log10(100)])
-	ax.set_yticks([0.2, 0.4, 0.6])
-	ax.set_xticklabels(['1', '10', '100'])
-	ax.view_init(5, -130)
-	plt.show()
-	fig.subplots_adjust(left=0.1, right=0.95, top=0.9)
 
 def main(quark):
 	parser = argparse.ArgumentParser()
