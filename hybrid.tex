@@ -334,8 +334,8 @@ The Langevin equations in the Ito scheme are,
 \Delta \vec{x}_i &=& \frac{\vec{p}_i}{E} \Delta t	\\
 \Delta \vec{p}_i &=& -\Gamma \vec{p}_i \Delta t + \Delta t \vec{\xi}
 \end{eqnarray}
-The first equation is the transport part.
-The second equation changes the momentum by a drag term with coefficient $\Gamma$ and a thermal random force $\vec{\xi}$. 
+The first equation is the spatial transport.
+IN the second equation, momentum of heavy quarks are changed by a drag term with coefficient $\Gamma$ and a thermal random force $\vec{\xi}$. 
 The random force has zero mean and the covariance structure:
 \begin{eqnarray}
 \langle \xi_i \xi_j \rangle = \frac{1}{\Delta t}\left(\Kpara \frac{p_i p_j}{p^2} + \Kperp \left(\delta_{ij} - \frac{p_i p_j}{p^2}\right) \right)
@@ -349,7 +349,7 @@ We choose momentum diffusion $\kappa$ as the independent variable in our paramet
 If temperature is the only scale in the problem, we expect $\kappa$ to scale as $T^3$.
 Additional, we consider the possibility of non-perturbative contribution to the diffusion component, which only happens at low energy and low temperature and we arrive at this simple ansatz,
 \begin{eqnarray}
-\frac{\kappa}{T^3} = A\left(x + (1-x)\frac{[1\textrm{ GeV}]^2}{ET}\right)
+\frac{\kappa}{T^3} = \kappa_D\left(x_D + (1-x_D)\frac{[1\textrm{ GeV}]^2}{ET}\right)
 \end{eqnarray}
 
 \section{Tests in a static medium}\label{section:test}
@@ -357,73 +357,67 @@ Additional, we consider the possibility of non-perturbative contribution to the 
 \includegraphics[width=\columnwidth]{thermalization.pdf}
 \caption{The approach to thermalization of the linear Boltzmann equation with elastic processes only (red dot), elastic with radiation processes (green dashed), and elastic with both radaition and absorption processes (blue solid). The static medium has a temperature $T = 0.4$ GeV. $10^4$ heavy quarks are initialized with $E = 10$ GeV at $t = 0$.}\label{plots:thermalization}
 \end{figure}
-\begin{figure*}
-\includegraphics[width=\textwidth]{E_Eloss.pdf}
-\caption{}\label{plots:dE-E}
-\end{figure*}
 
-\begin{figure*}
-\includegraphics[width=\textwidth]{L_Eloss.pdf}
-\caption{}\label{plots:dE-L}
-\end{figure*}
+Before coupling the heavy quark transport model to a realistic medium, we study the behavior of the model in a static medium, i.e., the medium is at rest with a fixed temperature.
+We first show our implementation indeed respect detailed balance and reaches thermal equilibrium.
+To quantify the approaching to thermal equilibrium of an ensemble of $N$ heavy quarks in a medium with temperature $T_0$, we define the following quantity,
+\begin{eqnarray}
+\Delta S = \frac{1}{N}\sum_{i=1}^{N} \ln f_0(E_i) - \frac{\int f_0(p)\ln f_0(E) dp^3}{\int f_0(p) dp^3}
+\end{eqnarray}
+$f_0 \propto \exp(-E/T_0)$ is the Boltzmann-J\"uttner distribution function at temperature $T_0$. 
+The second term is the entropy at this temperature, while the first term takes the heavy quarks ensemble average of $\ln f_0(E)$.
+This difference $\Delta S$ defines a ``distance" from the heavy quark ensemble to the thermal distribution, and it vanishes when heavy quark ensemble is thermalized.
+If the ensemble distribution $f$ is not far from thermal equilibrium and can be characterized by an effective temperature $T_{\textrm{eff}}$ so that $f(E)\sim \exp(-E/T_{\textrm{eff}})$, then this ``distance" measures,
+\begin{eqnarray}
+\nonumber
+\Delta S &\sim& \frac{1}{T_0}\int  e^{-E/T_{\textrm{eff}}} E dp^3 - \frac{1}{T_0}\int e^{-E/T_0} E dp^3 \\
+&=& \frac{T_\textrm{eff}-T_0}{T_0}
+\end{eqnarray}
+the fraction deviation of the effective temperature from the temperature of the thermal bath.
+Figure \ref{plots:thermalization} shows the time-evolution of $\Delta S$ of $10^4$ charm quarks inside thermal bath $T=0.4$ GeV with initial energy $E_0 = 10$ GeV.
+With elastic process only, the system thermalizes after about $50$ fm/$c$.
+If we further turn on radiation process, the system reaches equilibrium faster, but it is wrong equilibrium.
+The effective temperature is lower than the temperature of the thermal bath.
+This is the consequence of breaking detailed balance if model only has radiation process.
+Finally, we showed the case with both radiation and absorption turned on, the correct equilibrium is reached at $t\sim 20$ fm/c.
+The absorption processes only make a notable difference when the system is not far from equilibrium ($\Delta S < 1$), which is expected from our previous argument.
+\begin{figure}
+\includegraphics[width=\columnwidth]{Eloss.pdf}
+\caption{}\label{plots:dEE}
+\end{figure}
 
 \begin{figure}
 \includegraphics[width=\columnwidth]{BoxRaa.pdf}
+\caption{}\label{plots:BoxRaa}
 \end{figure}
+From the rate equation \ref{eq:rate} one can actually calculate the heavy quark energy loss per unit time by inserting $\Delta E$ into the integration of differential rates.
+This is straightforward for elastic processes, but because the rates of inelastic processes depend on history, a meaningful energy loss can only be obtained from an actually simulation.
+And as we will see, this history dependence causes a non-trivial path length (medium size $L$) dependent energy loss.
+In the first row of Figure \ref{plots:dEE}, we plot energy loss fraction $\Delta E/E$ for elastic process (left) and inelastic process (right) as function of $E$ for path length $5$ fm and temperature $T=0.2$ and $0.4$  GeV.
+The elastic energy loss fraction is large at intermediate energy and decreases towards small and large energies.
+At sufficient low energy, heavy quarks starts to gain energy from the medium on average that manifests as $\Delta E/E < 0$.
+For the case of inelastic energy loss, we study the effect of gluon absorption process by comparing $\Delta E/E$ with only radiation process (lines) to $\Delta E/E$ with both gluon radiation and absorption (lines with symbols).
+As expected, we find that gluon absorption process only affects energy loss significantly at low energy high temperature.
+At sufficient low energy, gluon absorption process allow the heavy quark to gain energy from the medium through inelastic channel which is key to thermalization.
 
-We first show our implementation of the above model gives the correct thermal limit. 
-The quantify the approach to equilibrium of an ensemble of heavy quarks in side a static medium with a fixed temperature $T_0$, we define the following quantity,
-\begin{eqnarray}
-\Delta S = \frac{1}{N}\sum_i \ln f_0(E_i) - \int f_0(p)\ln f_0(p) dp^3
-\end{eqnarray}
-$f_0 \propto \exp(-E/T)$ is the relativistic Boltzmann distribution function at temperature $T$. 
-The second term is the entropy at that temperature, while the first term is the ensemble average of one-particle entropy at that temperature.
-This difference $\Delta S$ defines a ``distance" towards the equilibrium state, and vanishes when the thermal equilibrium is reached.
-If the ensemble is not far from thermal equilibrium and can be characterized by an effective temperature $T_{\textrm{eff}}$ that the distribution function $f(E)\sim \exp(-E/T_{\textrm{eff}})$, then
-\begin{eqnarray}
-\nonumber
-\Delta S &\sim& \frac{1}{T}\int  e^{-E/T_{\textrm{eff}}} E dp^3 - \frac{1}{T}\int e^{-E/T} E dp^3 \\
-&=& \frac{T_\textrm{eff}-T}{T}
-\end{eqnarray}
-is an estimate of the deviation of the effective temperature from the temperature of the thermal bath.
-Figure \ref{plots:thermalization} shows the time-evolution of $Delta S$ of heavy quarks inside thermal bath $T=0.4$ GeV with initial energy $E_0 = 10$ GeV.
-With elastic process only, the system thermalize after about $150$ fm/$c$.
-If we further turn on radiation process, the equilibrium is reached in a shorter amount of time, but it is wrong equilibrium.
-The effective temperature is lower than the temperature of the thermal bath.
-This is the consequence from breaking detailed balance with radiation process only.
-By adding the absorption processes, the correct equilibrium is reached.
-We also point out that the inclusion of absorption processes only start to make difference when the system is not far from equilibrium.
-
-We can integrate collision rates using Equations \ref{eq:rate}, and calculate energy loss of a heavy quark by inserting $\Delta E$ into the integration of differential rates.
-This is straight forward for elastic processes, but since the rates of inelastic processes depend on collision history, a meaningful rate and energy loss in side a medium can only be obtained by an actually Monte Carlo simulation.
-Moreover, this history dependence is the reason that our rates and energy loss is not only a function of the incident energy ($E$) and medium temperature ($T$) but also the medium size (path length $L$).
-
-In Figure \ref{plots:dE-E}, we plot energy loss fraction $\Delta E/E$ for elastic process (first row) and inelastic process (second row) as function of $E$ for different path length and temperature.
-The elastic energy loss fraction increases as temperature and decreases for large energy.
-At low energy, the heavy quark starts to gain net energy from the medium as which manifests as $\Delta E < 0$.
-For the case of inelastic energy loss, we study the effect of gluon absorption process by comparing $\Delta E/E$ with radiation process only and with both radiation and absorption processes.
-We find that gluon absorption process does not affect the energy loss at low temperature or high energy heavy quark as expected.
-For high temperature such as $T=0.6$ GeV and energy below $10$ GeV, the gluon absorption process makes a notable difference.
-Radiation process always leads to a positive average energy loss, but with absorption process, heavy quarks with very low energy actually on average gain energy from the medium.
-
-In Figure \ref{plots:dE-L}, we show the path length dependence of the two energy loss mechanism.
+In the second row of Figure \ref{plots:dEE}, we show the path length dependence of the two energy loss mechanism.
 Here, we plot the energy loss fraction per unit length, with length measured in units of inverse temperature.
-The key observation is that elastic energy loss per unit length is a constant while for inelastic energy loss, this quantity first increases from zero for small path length and then gradually approaching a limit for large path length, showing a different medium size dependence of energy loss from the elastic process.
-The non-linear path length dependence $\Delta E \propto L^2$ is actually a characteristic behavior of the coherence effect in a finite length medium [CITE]. 
-In our effective implementation of LPM, this behavior arises because gluon radiation with
-\begin{eqnarray}
-\tau_f \ll L.
-\end{eqnarray}
-is suppressed, and therefore the inelastic energy loss for a thin medium is very small.
-As $L$ increases, a high energy heavy quark could have radiated gluons with formation time $\tau_f$ multiples times $N \propto L/\tau_f$ where each radiation carries off a typical amount of energy. 
-As a result the energy loss grows again linearly with path length.
+The key observation is that elastic energy loss increases linearly with path length but inelastic energy loss increases non-linearly for small path length and then transits to a linear increase at large path length. 
+The non-linear $L-$dependent energy loss is actually a characteristic behavior of the coherence effect in a finite length medium. 
+In our effective implementation of the LPM effect, this arises because the gluon radiation with $\tau_f \sim k/T^2 \gg L$ is suppressed.
+Therefore for a thin medium, the phase space for gluon radiation is very restricted $k < LT^2$, which is the typical amount of energy heavy quark loses per radiation.
+Multiplied by an estimated of number of collisions $N \propto LT$ the inelastic energy loss scales as $\Delta E \sim L^2T^3$.
+On the other hand, for a long path length, a energy heavy quark could have radiated gluons multiple times $N \propto L/\tau_f$ and each time the radiation carries off a typical amount of energy. 
+In this region, the inelastic energy loss rises linearly with $L$.
+What we see in the simulation is a behavior that interpolates between these two limits.
 
-Finally, for our study in a static medium, we calculate the $R_{AA}$ of charm and bottom quark in a medium $T=0.4$ GeV after evolving $3$ fm/c.
-Here we initialize the charm quark spectra with the parametrization provided by [cite].
-The heavy quarks looses a significant amount of energy in this static medium setup.
-Again, we see that the gluon absorption process only affects $R_{AA}$ for relatively low momentum $p_T < 10$ GeV.
-The mass plays an important role in the intermediate $p_T$ region.
-
+Finally, we calculate the $R_{AA}$ of charm and bottom quark in a static medium $T=0.4$ GeV after evolving for $3$ fm/c.
+The initial spectra of the charm and bottom are parametrized as the one showed in [cite].
+This simplified setup is far from realistic to compare to experimental measured $R_{AA}$, but is intended for comparison with other models.
+In Figure \ref{plots:BoxRaa} we showed both $R_{AA}$ of charm and bottom with or without turning on the gluon absorption process. 
+Again, we see that the absorption process only affects observables for relatively low momentum $p_T < 10$ GeV.
+The mass plays an important role in the intermediate $p_T$ region, where a clear separation between charm and bottom $R_{AA}$.
+The mass effect is neither important at high energy where $p_T$ is the only relevant scale or low $p_T$ when $M (\gg p_T, T)$ becomes the only relevant scale. 
 
 \section{Calibration of the model at LHC using Bayesian analysis}\label{section:calibration}
 This hybrid transport model contains three parameters right now ($\mu$ for scattering component and $A$ and $B$ for diffusion component).
@@ -438,11 +432,16 @@ The calculation of heavy flavor observables requires a multi-stage modeling incl
 \item HQ energy loss in the hadronic phase.
 \end{itemize}
 
+\begin{figure*}
+\includegraphics[width=.49\textwidth]{observables_design.pdf}
+\includegraphics[width=.49\textwidth]{observables_posterior.pdf}
+\caption{...}\label{plots:deisgn_posterior_obs}
+\end{figure*}
 
-\begin{figure}
-\includegraphics[width=\columnwidth]{baseline.pdf}
-\caption{...}\label{plots:baseline}
-\end{figure}
+%\begin{figure}
+%\includegraphics[width=\columnwidth]{baseline.pdf}
+%\caption{...}\label{plots:baseline}
+%\end{figure}
 
 \begin{figure}
 \includegraphics[width=\columnwidth]{qhat_p_T.pdf}
@@ -455,26 +454,21 @@ The calculation of heavy flavor observables requires a multi-stage modeling incl
 \end{figure}
 
 
-\begin{figure*}
-\includegraphics[width=.49\textwidth]{observables_design.pdf}
-\includegraphics[width=.49\textwidth]{observables_posterior.pdf}
-\caption{...}\label{plots:deisgn_posterior_obs}
-\end{figure*}
+\section{Prediction}\label{section:prediction}
 
 
-\section{Calibration of the model at LHC using Bayesian analysis}\label{section:prediction}
+
+\section{Conclusion}\label{section:conclusion}
 
 \begin{figure*}
 \includegraphics[width=\textwidth]{posterior.pdf}
 \caption{...}\label{plots:posterior}
 \end{figure*}
+
 \begin{figure*}
 \includegraphics[width=\textwidth]{find_map.pdf}
 \caption{...}\label{plots:posterior}
 \end{figure*}
-
-\section{Conclusion}\label{section:conclusion}
-
 
 \begin{appendices}
 \section{Running coupling}
@@ -490,32 +484,6 @@ Inside a medium, the temperature $T$ defines the medium scale, it is used as a l
 $\mu$ the only parameter we tuned in the scattering component of the hybrid model.
 For elastic scattering, $Q^2$ is chosen as the momentum exchange squared for $s,t,u$ channel.
 For the gluon emission / absorption vertex, we choose $Q^2 = k_\perp^2$.
-
-
-\section{Matrix elements}
-\label{appendix:matrix-element}
-\begin{widetext}
-\begin{eqnarray}
-\overline{|M_{Q+q\rightarrow Q+q}|^2} &=& \frac{64\pi^2}{9}\alpha_s^2 \frac{(u-M^2)^2 + (s-M^2)^2 + 2 M^2 t}{(t-m_D^2)^2}
-\end{eqnarray}
-\begin{eqnarray}
-\overline{|M_{Q+g\rightarrow Q+g}|^2} &=& \pi^2 \left\{
-32\alpha_s^2 \frac{(s-M^2)(-u+M^2)}{(t-m_D^2)^2} \right. \\ \nonumber
-&+&\frac{64}{9}\alpha_s^2 \frac{(s-M^2)(-u+M^2)+2M*2(s-M^2) + 4M^4}{(s-M^2+m_D^2)^2} \\ \nonumber
-&+&\frac{64}{9}\alpha_s^2 \frac{(s-M^2)(-u+M^2)+2M*2(u-M^2) + 4M^4}{(-u+M^2+m_D^2)^2} \\ \nonumber
-&+&\frac{16}{9}\alpha_s^2 \frac{M^2(4M^2 - t)}{(-u+M^2+m_D^2)(s-M^2+m_D^2)} \\ \nonumber
-&+& 16 \alpha_s^2 \frac{(s-M^2)(-u+M^2)+M^2(s-u)}{(t-m_D^2)(s-M^2+m_D^2)} \\ \nonumber
-&-& \left. 16 \alpha_s^2 \frac{(s-M^2)(-u+M^2)-M^2(s-u)}{(t-m_D^2)(-u+M^2+m_D^2)}\right\} 
-\end{eqnarray}
-\begin{eqnarray}
-\frac{\overline{|M_{Q+q\rightarrow Q+q+g}|^2}}{\overline{|M_{Q+q\rightarrow Q+q}|^2}} &=&  \frac{\overline{|M_{Q+g\rightarrow Q+g+g}|^2}}{\overline{|M_{Q+g\rightarrow Q+g, \textrm{t-channel}}|^2}} = P_g
-\end{eqnarray}
-\begin{eqnarray}
-P_g = 48 \pi \alpha_s (1-\bar{x})^2 \left(\frac{\vec{k}_\perp}{k_\perp^2 + x^2 M^2 + (1-\bar{x})\mu^2} 
-+ \frac{\vec{q}_\perp - \vec{k}_\perp}{(\vec{q}_\perp-\vec{k}_\perp)^2 + x^2 M^2 + (1-\bar{x})\mu^2}
-\right)^2 
-\end{eqnarray}
-\end{widetext}
 
 \section{Evolution with both scattering and diffusion dynamics}
 With a transport $\hat{T} = -v\cdot \partial_x$, a scattering $\hat{C}$, and a diffusion $\hat{D}$ operator in the hybrid transport equation,
@@ -553,6 +521,8 @@ Therefore, we design the following simulation procedure.
 \end{itemize}
 \end{itemize}
 
+
+
 \section{Calculation of $v_n\{2\}$ and $v_2\{EP\}$}
 Cumulant method correlates a heavy meson with a light particle to estimate $v_n$. 
 \begin{eqnarray}
@@ -560,5 +530,30 @@ v_n\{2\} &=& \frac{d_n\{2\}}{\sqrt{c_n\{2\}} } \\
 d_n\{2\} &=& \left\langle \frac{\Re\{pQ^*\}}{mM} \right\rangle_{w = mM} \\
 c_n\{2\} &=& \left\langle \frac{|Q|^2-M}{M(M-1)} \right\rangle_{w = M(M-1)}
 \end{eqnarray}
+
+\section{Matrix elements}
+\label{appendix:matrix-element}
+\begin{widetext}
+\begin{eqnarray}
+\overline{|M_{Q+q\rightarrow Q+q}|^2} &=& \frac{64\pi^2}{9}\alpha_s^2 \frac{(u-M^2)^2 + (s-M^2)^2 + 2 M^2 t}{t^2}
+\end{eqnarray}
+\begin{eqnarray}
+\overline{|M_{Q+g\rightarrow Q+g}|^2} &=& \pi^2 \left\{
+32\alpha_s^2 \frac{(s-M^2)(-u+M^2)}{t^2} \right.
++\frac{64}{9}\alpha_s^2 \frac{(s-M^2)(-u+M^2)+2M^2(s+M^2)}{(s-M^2)^2} \\ \nonumber
+&+&\frac{64}{9}\alpha_s^2 \frac{(s-M^2)(-u+M^2)+2M^2(u+M^2)}{(-u+M^2)^2} + \frac{16}{9}\alpha_s^2 \frac{M^2(4M^2 - t)}{(-u+M^2+m_D^2)(s-M^2)} \\ \nonumber
+&+& 16 \alpha_s^2 \frac{(s-M^2)(-u+M^2)+M^2(s-u)}{t(s-M^2)} - \left. 16 \alpha_s^2 \frac{(s-M^2)(-u+M^2)-M^2(s-u)}{t(-u+M^2)}\right\} 
+\end{eqnarray}
+\begin{eqnarray}
+\frac{\overline{|M_{Q+q\rightarrow Q+q+g}|^2}}{\overline{|M_{Q+q\rightarrow Q+q}|^2}} &=&  \frac{\overline{|M_{Q+g\rightarrow Q+g+g}|^2}}{\overline{|M_{Q+g\rightarrow Q+g, \textrm{t-channel}}|^2}} = P_g
+\end{eqnarray}
+\begin{eqnarray}
+P_g = 48 \pi \alpha_s (1-\bar{x})^2 \left(\frac{\vec{k}_\perp}{k_\perp^2 + x^2 M^2 + (1-\bar{x})\mu^2} 
++ \frac{\vec{q}_\perp - \vec{k}_\perp}{(\vec{q}_\perp-\vec{k}_\perp)^2 + x^2 M^2 + (1-\bar{x})\mu^2}
+\right)^2 
+\end{eqnarray}
+\end{widetext}
+
 \end{appendices}
 \end{document}
+
