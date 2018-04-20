@@ -420,56 +420,209 @@ The mass plays an important role in the intermediate $p_T$ region, where a clear
 The mass effect is neither important at high energy where $p_T$ is the only relevant scale or low $p_T$ when $M (\gg p_T, T)$ becomes the only relevant scale. 
 
 \section{Calibration of the model at LHC using Bayesian analysis}\label{section:calibration}
-This hybrid transport model contains three parameters right now ($\mu$ for scattering component and $A$ and $B$ for diffusion component).
-By systematic comparison to experimental measurements of heavy-flavors in AA collisions, one can extract the these parameters with uncertainties.
-The calculation of heavy flavor observables requires a multi-stage modeling including
+In this section, we couple the heavy quark transport model in a realistic event-by-event medium evolution and extract the transport model parameters  from a Bayesian model-to-data comparison.
+The medium evolution model consists of multiple stages,
 \begin{itemize}
-\item The soft medium production and evolution modeling.
-\item Initial production spectra of heavy quarks (HQ).
-\item HQ energy loss in the pre-equilibrium stage.
-\item HQ energy loss in the quark-gluon plasma phase.
-\item HQ hadronization.
-\item HQ energy loss in the hadronic phase.
+\item[1.] The TRENTo model generates event-by-event initial condition at time $\tau = 0^+$. 
+\item[2.] A collision-less Boltzmann equation (freestreaming) models the pre-equilibrium stage before the onset of hydrodyanmics expansion.
+\item[3.] The 2+1D relativistic viscous hydrodynamics evolves the QGP with a lattice equation of state.
+\item[4.] Finally, hadrons sampled from hydrodynamic energy momentum tensors rescatter and decay in the Ultra-Relativistic Quantum Molecular Dynamics (UrQMD) model.
 \end{itemize}
+The parameters of this bulk event generator (public available) have already been calibrated to reproduce a vast of bulk observables at the LHC energies, providing a description of bulk evolution with unprecedented precision.
+On the heavy quark transport side, we initialize heavy quark ensembles with the momenta sampled from FONLL calculation using either EPPS or nCTEQ15np nuclear parton distribution function. 
+The position of the hard production vertices at $\tau = 0^+$ are sampled from TRENTo binary collision density to correlate with hot-spots of  underlying event. 
+During the pre-equilibrium stage the heavy quark should already start to interact with medium.
+However, the system is still far from both kinetic and chemical equilibrium.
+To get a handle on the effect of pre-equilibrium energy loss on heavy quark, we choose to define the meidum flow velocities and energy density from the pre-equilibrium energy-momentum tensor by Landau macthing and further convert the energy density to a temperature using a 3-flavor conformal QCD equation of state. 
+Heavy quarks are allowed to loose energy starting from a tunable energy-loss onset time $0.1\textrm{ fm/c} < \tau_0 < \tau_{\textrm{fs}}$. 
+With a small $\tau_0$, this correspond to a fast generate of degrees of freedom in the medium that can collide with heavy quarks at very early time, and with a large $\tau_0$ the pre-equilibrium effects gradually turns off.
+This is of course a very simple and crude setup, we are looking for more sophisticated models to treat pre-equilibrium stage energy loss.
+During the hydrodynamic expansion stage, the time evolution of the flow velocities and temperature are provided by the 2+1D viscous hydro dynamics with boost-invariance in the beam direction.
+The heavy quarks then hadronize in a sudden-approximation at $T = 154$ MeV.
+Both the fragmentation and the recombination mechanisms are included. 
+The bottomed mesons cease to interact at this point in our model, but the charmed mesons are included in the UrQMD afterburner with $\pi$-D and $\rho$-D cross-sections.
 
+We summarize the model parameters in the heavy flavor sector,
+\begin{itemize}
+\item[1.] $\tau_0$ the time at which heavy quark energy loss starts, varies between $0.1$ fm/c to $1.0$ fm/c.
+\item[2.] $\mu$, the medium energy scale parameter that appears in the running coupling constant of the scattering component, varies from $\pi/3$ to $4\pi$.
+\item[3.] $\kappa_D$, the strength of momentum diffusion at $ET = 1 \textrm{GeV}^2$, range from $0$ to $8$.
+\item[4.] $x_D$, the fraction of the momentum diffusion that is energy independent, ranges from $0$ to $1$.
+\end{itemize}
+An additional variable factor is the nuclear parton distribution function.
+The nuclear PDF often comes with large uncertainty in the shadowing region which is relevant a the LHC energies.
+However, it is hard to parametrize its uncertainty in our study as other parameters.
+Instead, we choose to use the center values of two different sets of nuclear PDF, namely the EPPS set and the nCTEQ16np set and perform calibrations using both to demonstrate the sensitivity of the parameter extraction on the nuclear PDF uncertainty.
+The difference between the two can to some extent reflects the uncertainties in our understanding of the nuclear shadowing effects.
+
+The calibration of multiple parameters of a computationally time-consuming model is solved by the Bayesian model-to-data comparison framework developed in our group.
+Here, we briefly introduce the idea of this Bayesian technique and key terminologies to be used later.
+For more details, one can to the thesis work [] for an exhaustive study and to previous works [] for applications to bulk evolution and to heavy quark sector using an radiation improved Langevin transport model.
+Given a model whose prediction ${\bf y}$ depends on a vector of input parameters ${\bf p}$ and the experimental data ${\bf y}_\textrm{exp}$, 
+the probability distribution of the {\it true} model parameters ${\bf p^*}$ is given by the Baye's theorem, 
+\begin{eqnarray}\label{eq:Bayes}
+\textrm{Posterior}({\bf p^*}|{\bf y}_\textrm{exp}, M) &\propto& \textrm{Likelihood}({\bf y}_\textrm{exp}|{\bf p^*}, M) \nonumber \\ &\times& \textrm{Prior}({\bf p^*}).
+\end{eqnarray}
+The posterior probability distribution of the ${\bf p^*}$ given certain model $M$ and data, equals the probability $L$ of observing data given model and parameters ${\bf p^*}$, called likelihood function, times a prior belief on the distribution of ${\bf p^*}$.
+The likelihood function is often defined in a Gaussian form in terms of the difference between model calculation and experimental data and a covariance matrix that encodes experimental and theory uncertainty,
+\begin{eqnarray}\label{eq:likelihood}
+\ln(L) &=& -\frac{1}{2}({\bf y}-{\bf y}_{\textrm{exp}})^T\Sigma^{-1} ({\bf y}-{\bf y}_{\textrm{exp}})\nonumber\\ 
+		&-&\frac{d}{2}\ln(2\pi)-\frac{1}{2}\ln|\Sigma|.
+\end{eqnarray}
+Once we have the ability to evaluate model output given arbitrary parameters within a reasonable range, the information of parameters constrained by data follows from Equations \ref{eq:Bayes} and \ref{eq:likelihood}.
+And this high-dimensional posterior probability distribution function can be studied by a Markov-chain Monte Carlo (MCMC) sampling procedure.
+The difficulty for applying this directly event-by-event heavy-ion collision simulation are that the model itself is computationally heavy and that one needs to averaged over a lot of random events to get statistical error of calculation under control.
+Therefore, it is unpractical to evaluate the model output at arbitrary points in the parameter space in during the MCMC sampling.
+The solution is to use advanced sampling technique to sample O(100) design parameter sets in the parameter space and calculate the corresponding model outputs.
+Then, use a Gaussian process emulator to fast interpolate the model outputs with estimated uncertainty at arbitrary point in the parameter space.
+\begin{center}
+\begin{table}[h]
+\caption{ALICE dataset}\label{table:ALICE-obs} 
+\begin{tabularx}{\columnwidth}{Xl}
+\hline 
+ Observables & Centrality \\ 
+\hline 
+D-meson $v_2$ & 30-50\% \\ 
+Event-engineered D-meson $v_2$ & 30-50\% \\ 
+D-meson $R_{AA}$ & 0-10\% 30-50\% 50-80\% \\
+\hline 
+\end{tabularx}
+\end{table}
+\begin{table}[h]
+\caption{CMS dataset}\label{table:CMS-obs} 
+\begin{tabularx}{\columnwidth}{Xl}
+\hline 
+Observables & Centrality \\ 
+\hline 
+D${}^0$-meson $v_2$ & 0-10\%, 10-30\%, 30-50\% \\ 
+D${}^0$-meson $R_{AA}$ & 0-10\%, 0-100\% \\ 
+B${}^{\pm}$-meson $R_{AA}$ & 0-100\% \\ 
+\hline 
+\end{tabularx}
+\end{table}
+\end{center}
+
+In our study, we sampled 80 design points in the four dimensional parameter space $(\tau_0, \mu, \kappa_D, x_D)$.
+For each parameter set, we ran 4000 minimum biased event.
+Each event propagates an ensemble of $4\times 10^4$ charm quarks and $10^4$ bottom quarks as described above.
+The centrality is defined by mid-rapidity charged particle yield and the same kinematic cuts as experimental measures are applied to the calculation of heavy flavor observables.
+All these observables are measured at 5.02 TeV in Pb+Pb, as listed in Table \ref{table:ALICE-obs} and \ref{table:CMS-obs} and here are a few remarks on our choice.
+Most of these data are for D-meson and in additional to the $R_{AA}$ and $v_2$ that one usually fit to. 
+We also compare to the event-engineered D-meson flow being measured at ALICE.
+The idea of the event-engineering is to subdivide events in a certain centrality according to the magnitude of charged particle $q$-vector, in this case,
+\begin{eqnarray}
+|q_2|^2 = \frac{\left(\sum_{i=1}^{M} \cos(2\phi) \right)^2+ \left(\sum_{i=1}^{M} \sin(2\phi) \right)^2}{M}
+\end{eqnarray}.
+The D-meson $v_2$ is measured for those events with $20\%$ highest $q_2$ and events with $60\%$ lowest $q_2$.
+It is found that D-meson flow is strongly correlated with this measure of bulk collectivity.
+This event-engineering procedure necessitates a full event-by-event study and may be sensitive to the interplay between heavy quark energy loss and initial condition fluctuation, so we include it as an observable to calibrate on.
+Finally to investigate if the model predicts the correct mass-dependence, we include recent CMS measurements of $B^{\pm}$-meson $R_{AA}$, although the data has a large uncertainty which decreases its importance in the likelihood function.
 \begin{figure*}
 \includegraphics[width=.49\textwidth]{observables_design.pdf}
 \includegraphics[width=.49\textwidth]{observables_posterior.pdf}
 \caption{...}\label{plots:deisgn_posterior_obs}
 \end{figure*}
 
-%\begin{figure}
-%\includegraphics[width=\columnwidth]{baseline.pdf}
-%\caption{...}\label{plots:baseline}
-%\end{figure}
+On the left of Figure \ref{plots:deisgn_posterior_obs}, we show the prior range of our calculations for each of the listed observables. 
+We use different colors to distinguish calculations using EPPS (blue) and
+nCTEQnp (green) nuclear PDF.
+The calculated $R_{AA}$ at high transverse momenta and $v_2$ at low transverse momenta are spread enough to cover the experimental data.
+We noticed that our model are always below data points for the very low-$p_T$ ALICE $R_{AA}$ and 30-50\% high-$p_T$ CMS $v_2$.
+This could be limitations of our model, such as the need of more sophisticated implementation of LPM effect and more accurate calculation of low-$p_T$ charm quark production. 
+Plots on the right of Figure \ref{plots:deisgn_posterior_obs} show the posterior distribution of the observables from model emulators.
+The calibrated model displays a very good overall fit to all the observables except for the limitations pointed out above.
+The use of different nuclear PDF makes negligible difference for azimuthal anisotropy, but does affect the shape of $R_{AA}$.
+Calculations with EPPS nuclear PDF works very well for $p_T < 50$ GeV, while calculations with nCTEQnp does better at describing very high $p_T$ CMS data.
+The calculated event-engineered flow also shows strong correlation with charged particle $|q_2|$ and describes the lowest 60\% $q_2$ bin very well.
+For the highest 20\% $q_2$ bin, model posterior is consistent with measurements below $5$ GeV and underestimates the data at higher $p_T$ bins.
 
+\begin{figure}
+\includegraphics[width=.5\textwidth]{posterior.pdf}
+\caption{...}\label{plots:posterior}
+\end{figure}
+
+The posterior probability distribution of the parameters are marginalized to single parameter distribution (diagonal) and two-parameter joint distribution (off-diagonal) in Figure \ref{plots:posterior}.
+The lower off-diagonal plots and blue lines in the diagonal plots correspond to the extraction using EPPS nuclear PDF, and the off-diagonal plots abd green lines in the diagonal plots uses nCTEQ15np nuclear PDF.
+Despite the difference in $R_{AA}$ when different nuclear PDFs are used, the extracted probability distribution of parameters are similar.
+To describe LHC data, the model prefers a late onset of medium induced energy loss and a medium energy scale roughly around $0.6\pi T$, which means the largest coupling constant at certain temperature is $\alpha_s \sim \alpha_s(1.8T)$.
+A small but finite amount of momentum diffusion at $ET=1\textrm{ GeV}^2$ is preferred for the diffusion component.
+The smallness of this number is expected because most of the interaction are already taken account by the scattering component with relatively large coupling constant (a small medium scale).
+But this study is not sensitive to the energy / temperature dependence of the diffusion component other than the regular $T^3$ scaling of the momentum diffusion constant.   
+
+To define the total momentum broadening parameter of a heavy quark,
+we combine the contribution from both elastic scatterings and the diffusion component,
+\begin{eqnarray}\label{eq:qhat}
+\frac{\hat{q}}{T^3} &=& \frac{1}{T^3}\frac{d}{dt}\left\langle p_\perp^2 \right\rangle\\
+\nonumber
+ &=&  \kappa_D\left(x_D + (1-x_D)\frac{\textrm{GeV}^2}{ET}\right) + \frac{\hat{q}_{\textrm{el}}}{T^3}.
+\end{eqnarray}
+Where $\hat{q}_{\textrm{el}}$ is obtained by integrating the rate equation with transverse momentum transfer square.
+We shall discuss the inclusion of inelastic process into the calculation $\hat{q}$ in section \ref{section:conclusion}.
+Performing this calculation for many random parameter set samples drawn from the posterior distribution using either nuclear PDF, we estimate the posterior distribution of the functional $\hat{q}(E, T)$ constrained by data.
+On the left of Figure \ref{plots:posterior_qhat}, we showed the 90\% credible region of $\hat{q}$ as function of temperature, fixing heavy quark momenta at $10$ GeV.
+And the right panel the figure shows $\hat{q}$ as function of momenta at $T=0.35$ GeV.
+Our formula is mass dependence and the charm quark $\hat{q}$ (region enclosed by thick red lines and slashes) is slightly different from the bottom quark $\hat{q}$ (region enclosed by thick blue lines).
+Comparing to former work by Yingru et al (green shaded region), who used an improved Langevin model to extract charm quark transport properties at the LHC, the present result is consistent but hits the lower half of the 90\% credible region of the previous extraction.
 \begin{figure}
 \includegraphics[width=\columnwidth]{qhat_p_T.pdf}
 \caption{...}\label{plots:posterior_qhat}
 \end{figure}
+There is also a heavy quark spatial diffusion constant $D_s$ often defined in the limit of $p\ll M$.
+It is related to the momentum diffusion parameter by,
+\begin{eqnarray}
+2\pi T D_s = \frac{8\pi T^3}{\hat{q}(p\rightarrow 0, T)}
+\end{eqnarray}
+In figure \ref{plots:posterior_Ds}, we plotted the 90\% credible region of both charm (region enclosed by red thick lines and slashes) and bottom (region enclosed by blue tick lines) quark spatial diffusion constant as function of $T/T_c$.
+The results of this work is systematically higher than the extraction from the former work (green shaded region).
+The spatial diffusion constant has been calculated from first principal using lattice QCD.
+There are two calculations available, a calculation that assumes static heavy quark (blue symbols with higher values and larger errorbars) and the other calculation for realistic charm quark (red symbols with lower values and smaller errorbars).
+Our posterior in $D_s$ with diffusion component and only elastic channel contribution agrees with the static heavy quark limit lattice evaluation.
+Again, the effect of including inelastic channel in $D_s$ is discussed in the last section.
+
+To summarize this section, we perform a Bayesian calibration on the model parameters. 
+We found a general agreement to the data.
+The extracted parameters indicate a late onset of medium induced heavy quark energy loss and a small by finite diffusion component is preferred.
+The posterior transport coefficient $\hat{q}$ and spatial diffusion constant $D_s$ is calculated and $D_s$ agrees with lattice calculation in the static heavy quark limit. 
 
 \begin{figure}
 \includegraphics[width=\columnwidth]{Ds_posterior.pdf}
 \caption{...}\label{plots:posterior_Ds}
 \end{figure}
 
-
 \section{Prediction}\label{section:prediction}
+We can apply the calibrated model to predict for novel observables.
+\subsection{D-meson $v_3$, and B-meson $v_n$}
+\subsection{D-meson $v_1$}
+D-meson $v_1$ should be vanishing at mid-rapidity if one measures it with respect to an estimated reaction plane.
+But we can correlate $Q_1$ with charged particle $q_3$ to get a non-zero signal at mid-rapidity.
+\begin{eqnarray}
+v_1 = \left\langle \frac{\Re\{q_3 Q_1^*\}}{mM} \right\rangle
+\end{eqnarray}
+This is because when $q_3$ is non-zero, the direction of $q_3$ defines a plane to which the medium evolution is not reflection symmetric and this asymmetry should cause heavy quarks to loose energy differently depending moving along or against the direction of $q_3$.
+Since $q_3$ originates from the triangular initial state fluctuation, a finite signal would be another indicator of D-meson energy loss coupling to initial condition fluctuations and collectivity of bulk evolution.
+Here we showed the resulting $v_1$
 
 
-
-\section{Conclusion}\label{section:conclusion}
-
-\begin{figure*}
-\includegraphics[width=\textwidth]{posterior.pdf}
-\caption{...}\label{plots:posterior}
-\end{figure*}
-
-\begin{figure*}
-\includegraphics[width=\textwidth]{find_map.pdf}
-\caption{...}\label{plots:posterior}
-\end{figure*}
-
+\section{Discussion and Conclusion}\label{section:conclusion}
+Before summarizing this work, we want to discuss more on the definition of $\hat{q}$ in our model.
+In Equation \ref{eq:qhat} for the scattering component, we used only the elastic processes to evaluate $\hat{q}$.
+This is because we have an order-by-order definition of $\hat{q}$ in pQCD.
+In fact, the inelastic processes also contributes a diffusion-like part, but is shown to be one order higher in $\alpha_s$, though it may not be numerically small in realistic case compared to leading order.
+So in the sense of calculate a leading order transport coefficient, it is sufficient to use only elastic channels in Equation \ref{eq:qhat}, and this is also conceptually cleaner to compare with other pQCD based calculations.
+For lattice calculations, the results do not rely on the expansion in $\alpha_s$.
+In that case, to make a reasonable comparison with lattice transport coefficient, we should calculate $\hat{q}$ from the calibrated model including both elastic and inelastic processes in the scattering component.
+Unfortunately, currently there is not any lattice calculation of $\hat{q}$ at finite heavy quark momentum.  
+Lattice $D_s$ do exist with $p \ll M$, but such momenta are too small for our calculation with Gunion-Bertsch matrix-elements to be valid.
+Even so, we would like to show the $\hat{q}$ and $D_s$ with a set of high likelihood parameters that includes the inelastic processes.
+Just like the energy loss showed in Figure \ref{plots:dEE}, the transverse momentum broadening per unit time in the presence of inelastic processes is not a constant a thin static medium.
+Therefore, we setup the Monte Carlo simulation for fixed energy heavy quarks and extract $\hat{q}$ only after the finite path length effect fades away. 
+\begin{figure}
+\includegraphics[width=0.5\textwidth]{qhat_full.pdf}
+\caption{•}\label{plots:transport_full}
+\end{figure}
+Figure \ref{plots:transport_full} compares the $\hat{q}$ at $p=10$ GeV and $D_s$ before and after the elastic processes are turned on.
+The calculation uses a high likelihood parameter set $\mu = 0.6, \kappa_D = 0.4$ and $x_D = 0.5$. 
+We see a 30-40\% increase in $\hat{q}$ and similar amount of decrease in $D_s$ with the inelastic contribution.
 \begin{appendices}
 \section{Running coupling}
 We use the leading order running coupling constant with three flavors of quark,
@@ -533,26 +686,35 @@ c_n\{2\} &=& \left\langle \frac{|Q|^2-M}{M(M-1)} \right\rangle_{w = M(M-1)}
 
 \section{Matrix elements}
 \label{appendix:matrix-element}
-\begin{widetext}
+%\begin{widetext}
 \begin{eqnarray}
-\overline{|M_{Q+q\rightarrow Q+q}|^2} &=& \frac{64\pi^2}{9}\alpha_s^2 \frac{(u-M^2)^2 + (s-M^2)^2 + 2 M^2 t}{t^2}
-\end{eqnarray}
-\begin{eqnarray}
-\overline{|M_{Q+g\rightarrow Q+g}|^2} &=& \pi^2 \left\{
-32\alpha_s^2 \frac{(s-M^2)(-u+M^2)}{t^2} \right.
-+\frac{64}{9}\alpha_s^2 \frac{(s-M^2)(-u+M^2)+2M^2(s+M^2)}{(s-M^2)^2} \\ \nonumber
-&+&\frac{64}{9}\alpha_s^2 \frac{(s-M^2)(-u+M^2)+2M^2(u+M^2)}{(-u+M^2)^2} + \frac{16}{9}\alpha_s^2 \frac{M^2(4M^2 - t)}{(-u+M^2+m_D^2)(s-M^2)} \\ \nonumber
-&+& 16 \alpha_s^2 \frac{(s-M^2)(-u+M^2)+M^2(s-u)}{t(s-M^2)} - \left. 16 \alpha_s^2 \frac{(s-M^2)(-u+M^2)-M^2(s-u)}{t(-u+M^2)}\right\} 
-\end{eqnarray}
-\begin{eqnarray}
-\frac{\overline{|M_{Q+q\rightarrow Q+q+g}|^2}}{\overline{|M_{Q+q\rightarrow Q+q}|^2}} &=&  \frac{\overline{|M_{Q+g\rightarrow Q+g+g}|^2}}{\overline{|M_{Q+g\rightarrow Q+g, \textrm{t-channel}}|^2}} = P_g
-\end{eqnarray}
-\begin{eqnarray}
-P_g = 48 \pi \alpha_s (1-\bar{x})^2 \left(\frac{\vec{k}_\perp}{k_\perp^2 + x^2 M^2 + (1-\bar{x})\mu^2} 
-+ \frac{\vec{q}_\perp - \vec{k}_\perp}{(\vec{q}_\perp-\vec{k}_\perp)^2 + x^2 M^2 + (1-\bar{x})\mu^2}
+\overline{|M_{22,Qq}|^2} &=& \frac{64\pi^2\alpha_s^2}{9} \frac{(M^2-u)^2 + (s-M^2)^2 + 2 M^2 t}{t^2}
+\nonumber
+\\
+\overline{|M_{22,Qg}|^2} &=& \pi^2 \left\{
+32\alpha_s^2 \frac{(s-M^2)(M^2-u)}{t^2} \right.
+\nonumber
+\\
+&+&\frac{64}{9}\alpha_s^2 \frac{(s-M^2)(M^2-u)+2M^2(s+M^2)}{(s-M^2)^2} \nonumber
+\\
+&+&\frac{64}{9}\alpha_s^2 \frac{(s-M^2)(M^2-u)+2M^2(u+M^2)}{(M^2-u)^2} \nonumber
+\\
+&+& \frac{16}{9}\alpha_s^2 \frac{M^2(4M^2 - t)}{(M^2-u)(s-M^2)} 
+\nonumber
+\\
+&+& 16 \alpha_s^2 \frac{(s-M^2)(M^2-u)+M^2(s-u)}{t(s-M^2)}
+\nonumber
+\\
+&-& \left. 16 \alpha_s^2 \frac{(s-M^2)(M^2-u)-M^2(s-u)}{t(M^2u)}\right\}
+\nonumber
+\\
+|M_{2\rightarrow 3}|^2 &=& |M_{2\rightarrow 2}|^2 48 \pi \alpha_s (1-\bar{x})^2
+\nonumber
+\\
+&\times&\left(\frac{\vec{k}_\perp}{k_\perp^2 + x^2 M^2} + \frac{\vec{q}_\perp - \vec{k}_\perp}{(\vec{q}_\perp-\vec{k}_\perp)^2 + x^2 M^2}
 \right)^2 
 \end{eqnarray}
-\end{widetext}
+%\end{widetext}
 
 \end{appendices}
 \end{document}
