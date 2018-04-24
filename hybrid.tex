@@ -49,22 +49,21 @@
 \newcommand{\Pperp}{\hat{P}^{\perp}}
 
 \begin{abstract}
-Current observation of open charm in heavy-ion collisions shows unexpectedly large momentum anisotropy and small nuclear modification factor, posing a challenge to the theoretical understanding of the nature of coupling between heavy quark and the medium.
-Linear Boltzmann transport and Langevin diffusion are two popular kinetic models for heavy quark in-medium propagation.
-In this work, we develop a hybrid heavy quark transport model that combines the strengths of both: 
-heavy quarks are evolved with Langevin diffusion using an empirical diffusion constant and scattering processes treated linear Boltzmann equations with perturbative matrix elements.
-The Langevin component is a complementary contribution to the linear Boltzmann equation when perturbative scattering is inadequate.
-Both elastic and inelastic scatterings are included in the Boltzmann component.
-The Landau-Pomeranchuk-Migdal effect is treated effectively via gluon formation time and detailed balance is imposed between gluon emission and absorption.
-With the hybrid model, we study the heavy flavor momentum anisotropic, nuclear modification factor, and correlation observables in A-A collisions at the RHIC and the LHC energies.
-Comparing to available D and B meson data, we constrain the diffusion constant of the Langevin component.
-
+In relativistic heavy-ion collisions, the heavy flavor production at high transverse momenta are strongly suppressed compared to proton-proton collisions and an unexpected large azimuthal anisotropy was found for charmed meson in non-central collisions. 
+Both observations pose challenges to the theoretical understanding of the coupling between heavy quark and the quark-gluon plasma.
+Linear Boltzmann transport and Langevin transport equations are two popular kinetic models for heavy quark in-medium propagation.
+In this work, we develop a hybrid transport model that combines the strengths of both: 
+heavy quarks scatterings with medium partons through perturbative matrix-elements, while between scatterings heavy quarks are evolved with Langevin equations using an empirical diffusion constant.
+The diffusion constant parametrizes interactions that may be missing in the leading order perturbative scattering picture.
+Both elastic and inelastic processes are included in the scattering component.
+The Landau-Pomeranchuk-Migdal effect is treated effectively via gluon formation time and detailed balance is imposed for inelastic processes between gluon emission and absorption.
+With the hybrid transport model coupled to the state-of-the-art event-by-event bulk evolution generator, we study the heavy flavor azimuthal anisotropy, nuclear modification factor in Pb+Pb collisions at $\sqrt{s} = 5.02$ TeV.
+Model parameters are calibrated in a Bayesian approach by systemaitc comparing to avialable D-meson and B-meson data at the LHC.
+Using the calibrated model, we study the implications on the heavy-flavor transport properties and predict novel observables at the same beam energy.
 \end{abstract}
 
 
 \begin{document}
-
-
 \title{A hybrid heavy quark transport model in a quark-gluon plasma that couples linear Boltzmann equation and Langevin diffusion dynamics}
 \author{Weiyao Ke}
 \author{Yingru Xu}
@@ -76,39 +75,44 @@ Comparing to available D and B meson data, we constrain the diffusion constant o
 \section{Introduction}
 In recent years, Relativistic Heavy-Ion Collider (RHIC) at Brookhaven National Laboratory and later the Large Hadron Collider (LHC) at CERN discovered a new state of matter, namely the strongly coupled quark-gluon plasma (sQGP), in ultra-relativistic heavy-ion collisions.
 Two key signatures in the discoveries of sQGP are the collective flows and the jet quenching.
-The collective flows reveal the surprising fact that the bulk medium of sQGP undergoes a strong collective expansion after being produced and the behaviors can be explained in great details by viscous hydrodynamics with the smallest specific viscosity ($\eta/s$) ever discovered in nature.
-The jet quenching refers to that the yield of high transverse momentum hadrons in nuclear collisions are strongly suppressed compared to the yield in proton proton collision where medium effects should be small.
+The collective flows reveal that the bulk medium of sQGP undergoes a strong collective expansion after being produced.
+The bulk behavior can be surprisingly explained in great details by models using a relativistic viscous hydrodynamics with the smallest specific viscosity ($\eta/s$) ever discovered in nature.
+The jet quenching refers to that the yield of high transverse momentum hadrons in nuclear collisions are strongly suppressed compared to the scaled yield in proton-proton collisions where medium effects are small.
 Calculations have shown that this suppression is a consequences of jet losing energy to the hot, dense and color-deconfined medium. 
+Open heavy flavors (charm and bottom) as probes of sQGP partly belong to the jet observables but are also special due to their large masses and unique flavors.
+Because the temperatures achieved in nowadays experiments are still much smaller than charm and bottom masses, their thermal productions are highly suppressed; 
+therefore the dominant production mechanism is the production through hard processes at very early times of the collision.
+Heavy flavor are rare in heavy ion collisions, so they barely annihilate or recombine with their anti-particles, roughly conserving its number during the life time of the produced sQGP.
+These two features are particular attractive to theorists as heavy quarks experience the full medium evolution and these flavor-tagged particles are much easier to track in the calculations than the evolution of a full jet.
+The mass also sets an additional energy scale to the problem and brings rich physics to the heavy flavor sector.
+In the high transverse momentum region, heavy quarks lose energy mainly through radiative process and this merge to the regime of jet energy loss study;
+in the low transverse momentum region, mass effect delays its thermalization time, providing a window to study the equalibration process.
+Heavy flavors are therefore ideal and unique probes to study the sQGP properties.
 
-Open heavy flavors (charm and bottom) as probes of sQGP partly belong to the jet observables but they are also unique because of the large masses and flavors.
-Since the temperatures achieved in the experiments are still much smaller than charm and bottom masses, their thermal productions are highly suppressed; 
-therefore the dominant production mechanism is production through initial hard process.
-Heavy flavors are rare in heavy ion collisions even at low transverse momentum due to the mass, so they barely annihilate or recombine with their anti-particles, roughly conserving its number during the time-scale of sQGP.
-These two features are particular attractive to theorists as heavy quarks experienced the medium full-time evolution and flavor-tagged particles are much easier to track in the calculations than the evolution of a full jet.
-Finally, the mass sets an additional energy scale to the problem and brings rich physics to the heavy flavor sector.
-In the high transverse momentum region, heavy quarks lose energy mainly through radiative process and this merge into the regime of jet energy loss study;
-in the low momentum region, mass effect delays its thermalization time, providing a window to study the equilibration process.
-Heavy flavors are therefore an ideal and unique probe to study the sQGP properties.
-
-The in-medium propagation of heavy flavors is often studied in a kinetic approach that is linearized with respect to heavy quark distribution function. 
-This linearization means any back reactions from heavy quark to the medium are neglected.
+The in-medium propagation of heavy flavors is often studied in a kinetic approach that is linearized with respect to heavy quark distribution function and the medium particle distribution function are assumed to be thermal obtained from hydrodynamical models.
+The linearization means any back reactions from heavy quark to the medium are neglected.
 Linearized Boltzmann transport equation and Langevin equation are both widely used linearized models but focus on different levels of description of the interaction.
-The linearized Boltzmsport equation is built on elementary scattering processes that can be directly related to fundamental calculations.
-In principal, perturbative-QCD (pQCD) can predict the cross-section of these elementary scatterings.
+The linearized Boltzman transport equation is built on elementary scattering processes that can be directly related to fundamental calculations.
+In principal, perturbative Quantum-Chromodynamics (pQCD) can predict the cross-section of these elementary scatterings.
 However, these calculation in the presence of a medium is extremely complicated even at leading order.
-Also, the pQCD processes are often plagued by soft divergence that need to be regulated by a medium scale proportional to the temperature, but with current collision energies the relevent temperature scale is not high enough that brings large ambiguity to pQCD calculation through the scale dependence of the strong coupling constant $\alpha_s(\mu T)$.
+Also, the pQCD processes are often plagued by soft divergence that need to be regulated by a medium scale of the order of temperature, but with current collision energies the relevant temperature scale is not high enough that brings large ambiguity to pQCD calculation through the scale dependence of the strong coupling constant $\alpha_s$.
 The Langevin equation takes a different perspective. 
 It assumes that heavy quark receives frequent but soft momentum kicks from the medium, then a statistical description in terms of "drag" and "diffusion" coefficients of the interaction is possible.
-These transport coefficients encode the first and second momentums of the momentum exchange rate but are agnostic to further details of the elementary processes.
-One can again evaluate these transport coefficients from first principals, but for us focusing on learning these properties from experiment data, it is the vast flexibility to parametrize these quantities that the Langevin equation is most useful.
-Of course, in this way it is not clear how to establish a direct relation between the extracted values and a more fundamental understanding.
+These transport coefficients encode the first and second moments of the momentum-exchanging rate but are agnostic to further details of the elementary processes and medium properties.
+There are efforts that evaluate these transport coefficients from first principals, but for our purposes to understand these properties from experiment data, it is the vast flexibility to parametrize the transport coeffiecents that the Langevin equation is most useful.
+Of course once we learn these transport coefficients from experiments, it is not clear how to establish a direct relation between the extracted values and a more fundamental understanding.
 In this work, we would like to combine the strengths of both approaches
-and we have developed a hybrid heavy quark transport model described as follows.
-The heavy quark scatters off medium particles in a linear Boltzmann equations with pQCD matrix elements (the scattering component), and between scatterings heavy quark is propagated by a Langevin equation (the diffusion component) with empirical transport coefficient mimicing the interaction missing from the above scattering picture.
-Both elastic and inelastic scatterings are included in the scattering component with soft divergence screened by a Debye mass $m_D^2 \sim \alpha_s T^2$ and Landau-Pomeranchuk-Migdal (LPM) effect taken into account effectively.
-The renormalization scale $\mu$ is the only parameter in the scattering component and the diffusion component has several parameters which carries an implicit dependence on $\mu$ once we tuned the model to data.
-The effect of small momentum transfer scatterings that may suffer too much from the scale ambiguity is assumed to be compensated by the diffusion component. 
-In addition, the diffusion component may conceptually receive other diffusion-like contributions such as non-perturbative effects.
+and develop a hybrid heavy quark transport model.
+In the hybrid model, the heavy quark scatters off medium particles in a linear Boltzmann equations with pQCD matrix elements (the scattering component), and between scatterings heavy quark is propagated by a Langevin equation (the diffusion component) with empirical transport coefficient mimicing the interaction missing from the above scattering picture.
+Both elastic and inelastic scatterings are included in the scattering component with soft divergence screened by a Debye mass $m_D$ and Landau-Pomeranchuk-Migdal (LPM) effect taken into account effectively.
+The scattering process inside a medium is a multi-scale problem that includes at least a momentum transfer scale $Q$ and a medium scale that is proportional to the temperature $\mu T$.
+The QCD strong coupling constant has a scale dependence that we choose to be the maximum of $Q$ and $\mu T$, which means the typical scale of an in-medium process is cut-off by the medium scale.
+The details of the running coupling constant we utilized can be found in Appendix \ref{appendix:alphas}.
+The medium scale parameter $\mu$ is the only parameter in the scattering component and we assume it encodes the uncertainty in the pQCD matrix-element approach in our models.
+The diffusion component can several parameters depending on the way we parametrizes the drag and diffusion coefficients. 
+The idea is to absorb any diffusion-like interaction that is missing from leading order pQCD scatterings into these coefficients.
+For example, the diffusion component may include non-perturbative effects.
+Also, the effect of small momentum transfer scatterings that may suffer too much from the scale ambiguity is assumed to be compensated by the diffusion component; therefore, the parameters will be correlated with $\mu$ once we tuned the hybrid model to data.
 We have noticed that a rigorous separation of matrix-element scattering and diffusion has been proposed for the study of jet energy loss up to next-to-leading order within the context of pQCD.
 In our study, we don't require the content of the diffusion component to be pQCD in nature.
 In fact, we can understand this hybrid approach in the following way, given that a major part of the heavy quark medium interaction is explained by pQCD, what is still needed for the theory to describe the data is parameterized in diffusion component that can be learned from data.
@@ -552,6 +556,16 @@ A small but finite amount of momentum diffusion at $ET=1\textrm{ GeV}^2$ is pref
 The smallness of this number is expected because most of the interaction are already taken account by the scattering component with relatively large coupling constant (a small medium scale).
 But this study is not sensitive to the energy / temperature dependence of the diffusion component other than the regular $T^3$ scaling of the momentum diffusion constant.   
 
+First, we notice that the preferred medium scale that acts as a minimum energy scale cut-off in $\alpha_s(Q, \mu T)$ is not very large.
+So it is imperative to check the typical $\alpha_s$ in the model to evaluate the the use of perturbative matrix-elements.
+Here we evaluate the strong coupling constant at two process scales $Q=0$ and $Q=m_D$ in Figure \ref{plots:alphas}.
+In the case of $Q=0$ (left), the energy scale is cut off by $\mu T$ and this plot show the maximum of model coupling constant at a given temperature.
+Put $Q=m_D$ (right) as a proxy for the typical momentum transfer in the $t-$channel scattering, the coupling constant rises slower as temperature drops down.
+It turns out in order to describe experimental data, the preferred coupling constant is fairly large suggesting next-to-leading (NLO) order correction to the present scattering picture should be prominent.
+One may even question the use of a perturbative expansion with such large coupling.
+It would be interesting to study if a calibration with NLO level processes would result in a better control of the coupling constant in the medium.
+
+Next, we investigate the transport coefficients of the calibrated model.
 To define the total momentum broadening parameter of a heavy quark,
 we combine the contribution from both elastic scatterings and the diffusion component,
 \begin{eqnarray}\label{eq:qhat}
@@ -565,7 +579,7 @@ Performing this calculation for many random parameter set samples drawn from the
 On the left of Figure \ref{plots:posterior_qhat}, we showed the 90\% credible region of $\hat{q}$ as function of temperature, fixing heavy quark momenta at $10$ GeV.
 And the right panel the figure shows $\hat{q}$ as function of momenta at $T=0.35$ GeV.
 Our formula is mass dependence and the charm quark $\hat{q}$ (region enclosed by thick red lines and slashes) is slightly different from the bottom quark $\hat{q}$ (region enclosed by thick blue lines).
-Comparing to former work by Yingru et al (green shaded region), who used an improved Langevin model to extract charm quark transport properties at the LHC, the present result is consistent but hits the lower half of the 90\% credible region of the previous extraction.
+Comparing to former work by Yingru et al (shaded region), who used an improved Langevin model to extract charm quark transport properties at the LHC, the present result is consistent but hits the lower half of the 90\% credible region of the previous extraction.
 \begin{figure}
 \includegraphics[width=\columnwidth]{qhat_p_T.pdf}
 \caption{...}\label{plots:posterior_qhat}
@@ -576,7 +590,7 @@ It is related to the momentum diffusion parameter by,
 2\pi T D_s = \frac{8\pi T^3}{\hat{q}(p\rightarrow 0, T)}
 \end{eqnarray}
 In figure \ref{plots:posterior_Ds}, we plotted the 90\% credible region of both charm (region enclosed by red thick lines and slashes) and bottom (region enclosed by blue tick lines) quark spatial diffusion constant as function of $T/T_c$.
-The results of this work is systematically higher than the extraction from the former work (green shaded region).
+The results of this work is systematically higher than the extraction from the former work (shaded region).
 The spatial diffusion constant has been calculated from first principal using lattice QCD.
 There are two calculations available, a calculation that assumes static heavy quark (blue symbols with higher values and larger errorbars) and the other calculation for realistic charm quark (red symbols with lower values and smaller errorbars).
 Our posterior in $D_s$ with diffusion component and only elastic channel contribution agrees with the static heavy quark limit lattice evaluation.
@@ -666,6 +680,7 @@ The calculation uses a high likelihood parameter set $\mu = 0.6, \kappa_D = 0.35
 We see a 30-40\% increase in $\hat{q}$ and similar amount of decrease in $D_s$ with the inelastic contribution.
 \begin{appendices}
 \section{Running coupling}
+\label{appendix:alphas}
 We use the leading order running coupling constant with three flavors of quark,
 \begin{eqnarray}
 \alpha_s(Q^2) = \frac{4\pi}{9 \ln\left(Q^2/\Lambda^2\right) }
