@@ -590,9 +590,32 @@ The posterior transport coefficient $\hat{q}$ and spatial diffusion constant $D_
 \end{figure}
 
 \section{Prediction}\label{section:prediction}
-We can apply the calibrated model to predict for novel observables.
+We now apply the calibrated model to predict for novel observables.
+In principal, any parameter sets sampled according to the posterior probability distribution in the high-likelihood region (90\% credible for example) are equally good to make predictions and the resultant differences represent the systematic uncertainties of the prediction.
+For simplicity, we only run a single set of high likelihood parameters listed in Table \ref{table:high-likelihood-parameters} with very high statistics.
+\begin{table}
+\caption{A high-likelihood parameter set}\label{table:high-likelihood-parameters}
+\begin{tabularx}{\columnwidth}{XXXXX}
+\hline
+Parameters & $\tau_0$ [fm/c] & $\mu$ & $\kappa_D$ & $x_D$   \\
+\hline
+Values & 0.85 & 0.6 & 0.35 & 0.5\\
+\hline
+\end{tabularx}
+\end{table} 
 \subsection{D-meson $v_3$, and B-meson $v_n$}
-\subsection{D-meson $v_1$}
+CMS has measured the third harmonics flow of D-meson, showing a non-zero $v_3$ at relatively low transverse momentum that weakly dependents on centrality.
+In the transport model, non-zero heavy-flavor $v_3$ is caused by heavy quarks losing energy to a medium with third order eccentricity from initial condition fluctuations.
+The fluctuation nature of $v_3$ requires averaging over much more events than the calculation of $v_2$ to control the statistical fluctuation.
+As a result, we did not include it in the calibration.
+Now we make a post-prediction of D-meson $v_3$ and real prediction of B-meson $v_n$ in Figure \ref{plots:pred:vn}.
+\begin{figure*}
+\includegraphics[width=\textwidth]{vn.pdf}
+\caption{•}\label{plots:pred:vn}
+\end{figure*}
+The B-meson $v_2$ and $v_3$ is predicted to be similar to D-meson flow for $p_T > 10$ GeV, below which B-meson flow is significantly smaller than D-meson flow.
+Compared to CMS data, the calibrated model reproduces the transverse momentum and centrality dependence of D-meson $v_3$ very well.
+\subsection{Heavy-flavor $v_1$}
 D-meson $v_1$ should be vanishing at mid-rapidity if one measures it with respect to an estimated reaction plane.
 But we can correlate $Q_1$ with charged particle $q_3$ to get a non-zero signal at mid-rapidity.
 \begin{eqnarray}
@@ -600,7 +623,15 @@ v_1 = \left\langle \frac{\Re\{q_3 Q_1^*\}}{mM} \right\rangle
 \end{eqnarray}
 This is because when $q_3$ is non-zero, the direction of $q_3$ defines a plane to which the medium evolution is not reflection symmetric and this asymmetry should cause heavy quarks to loose energy differently depending moving along or against the direction of $q_3$.
 Since $q_3$ originates from the triangular initial state fluctuation, a finite signal would be another indicator of D-meson energy loss coupling to initial condition fluctuations and collectivity of bulk evolution.
-Here we showed the resulting $v_1$
+Here we showed the resulting $v_1$ in Figure \ref{plots:pred:v1}
+\begin{figure}
+\includegraphics[width=0.5\textwidth]{v1.pdf}
+\caption{•}\label{plots:pred:v1}
+\end{figure}
+On the left, we calculate the D-meson direct flow relative to the charged particle $n=3$ event plane as function of centrality, using events from the 80 design parameter sets.
+This quantity is certainly negative for non-central collisions in our model.
+On the right, we predict this quantity as function of centrality using the high likelihood parameter set with ALICE kinematic cuts.
+We expect this D-meson $v_1$ start from 0 in central collisions and decreases to $-4\%$ in peripheral centrality bins $50-80\%$.
 
 
 \section{Discussion and Conclusion}\label{section:conclusion}
