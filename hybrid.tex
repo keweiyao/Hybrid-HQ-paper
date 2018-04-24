@@ -540,7 +540,10 @@ For the highest 20\% $q_2$ bin, model posterior is consistent with measurements 
 \includegraphics[width=.5\textwidth]{posterior.pdf}
 \caption{...}\label{plots:posterior}
 \end{figure}
-
+\begin{figure}
+\includegraphics[width=.5\textwidth]{alpha_s_at_T.pdf}
+\caption{...}\label{plots:alphas}
+\end{figure}
 The posterior probability distribution of the parameters are marginalized to single parameter distribution (diagonal) and two-parameter joint distribution (off-diagonal) in Figure \ref{plots:posterior}.
 The lower off-diagonal plots and blue lines in the diagonal plots correspond to the extraction using EPPS nuclear PDF, and the off-diagonal plots abd green lines in the diagonal plots uses nCTEQ15np nuclear PDF.
 Despite the difference in $R_{AA}$ when different nuclear PDFs are used, the extracted probability distribution of parameters are similar.
@@ -603,16 +606,27 @@ Values & 0.85 & 0.6 & 0.35 & 0.5\\
 \hline
 \end{tabularx}
 \end{table} 
+\subsection{B-meson $R_{AA}$}
+\begin{figure*}
+\includegraphics[width=\textwidth]{raa.pdf}
+\caption{•}\label{plots:pred:raa}
+\end{figure*}
+We first investigate the B-meson nuclear modification factor in a larger $p_T$ range with ALICE kinematic cuts.
+In Figure \ref{plots:pred:raa}, B-meson $R_{AA}$ for 0-10\%, 30-50\%, and 60-80\% centrality is shown and compared to D-meson calculation and experimental data for a reference.
 \subsection{D-meson $v_3$, and B-meson $v_n$}
+\begin{figure*}
+\includegraphics[width=\textwidth]{vn.pdf}
+\caption{•}\label{plots:pred:vn}
+\end{figure*}
+\begin{figure}
+\includegraphics[width=0.5\textwidth]{v1.pdf}
+\caption{•}\label{plots:pred:v1}
+\end{figure}
 CMS has measured the third harmonics flow of D-meson, showing a non-zero $v_3$ at relatively low transverse momentum that weakly dependents on centrality.
 In the transport model, non-zero heavy-flavor $v_3$ is caused by heavy quarks losing energy to a medium with third order eccentricity from initial condition fluctuations.
 The fluctuation nature of $v_3$ requires averaging over much more events than the calculation of $v_2$ to control the statistical fluctuation.
 As a result, we did not include it in the calibration.
 Now we make a post-prediction of D-meson $v_3$ and real prediction of B-meson $v_n$ in Figure \ref{plots:pred:vn}.
-\begin{figure*}
-\includegraphics[width=\textwidth]{vn.pdf}
-\caption{•}\label{plots:pred:vn}
-\end{figure*}
 The B-meson $v_2$ and $v_3$ is predicted to be similar to D-meson flow for $p_T > 10$ GeV, below which B-meson flow is significantly smaller than D-meson flow.
 Compared to CMS data, the calibrated model reproduces the transverse momentum and centrality dependence of D-meson $v_3$ very well.
 \subsection{Heavy-flavor $v_1$}
@@ -624,10 +638,6 @@ v_1 = \left\langle \frac{\Re\{q_3 Q_1^*\}}{mM} \right\rangle
 This is because when $q_3$ is non-zero, the direction of $q_3$ defines a plane to which the medium evolution is not reflection symmetric and this asymmetry should cause heavy quarks to loose energy differently depending moving along or against the direction of $q_3$.
 Since $q_3$ originates from the triangular initial state fluctuation, a finite signal would be another indicator of D-meson energy loss coupling to initial condition fluctuations and collectivity of bulk evolution.
 Here we showed the resulting $v_1$ in Figure \ref{plots:pred:v1}
-\begin{figure}
-\includegraphics[width=0.5\textwidth]{v1.pdf}
-\caption{•}\label{plots:pred:v1}
-\end{figure}
 On the left, we calculate the D-meson direct flow relative to the charged particle $n=3$ event plane as function of centrality, using events from the 80 design parameter sets.
 This quantity is certainly negative for non-central collisions in our model.
 On the right, we predict this quantity as function of centrality using the high likelihood parameter set with ALICE kinematic cuts.
@@ -652,17 +662,8 @@ Therefore, we setup the Monte Carlo simulation for fixed energy heavy quarks and
 \caption{•}\label{plots:transport_full}
 \end{figure}
 Figure \ref{plots:transport_full} compares the $\hat{q}$ at $p=10$ GeV and $D_s$ before and after the elastic processes are turned on.
-The calculation uses a high likelihood parameter set $\mu = 0.6, \kappa_D = 0.4$ and $x_D = 0.5$. 
+The calculation uses a high likelihood parameter set $\mu = 0.6, \kappa_D = 0.35$ and $x_D = 0.5$. 
 We see a 30-40\% increase in $\hat{q}$ and similar amount of decrease in $D_s$ with the inelastic contribution.
-
-In conclusion, we developed a hybrid transport model for heavy quark in quark gluon plasma that include a scattering component using pQCD matrix-element and a diffusion component with empirical diffusion constant to model the residue interaction apart from scattering.
-The model have full detailed balance and LPM effect is included effectively.
-The hybrid model is coupled to a state-of-the-art model of bulk evolution of relativistic heavy-ion model.
-The model parameters are calibrated using ALICE and CMS D-meson and B-meson measurements of Pb+Pb at 5.02 TeV.
-The calibration results prefers a late onset of medium induced energy loss. 
-A relatively large strong coupling constant in the scattering cross-section and a small diffusion component is needed to explain the experimental data.
-
-
 \begin{appendices}
 \section{Running coupling}
 We use the leading order running coupling constant with three flavors of quark,
