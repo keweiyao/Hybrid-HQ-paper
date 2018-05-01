@@ -76,7 +76,7 @@ Using the calibrated model, we study the implications on the heavy-flavor transp
 In recent years, Relativistic Heavy-Ion Collider (RHIC) at Brookhaven National Laboratory and later the Large Hadron Collider (LHC) at CERN discovered a new state of matter, namely the strongly coupled quark-gluon plasma (sQGP), in ultra-relativistic heavy-ion collisions.
 Two key signatures in the discoveries of sQGP are the collective flows and the jet quenching.
 The collective flows reveal that the bulk medium of sQGP undergoes a strong collective expansion after being produced.
-The bulk behavior can be surprisingly explained in great details by models using a relativistic viscous hydrodynamics with the smallest specific viscosity ($\eta/s$) ever discovered in nature.
+The bulk behavior can be surprisingly explained in great details by models using a relativistic viscous hydrodynamics.
 The jet quenching refers to that the yield of high transverse momentum hadrons in nuclear collisions are strongly suppressed compared to the scaled yield in proton-proton collisions where medium effects are small.
 Calculations have shown that this suppression is a consequences of jet losing energy to the hot, dense and color-deconfined medium. 
 Open heavy flavors (charm and bottom) as probes of sQGP partly belong to the jet observables but are also special due to their large masses and unique flavors.
@@ -85,8 +85,8 @@ therefore the dominant production mechanism is the production through hard proce
 Also the number of open heavy flavors are roughly conserved during the life time of QGP evolution, because they are dilute probes and seldom annihilate or recombine with their anti-particles.
 These two features are particular attractive to theorists as heavy quarks experience the full medium evolution and these flavor-tagged particles are much easier to track in the calculations than the evolution of a full jet.
 The mass also sets an additional energy scale to the problem and brings rich physics to the heavy flavor sector.
-In the high transverse momentum region, heavy quarks lose energy mainly through radiative process and this merge to the regime of jet energy loss study;
-in the low transverse momentum region, mass effect delays its thermalization time \cite{Moore:2004tg}, providing a window to study the equalibration process.
+In the high transverse momentum region, heavy quarks lose energy mainly through radiative process and this merge to the regime of jet energy loss study \cite{Wicks:2007am, Djordjevic:2004nq, Xu:2014tda, Kang:2016ofv};
+in the low transverse momentum region, mass effect delays its thermalization time, providing a window to study the equalibration process \cite{Moore:2004tg,Riek:2010fk}.
 Heavy flavors are therefore ideal and unique probes to study the sQGP properties.
 
 The in-medium propagation of heavy flavors is often studied in a kinetic approach that is linearized with respect to heavy quark distribution function and the medium particle distribution function are assumed to be thermal obtained from hydrodynamic models.
@@ -99,7 +99,7 @@ Also, the pQCD processes are often plagued by soft divergence that need to be re
 The Langevin equation takes a different perspective. 
 It assumes that heavy quark receives frequent but soft momentum kicks from the medium, then a statistical description in terms of ``drag" and ``diffusion" coefficients of the interaction is possible.
 These transport coefficients encode the first and second moments of the momentum-exchanging rate but are agnostic to further details of the elementary processes and medium properties.
-There are efforts to calculate these transport coefficients in various approaches including lattice QCD evaluations \cite{Moore:2004tg, Gossiaux:2008jv,He:2012df,Riek:2010fk,Ding:2012sp,Banerjee:2011ra}, but for our purposes to understand these properties from experiment data, it is the vast flexibility to parametrize the transport coefficients that the Langevin equation is most useful and we learn these transport coefficients by fitting experiments.
+There are efforts to calculate these transport coefficients in various approaches including lattice QCD \cite{Moore:2004tg,CaronHuot:2008uh, Gossiaux:2008jv,He:2012df,Riek:2010fk,vanHees:2007me,Scardina:2017ipo,Ding:2012sp,Banerjee:2011ra}, but for our purposes to understand these properties from experiment data, it is the vast flexibility to parametrize the transport coefficients that the Langevin equation is most useful and we learn these transport coefficients by fitting experiments.
 That drawback is vague connection between the fitted phenomenological transport coefficients and a more fundamental understanding of the interaction mechanism.
 In this work, we would like to combine the strengths of both approaches
 and develop a hybrid heavy quark transport model.
@@ -643,7 +643,7 @@ Values & 0.9 & 0.6 & 0.4 & 0.5\\
 \end{table} 
 \begin{figure*}
 \includegraphics[width=\textwidth]{raa.pdf}
-\caption{Calculation of heavy-flavor $R_{AA}$ with the high likelihood parameter set compared to ALICE D-meson Pb+Pb and p+Pb \cite{Abelev:2014hha} measurements. B-meson $R_{AA}$ are predictions.}\label{plots:pred:raa}
+\caption{Calculation of heavy-flavor $R_{AA}$ with the high likelihood parameter set compared to ALICE D-meson Pb+Pb and p+Pb \cite{Abelev:2014hha,Abelev:2014hha} measurements. B-meson $R_{AA}$ are predicted.}\label{plots:pred:raa}
 \end{figure*}
 \begin{figure*}
 \includegraphics[width=\textwidth]{vn.pdf}
@@ -654,19 +654,21 @@ Values & 0.9 & 0.6 & 0.4 & 0.5\\
 \includegraphics[width=0.5\textwidth]{v1pT.pdf}
 \caption{Top row: centrality dependence of D-meson direct flow with respect to $n=3$ event plane. Left: the prior range. Right: prediction using high likelihood parameter set. Bottom left: the transverse momentum dependence of D-meson direct flow with respect to $n=3$ event plane at 30-50\% centrality. Bottom right: a sample trento event. The third order eccentricity would drive a $v_3$. A measurement along the $n=3$ direction, would introduce reflection asymmetry in the heavy quark energy loss.}\label{plots:pred:v1}
 \end{figure}
-We first investigate the B-meson nuclear modification factor in a larger $p_T$ range with ALICE kinematic cuts.
-In Figure \ref{plots:pred:raa}, B-meson $R_{AA}$ for 0-10\%, 30-50\%, and 60-80\% centrality is shown and compared to D-meson calculations and measurements for a reference.
-The mass effect clearly separates B-meson from D-meson $R_{AA}$ in the intermediate $p_T$ range for all three centralities. 
-CMS has measured the third harmonics flow of D-meson, showing a non-zero $v_3$ at relatively low transverse momentum that weakly dependents on centrality.
+We first investigate the nuclear modification factor in a larger $p_T$ range with $|y|<0.5$.
+In Figure \ref{plots:pred:raa} first three plots, B-meson $R_{AA}$ for 0-10\%, 30-50\%, and 60-80\% centrality is shown and compared to D-meson calculations and measurements for a reference.
+The mass effect clearly separates $B$-meson from $D$-meson $R_{AA}$ in the intermediate $p_T$ range. 
+The calculation for $p+Pb$ collisions is shown in the right most plot compared to ALICE measurement of $D$-meson $R_{AA}$ \cite{Abelev:2014hha}.
+The red-dotted line showed the calculation without using shadowing effect for $p$+Pb collision.
+We found calibrated model results in a very good description of the $p+Pb$ minimum biased measurement and shadowing effect is important to understand the low-$p_T$ data.
+
+Next, we validate the calibrated model by comparing to CMS measured $D$-meson $v_3$ and make a prediction for B-meson $v_n$ in Figure \ref{plots:pred:vn}.
 In the transport model, non-zero heavy-flavor $v_3$ is caused by heavy quarks losing energy to a medium with third order eccentricity from initial condition fluctuations.
-The fluctuation nature of $v_3$ requires averaging over much more events than the calculation of $v_2$ to control the statistical fluctuation and as a result we did not include it in the calibration.
-We validate our calibration with the D-meson $v_3$ and make a prediction for B-meson $v_n$ in Figure \ref{plots:pred:vn}.
 The B-meson $v_2$ and $v_3$ is predicted to be similar to D-meson flow for $p_T > 10$ GeV, below which B-meson flow is significantly smaller than D-meson flow.
 Compared to CMS data, the calibrated model reproduces the transverse momentum and centrality dependence of D-meson $v_3$ very well.
 
 Finally, we want to bring attention to the D-meson direct flow $v_1$.
-D-meson $v_1$ should be vanishing at mid-rapidity if one measures it with respect to an estimation of reaction plane due to the reflection symmetry on averaging over many events.
-But we can correlate heavy quarks $v_1$ with charged particle $v_3$ to get a non-zero signal even at mid-rapidity.
+D-meson $v_1$ should be vanishing at mid-rapidity if one measures it with respect to the reaction plane due to the reflection symmetry on averaging over many events.
+But correlating heavy quarks $v_1$ with charged particle $v_3$ result in a non-zero signal even at mid-rapidity.
 This direct flow with respect to $n=3$ event plane is calculated in the scalar product approach
 \begin{eqnarray}
 v_1 &=& \left\langle \frac{\Re\{q_3 Q_1^*\}}{mM} \right\rangle\Bigm/\left\langle \frac{|q_3|^2-m}{m(m-1)} \right\rangle,\\
@@ -674,10 +676,12 @@ Q_1 &=& \sum_{j=1}^{M}e^{i\phi_j} \textrm{, for heavy mesons},\nonumber\\
 q_3 &=& \sum_{j=1}^{m}e^{i3\phi_j} \textrm{, for charged particles}. \nonumber
 \end{eqnarray}
 The resulting $v_1$ as function of centrality is shown in Figure \ref{plots:pred:v1}.
-The shaded area is the prior range of this quantity using events from the 80 design parameter set calculations.
-The dots are our prediction using the high likelihood parameter set with ALICE kinematic cuts.
-This quantity is clearly finite and negative in our calculation and we expect it to reach as far as $-4\%$ in the peripheral centrality bin.
-We understand this finite signal in the following way. 
+The upper left plot shows the prior range of this quantity as function of centrality using events from the 80 design parameter set calculations.
+The upper right dots are our prediction using the high likelihood parameter set with.
+This quantity is clearly finite and negative in our calculation and we expect it to reach as far as $-3\%$ in the peripheral centrality bin.
+The transverse momentum dependence of $v_1$ is shown in the lower left plot, the magnitude of the signal grows with $p_T$ until it reaches the minimum at $p_T \sim 8$ GeV; then the magnitude slowly drop to zero at large $p_T$.
+We understand this finite $v_1$ in the following way.
+Please refer to the sketch plot on the lower right of Figure \ref{plots:pred:v1}.
 When $q_3$ is finite, the direction of $q_3$ defines a plane to which the medium evolution is reflection asymmetric and this asymmetry causes heavy quarks to loose energy differently depending whether the direction of motion is along or against the direction of $q_3$.
 Since $q_3$ originates from the triangular initial state fluctuation, a finite signal would be another indication of heavy quark energy loss coupling to initial condition fluctuations and bulk collectivity.
 
@@ -710,7 +714,8 @@ Our results suggest a late onset of medium energy loss.
 The typical coupling constant of perturbative scattering is fairly large and future improvements are needed.
 A additional small diffusion component is preferred.
 The calibrated model predicts the centrality and $p_T$ dependence of $B$ meson nuclear modification factor and flows and a non-zero D-meson direct flow with respect to $n=3$ event plane.
-The extracted heavy quark transport coefficient $\hat{q}$ at finite momenta in the QGP phase is consistent within uncertainty in the previous work, but at small momenta, $D_s$ of this work is larger than the previous extraction.
+The extracted heavy quark transport coefficient $\hat{q}$ at finite momenta in the QGP phase is consistent within uncertainty in the previous work. 
+But at small momenta, $D_s$ of this work is larger than the previous extraction.
 
 \begin{appendices}
 \section{Running coupling}
