@@ -643,28 +643,32 @@ Values & 0.9 & 0.6 & 0.4 & 0.5\\
 \end{table} 
 \begin{figure*}
 \includegraphics[width=\textwidth]{raa.pdf}
-\caption{Calculation of heavy-flavor $R_{AA}$ with the high likelihood parameter set compared to ALICE D-meson Pb+Pb and p+Pb \cite{Abelev:2014hha,Abelev:2014hha} measurements. B-meson $R_{AA}$ are predicted.}\label{plots:pred:raa}
+\caption{Calculation of heavy-flavor $R_{AA}$ with the high likelihood parameter set. Results are compared to ALICE $D$-meson measurements in Pb+Pb and p+Pb \cite{Abelev:2014hha,Abelev:2014hha} and STAR $D$-meson measurements in Au+Au \cite{Xie:2016iwq}. $B$-meson $R_{AA}$ are predicted.}\label{plots:pred:raa}
 \end{figure*}
 \begin{figure*}
 \includegraphics[width=\textwidth]{vn.pdf}
-\caption{Calculation of heavy-flavor flows with the high likelihood parameter set compared to CMS D-meson measurements. D-meson $v_3$ and B-meson $v_2, v_3$ are predictions.}\label{plots:pred:vn}
+\caption{Calculation of heavy-flavor flows with the high likelihood parameter set. Results are compared to CMS $D$-meson measurements in Pb+Pb \cite{Sirunyan:2017plt} and STAR $D$-meson measurements in Au+Au \cite{Adamczyk:2017xur}. D-meson $v_3$ and B-meson $v_2, v_3$ are predictions.}\label{plots:pred:vn}
 \end{figure*}
 \begin{figure}
 \includegraphics[width=0.5\textwidth]{v1.pdf}\\
 \includegraphics[width=0.5\textwidth]{v1pT.pdf}
 \caption{Top row: centrality dependence of D-meson direct flow with respect to $n=3$ event plane. Left: the prior range. Right: prediction using high likelihood parameter set. Bottom left: the transverse momentum dependence of D-meson direct flow with respect to $n=3$ event plane at 30-50\% centrality. Bottom right: a sample trento event. The third order eccentricity would drive a $v_3$. A measurement along the $n=3$ direction, would introduce reflection asymmetry in the heavy quark energy loss.}\label{plots:pred:v1}
 \end{figure}
-We first investigate the nuclear modification factor in a larger $p_T$ range with $|y|<0.5$.
-In Figure \ref{plots:pred:raa} first three plots, B-meson $R_{AA}$ for 0-10\%, 30-50\%, and 60-80\% centrality is shown and compared to D-meson calculations and measurements for a reference.
+We first investigate the nuclear modification factor in a larger $p_T$ range.
+In Figure \ref{plots:pred:raa} first three plots, $D$-meson and $B$-meson $R_{AA}$ for 0-10\%, 30-50\%, and 60-80\% centrality are shown and compared to ALICE $D$-meson measurements.
 The mass effect clearly separates $B$-meson from $D$-meson $R_{AA}$ in the intermediate $p_T$ range. 
-The calculation for $p+Pb$ collisions is shown in the right most plot compared to ALICE measurement of $D$-meson $R_{AA}$ \cite{Abelev:2014hha}.
+The calculation for $p+Pb$ collisions is shown in the fourth plot compared to ALICE measurement \cite{Abelev:2014hha}.
 The red-dotted line showed the calculation without using shadowing effect for $p$+Pb collision.
 We found calibrated model results in a very good description of the $p+Pb$ minimum biased measurement and shadowing effect is important to understand the low-$p_T$ data.
+In the right most plot, we apply the model to the RHIC beam energy ($\sqrt{s} = 200$ GeV).
+The calculated $D$-meson $R_{AA}$ is slightly higher than the STAR measurements \cite{Xie:2016iwq}. 
+Given that we did not include any RHIC data in our calibration, this level of agreement is satisfactory.
 
-Next, we validate the calibrated model by comparing to CMS measured $D$-meson $v_3$ and make a prediction for B-meson $v_n$ in Figure \ref{plots:pred:vn}.
+Next, we validate the calibrated model by comparing to CMS measured $D$-meson $v_3$ and make a prediction for B-meson $v_n$ in the first three columns of Figure \ref{plots:pred:vn}.
 In the transport model, non-zero heavy-flavor $v_3$ is caused by heavy quarks losing energy to a medium with third order eccentricity from initial condition fluctuations.
 The B-meson $v_2$ and $v_3$ is predicted to be similar to D-meson flow for $p_T > 10$ GeV, below which B-meson flow is significantly smaller than D-meson flow.
 Compared to CMS data, the calibrated model reproduces the transverse momentum and centrality dependence of D-meson $v_3$ very well.
+In the last two columns of Figure \ref{plots:pred:vn}, we again apply the model to the RHIC data and observe a good agreement with STAR measured $v_2$ of $D^0$-meson \cite{Adamczyk:2017xur}.
 
 Finally, we want to bring attention to the D-meson direct flow $v_1$.
 D-meson $v_1$ should be vanishing at mid-rapidity if one measures it with respect to the reaction plane due to the reflection symmetry on averaging over many events.
@@ -717,6 +721,13 @@ The calibrated model predicts the centrality and $p_T$ dependence of $B$ meson n
 The extracted heavy quark transport coefficient $\hat{q}$ at finite momenta in the QGP phase is consistent within uncertainty in the previous work. 
 But at small momenta, $D_s$ of this work is larger than the previous extraction.
 
+\begin{acknowledgments}
+  This research was completed using $10^6$ CPU hours provided by the Open Science Grid \cite{Pordes:2007zzb,Sfiligoi:2010zz}, which is supported by the National Science Foundation and the U.S.\ Department of Energy's Office of Science.
+SAB, YX, and WK  are supported by the U.S. Department of Energy Grant no. DE-FG02-05ER41367.
+ WK is also supported by NSF grant OAC-1550225.
+We thank Shanshan Cao, Marlene Nahrgang, and Jussi Auvinen for useful discussion of this project.
+\end{acknowledgments}
+
 \begin{appendices}
 \section{Running coupling}
 \label{appendix:alphas}
@@ -732,44 +743,6 @@ Inside a medium, the temperature $T$ defines the medium scale, it is used as a l
 $\mu$ the only parameter we tuned in the scattering component of the hybrid model.
 For elastic scattering, $Q^2$ is chosen as the momentum exchange squared for $s,t,u$ channel.
 For the gluon emission / absorption vertex, we choose $Q^2 = k_\perp^2$.
-
-\begin{comment}
-\section{Evolution with both scattering and diffusion dynamics}
-With a transport $\hat{T} = -v\cdot \partial_x$, a scattering $\hat{C}$, and a diffusion $\hat{D}$ operator in the hybrid transport equation,
-\begin{eqnarray}
-\frac{\partial f}{\partial t} = \left( \hat{T} + \hat{C} + \hat{D} \right) f
-\end{eqnarray}
-The formal solution is,
-\begin{eqnarray}
-f_{\Delta t} = e^{\int_0^{\Delta t}  \left( \hat{T} + \hat{C} + \hat{D} \right) dt}f_0
-\end{eqnarray}
-Assume the time variance of the medium are slow and decompose the joint operation into separate operations.
-\begin{eqnarray}
-e^{ \Delta t\left(\hat{T} +\hat{C} + \hat{D} \right)} &=&
-\nonumber
-e^{\Delta t \left(\hat{T} + \hat{D}\right) } e^{\Delta t \hat{C}}   e^{-\frac{\Delta t^2}{2} [\hat{T}+\hat{D}, \hat{C}]}\left(1+O(\Delta t^3)\right) \\
-\nonumber
-&=& \frac{1}{2}  \left\{
-1+\Delta t \left( \hat{T}+\hat{D} \right), 1+\Delta t C
-\right\} + O(\Delta t^3) 
-\end{eqnarray}
-The operator $1 + \Delta t ( \hat{T}  + \hat{D} )$ stands for a ``Diffusion" step in the simulation; the operator $1+\Delta t \hat{C}$ stands for a ``Scattering" step in the simulation. 
-Therefore, we design the following simulation procedure.
-\begin{itemize}
-\item For each step, choose a $\Delta t$ in lab frame small enough that total scattering probability $P_c \ll 1$.
-\item Determine the ordering of diffusion step and scattering step with 50-50\% chance
-\item If diffusion operates before scattering.
-\begin{itemize}
-\item[Step 1.] $(t, x, p) \xrightarrow{\textrm{Diffusion}} (t+\Delta t, x', p^*)$.
-\item[Step 2.] $(t+\Delta t, x', p^*) \xrightarrow{\textrm{Scattering}} (t+\Delta t, x', p')$.
-\end{itemize}
-\item If diffusion operates after scattering.
-\begin{itemize}
-\item[Step 1.] $(t, x, p) \xrightarrow{\textrm{Scattering}} (t, x, p^*)$.
-\item[Step 2.] $(t, x, p^*)  \xrightarrow{\textrm{Diffusion}} (t+\Delta t, x', p')$.
-\end{itemize}
-\end{itemize}
-\end{comment}
 
 \begin{comment}
 \section{Calculation of $v_n\{2\}$ and $v_2\{EP\}$}
