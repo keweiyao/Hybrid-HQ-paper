@@ -1,5 +1,5 @@
 \documentclass[aps, prc, reprint, amsmath, groupedaddress, nofootinbib]{revtex4-1}
-\usepackage[compat=1.1.0]{tikz-feynman}
+%\usepackage[compat=1.1.0]{tikz-feynman}
 \usepackage[utf8]{inputenc}
 \usepackage{hyperref}
 \usepackage{amsmath}
@@ -222,125 +222,12 @@ With this prescription, the rate of emitting gluon with $\tau_f \gg \Delta t$ is
 It is not trivial to tell if the Boltzmann equation with a history-dependent rate should thermalize as $t\rightarrow \infty$, so we test and confirm this the next section.
 
 \begin{figure}
-\feynmandiagram [xscale=.95, yscale=1, horizontal=a to b] {
-  p1 -- [fermion] a--b[fermion] -- [fermion] p3 ,
-  p2 -- [gluon] a,
-  p4 -- [gluon] b,
-};
-\begin{tikzpicture}[xscale=.95, yscale=1.]
-  \begin{feynman}
-    \diagram [horizontal=a to b] {
-      i1 %[particle=\(Q\)]
-      -- [fermion] a
-      -- [draw=none] f1,% [particle=\(g\)],
-      a -- [fermion] b,
-      i2 %[particle=\(Q\)]
-      -- [anti fermion] b
-      -- [draw=none] f2,% [particle=\(g\)],
-    };
-    \diagram* {
-      (a) -- [gluon] (f2),
-      (b) -- [gluon] (f1),
-    };
-  \end{feynman}
-\end{tikzpicture}
-\feynmandiagram [xscale=1.2, yscale=.8, horizontal=p2 to p4] {
-  p2 [particle=$g$]-- [gluon] b -- [gluon] p4 [particle=$g$],
-  a -- [gluon] b,
-  p1 [particle=$Q$] -- [fermion] a -- [fermion] p3 [particle=$Q$],
-};
-\feynmandiagram [xscale=1.2, yscale=.8, horizontal=p1 to p3] {
-  p2 [particle=$q$] -- [fermion, edge label=$p_2$] a -- [fermion, edge label=$p_4$] p4 [particle=$q$],
-  a -- [gluon, momentum=$q$] b,
-  p1 [particle=$Q$] -- [fermion, edge label=$p_1$] b -- [fermion, edge label=$p_3$] p3 [particle=$Q$],
-};
+\includegraphics[width=.5\textwidth]{feyn-inel.pdf}
 \caption{Elastic processes. The first three diagrams contribute to heavy quark (Q) - gluon (g) scattering, the last one contributes to a light (anti-)quark (q) scattering. Intermediate propagators are screened by a Debye mass in case of soft divergence.}\label{plots:feyn-elastic}
 \end{figure}
 
 \begin{figure}
-\begin{tikzpicture}
-  \begin{feynman}
-    \diagram [xscale=0.8, yscale=.6, vertical=a to b] {     
-      i2 [particle=\(g/q\)]
-        -- [gluon] b
-        -- [gluon] f2 [particle=\(g/q\)]],
-      b -- [gluon, momentum=$q$] a,
-      i1 [particle=\(Q\)]
-        -- [fermion] a
-        -- [fermion] f1 [particle=\(Q\)],
-    };
-    \vertex [below right=.2 cm and .8 cm of a, label=\(k\)] (r);
-    \draw [gluon] ($(a)!0.3!(f1)$) -- (r);
-    \draw  (i2)--(b);
-     \draw  (b)--(f2);
-  \end{feynman}
-\end{tikzpicture}
-\begin{tikzpicture}
-  \begin{feynman}
-    \diagram [xscale=0.8, yscale=0.6, vertical=a to b] {     
-      i2  -- [gluon] b
-        -- [gluon] f2,
-      a -- [gluon] b,
-      i1 -- [fermion] a
-        -- [fermion] f1,
-    };
-    \vertex [above right=.7 cm and .4 cm of a] (r);
-    \draw [gluon] ($(i1)!0.7!(a)$) -- (r);
-    \draw  (i2)--(b);
-     \draw  (b)--(f2);
-  \end{feynman}
-\end{tikzpicture}
-\begin{tikzpicture}
-  \begin{feynman}
-    \diagram [xscale=0.8, yscale=.6, vertical=a to b] {     
-      i2 %[particle=\(g\)]
-        -- [gluon] b
-        -- [gluon] f2, %[particle=\(g\)]],
-      a -- [gluon] b,
-      i1 %[particle=\(Q\)]
-        -- [fermion] a
-        -- [fermion] f1, %[particle=\(Q\)],
-    };
-    \vertex [below right=.0 cm and .8 cm of a] (r);
-    \draw [gluon] ($(a)!0.5!(b)$) -- (r);
-    \draw  (i2)--(b);
-     \draw  (b)--(f2);
-  \end{feynman}
-\end{tikzpicture}
-\begin{tikzpicture}
-  \begin{feynman}
-    \diagram [xscale=0.8, yscale=.6, vertical=a to b] {     
-      i2 %[particle=\(g\)]
-        -- [gluon] b
-        -- [gluon] f2, %[particle=\(g\)]],
-      a -- [gluon] b,
-      i1 %[particle=\(Q\)]
-        -- [fermion] a
-        -- [fermion] f1, %[particle=\(Q\)],
-    };
-    \vertex [below right=.75 cm and .35 cm of b] (r);
-    \draw [gluon] ($(i2)!0.6!(b)$) -- (r);
-    \draw  (i2)--(b);
-     \draw  (b)--(f2);
-  \end{feynman}
-\end{tikzpicture}
-\begin{tikzpicture}
-  \begin{feynman}
-    \diagram [xscale=0.8, yscale=.6, vertical=a to b] {     
-      i2 %[particle=\(g\)]
-        -- [gluon] b
-        -- [gluon] f2, %[particle=\(g\)]],
-      a -- [gluon] b,
-      i1 %[particle=\(Q\)]
-        -- [fermion] a
-        -- [fermion] f1, %[particle=\(Q\)],
-    };
-    \vertex [above right=.2 cm and .8 cm of b] (r);
-    \draw [gluon] ($(b)!0.3!(f2)$) -- (r);
-    \draw  (i2)--(b);
-     \draw  (b)--(f2);
-  \end{feynman}
-\end{tikzpicture}
+\includegraphics[width=.5\textwidth]{feyn-inel.pdf}
 \caption{Inelastic process. Heavy quark collide with a meidum light (anti-)quark or gluon and radiates an additional gluon.}\label{plots:feyn-inelastic}
 \end{figure}
 
