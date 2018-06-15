@@ -125,14 +125,26 @@ We calibrate the model parameters in section \ref{section:calibration} to data a
 Finally, section \ref{section:conclusion} contains summary and discussion of results.
 
 \section{Heavy quark propagation in a hybrid transport model}\label{section:model}
-As introduced in the previous section, the hybrid heavy quark transport model {\tt Lido} consists of a scattering component and a diffusion component:
+As introduced in the previous section, the {\tt Lido} model consists of a linearized-Boltzmann equation of scatterings $\mathcal{C}[f_Q]$ and a diffusion component that appears as a Fokker-Plank operator $\mathcal{D}[f_Q]$ in the transport equation:
+\begin{eqnarray}
+\nonumber
+  \frac{p \cdot \partial f_Q}{E}  &=& 
+\mathcal{C}[f_Q] + \frac{\partial}{\partial p_i}\left(A_i +\frac{1}{2}\frac{\partial}{\partial p_j}B_{ij} \right) f_Q \\
+  &=& 
+\left( \mathcal{\hat{C}} + \mathcal{\hat{D}} \right) f_Q,
+\end{eqnarray}
+with a formal solution,
+\begin{eqnarray}
+\nonumber
+f_Q(x) &=& \exp\left\{ \int_{x'}^x \gamma u \cdot dx \left( \mathcal{\hat{C}} + \mathcal{\hat{D}} \right) \right\} f_Q(x')
+\end{eqnarray}
+Technically, this can be solved by the split step method within a tiny time step $\Delta t = \gamma u \cdot dx$, during which we apply the operation of scattering and diffusion subsequently up to corrections of $\mathcal{O}(\Delta t^2)$.
+Next, we discuss the physics included in each components in detail. 
 
 \subsection{Scattering component}
 The scattering of heavy quarks with medium particles is treated with a linearized Boltzmann equation,
 \begin{eqnarray}
-  \frac{\partial}{\partial t}f_Q - \frac{\vec{p}}{E}\cdot\nabla f_Q  = 
-\mathcal{C}[f_Q]
-%C_i^{2\rightleftharpoons 2}[f_Q] + C_i^{2\rightleftharpoons 3}[f_Q]
+    \frac{p \cdot \partial f_Q}{E} = \mathcal{C}[f_Q].
 \end{eqnarray}
 The left hand side represents the free evolution of the heavy quark distribution function. 
 Scatterings with medium partons modify the distribution function via the collision integral on the right.
@@ -143,8 +155,8 @@ f_{q,\bar{q}, g}(t,x,p) = \exp\left(-\frac{p \cdot u(t,x)}{T(t,x)}\right),
 and any non-equilibrium corrections are neglected.
 The space-time evolution of the temperature field $T$ and velocity field $u^\mu$ are obtained in an event-by-event 2+1D viscous relativistic hydrodynamic calculation \cite{Heinz:2005bw,Song:2007ux,Shen:2014vra}.
 We solve $f_Q(t,x,p)$ using Monte Carlo techniques by representing the distribution function with an ensemble of heavy quarks.
-Within a given time step $dt$, each heavy quark scatters according to its reaction probability $P$.
-We always calculate $P$ in the center-of-mass (CoM) frame of the local fluid cell with given temperature $T$ and velocity field $u^\mu$.
+Within a given time step $\Delta t$, each heavy quark scatters according to its reaction probability $\Delta P$.
+We always calculate $\Delta P$ in the rest frame of the fluid cell with given temperature $T$ and velocity field $u^\mu$.
 In this reference frame, the heavy quark with energy $E_1$ can collide with medium particles that together form an $n$-body initial state denoted as $\{\textrm{in}\}$, and the outgoing particles after the collision form the $m$-body final state $\{\textrm{out}\}$.
 The probability for a heavy quark to undergo an interaction of a certain type inside the fluid cell per unit time is the so called scattering rate $\Gamma$,
 \begin{eqnarray}\label{eq:rate}
