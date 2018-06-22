@@ -141,37 +141,53 @@ TRENTO_LABEL = r'T\raisebox{-.5ex}{R}ENTo'
 
 
 
+alpha0 = 4.*np.pi/(11. - 2./3.*3)
+Lambda2 = 0.2**2
 def alpha_s(Q2, T, mu):
-	Nc, Nf = 3., 3.
-	pf_g = 4.*np.pi/3.*(Nc+Nf/2.)
-	alpha0 = 4.*np.pi/(11. - 2./3.*Nf)
-	Lambda2 = 0.2**2
-	scale2 = (mu*np.pi*T)**2
-	if Q2 < 0:
-		result = alpha0/np.log(np.max([-Q2, scale2])/Lambda2)
-		if result > alpha0 or result < 0.:
-			return alpha0
+	scale = (mu*np.pi*T)**2
+	Q2 = np.max([np.abs(Q2), scale])
+	if Q2 < Lambda2*2.71828:
+		return alpha0
 	else:
-		return alpha0*(0.5 - np.arctan(np.log(np.max([Q2, scale2])/Lambda2)/np.pi)/np.pi)
+		return alpha0/np.log(Q2/Lambda2)
 alpha_s = np.vectorize(alpha_s)
 
-def mD2(T, mu):
-	return alpha_s(0., T, mu)*6.*np.pi*T*T
-mD2 = np.vectorize(mD2)
+def naive_LO_mD2(T, mu):
+	return alpha_s(0., T, mu)*48./np.pi*T*T
+naive_LO_mD2 = np.vectorize(naive_LO_mD2)
+
+def mD2_LO_sf(T, mu):
+	def mD2_LO_eq(m2, T, mu):
+		return alpha_s(m2,T,mu)*48./np.pi*T*T - m2
+
+	return brentq(mD2_LO_eq, 0.01, 100., args=(T, mu))
+mD2 = np.vectorize(mD2_LO_sf)
 
 @plot
 def alpha_s_at_T(args):
-	fig, ax = plt.subplots(nrows=1, ncols=1,
-							 figsize=(columnwidth, 0.6*columnwidth))
-	Tc = 0.154
-	T = np.linspace(Tc, 1, 100)
+	fig, axes = plt.subplots(nrows=1, ncols=2, sharex=True,#sharey=True,
+							 figsize=(columnwidth, 0.55*columnwidth))
+	Tc = 0.15
+	T = np.linspace(Tc, 0.8, 100)
+	ax = axes[0]
 	for mu, num, line in zip([0.45, 0.6, 0.75],
 		["0.45", "0.6", "0.75"], ['--', '-', '-.']):
 		ax.plot(T, alpha_s(0., T, mu), line, color=cr, label=r"${:s}\pi T$".format(num))
-	ax.set_xlabel(r'$T$')
-	ax.set_ylabel(r'$\alpha_s(T)$')
-	ax.set_ylim(0,1)
-	ax.set_xlim(0.1, 1)
+	ax.set_xlabel(r'$T$ [GeV]')
+	ax.set_ylabel(r'$\alpha_s(Q, \mu\pi T)$')
+	ax.set_ylim(0,2)
+	ax.set_xlim(0., .9)
+	ax.set_title("$Q=0$")	
+	ax = axes[1]
+	for mu, num, line in zip([0.45, 0.6, 0.75],
+		["0.45", "0.6", "0.75"], ['--', '-', '-.']):
+		ax.plot(T, alpha_s(mD2(T,mu)**0.5, T, mu), line, color=cr, label=r"${:s}\pi T$".format(num))
+	ax.set_xlabel(r'$T$ [GeV]')
+	ax.set_ylim(0,2)
+	ax.set_xlim(0., .8)
+	ax.set_yticks([])
+	ax.set_xticks([0., 0.3, 0.6])
+	ax.set_title("$Q=m_D$")
 	ax.legend()
 	finish(rect=[0.0, 0., 0.99, 0.99])
 
