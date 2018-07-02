@@ -18,57 +18,72 @@ from matplotlib.colors import LinearSegmentedColormap
 from matplotlib import patches
 from matplotlib import gridspec
 
+fontsmall, fontnormal, fontlarge = 5, 6, 7
+offblack = '#262626'
 aspect = 1/1.618
 resolution = 72.27
-columnwidth = 246/resolution
-textwidth = 510/resolution
+textwidth = 307.28987/resolution
+textheight = 261.39864/resolution
+fullwidth = 350/resolution
+fullheight = 270/resolution
+textwidth = fullwidth
+columnwidth = fullwidth/2.
 textiny, texsmall, texnormal = 8.0, 9.25, 10.0
 cm1, cm2 = plt.cm.Blues(.8), plt.cm.Reds(.8)
 cb,co,cg,cr = plt.cm.Blues(.6), \
-	plt.cm.Oranges(.6), plt.cm.Greens(.6), plt.cm.Reds(.6)
+    plt.cm.Oranges(.6), plt.cm.Greens(.6), plt.cm.Reds(.6)
 offblack = '#262626'
 gray = '0.8'
 
 plt.rcdefaults()
 plt.rcParams.update({
-	'font.family': 'sans-serif',
-	'font.serif': ['CMU Serif'],
-	'font.size': textiny*1.2,
-	'legend.fontsize': textiny*1.2,
-	'axes.labelsize': textiny*1.2,
-	'axes.titlesize': textiny*1.2,
-	'xtick.labelsize': textiny*1.2,
-	'ytick.labelsize': textiny*1.2,
-	'font.weight': 400,
-	'axes.labelweight': 400,
-	'axes.titleweight': 400,
-	'lines.linewidth': .9,
-	'lines.markersize': 3,
-	'lines.markeredgewidth': .1,
-	'patch.linewidth': .9,
-	'axes.linewidth': .5,
-	'xtick.major.width': .5,
-	'ytick.major.width': .5,
-	'xtick.minor.width': .5,
-	'ytick.minor.width': .5,
-	'xtick.major.size': 2,
-	'ytick.major.size': 2,
-	'xtick.minor.size': 1.3,
-	'ytick.minor.size': 1.3,
-	'xtick.major.pad': 1.8,
-	'ytick.major.pad': 1.8,
-	'text.color': 'black',
-	'axes.edgecolor': 'black',
-	'axes.labelcolor': 'black',
-	'xtick.color': 'black',
-	'ytick.color': 'black',
-	'legend.numpoints': 1,
-	'legend.scatterpoints': 1,
-	'legend.frameon': False,
-	'image.interpolation': 'none',
-	'pdf.fonttype': 42,
+    'font.family': 'DejaVu Sans-Serif',
+    'font.sans-serif': ['Lato'],
+    'mathtext.fontset': 'custom',
+    'mathtext.default': 'it',
+    'mathtext.rm': 'sans',
+    'mathtext.it': 'sans:italic:medium',
+    'mathtext.cal': 'sans',
+    'font.size': fontnormal,
+    'legend.fontsize': fontnormal,
+    'axes.labelsize': fontnormal,
+    'axes.titlesize': fontlarge,
+    'xtick.labelsize': fontsmall,
+    'ytick.labelsize': fontsmall,
+    'font.weight': 400,
+    'axes.labelweight': 400,
+    'axes.titleweight': 400,
+    'lines.linewidth': .5,
+    'lines.markersize': 3,
+    'lines.markeredgewidth': 0,
+    'patch.linewidth': .5,
+    'axes.linewidth': .4,
+    'xtick.major.width': .4,
+    'ytick.major.width': .4,
+    'xtick.minor.width': .4,
+    'ytick.minor.width': .4,
+    'xtick.major.size': 1.2,
+    'ytick.major.size': 1.2,
+    'xtick.minor.size': .8,
+    'ytick.minor.size': .8,
+    'xtick.major.pad': 1.5,
+    'ytick.major.pad': 1.5,
+    'axes.formatter.limits': (-5, 5),
+    'axes.spines.top': False,
+    'axes.spines.right': False,
+    'axes.labelpad': 3,
+    'text.color': offblack,
+    'axes.edgecolor': offblack,
+    'axes.labelcolor': offblack,
+    'xtick.color': offblack,
+    'ytick.color': offblack,
+    'legend.numpoints': 1,
+    'legend.scatterpoints': 1,
+    'legend.frameon': False,
+    'image.cmap': 'Blues',
+    'image.interpolation': 'none',
+    'pdf.fonttype': 42
 })
-
 
 plot_functions = {}
 
@@ -76,7 +91,7 @@ def plot(f):
 	def wrapper(*args, **kwargs):
 		print(f.__name__)
 		f(*args, **kwargs)
-		plt.savefig('{}.pdf'.format(f.__name__))
+		plt.savefig('{}.pdf'.format(f.__name__), dpi=300)
 		plt.close()
 
 	plot_functions[f.__name__] = wrapper
@@ -172,7 +187,7 @@ def alpha_s_at_T(args):
 	ax = axes[0]
 	for mu, num, line in zip([0.45, 0.6, 0.75],
 		["0.45", "0.6", "0.75"], ['--', '-', '-.']):
-		ax.plot(T, alpha_s(0., T, mu), line, color=cr, label=r"${:s}\pi T$".format(num))
+		ax.plot(T, alpha_s(0., T, mu), line, color=cr, label=r"${:s}\pi T$".format(num), linewidth=1)
 	ax.set_xlabel(r'$T$ [GeV]')
 	ax.set_ylabel(r'$\alpha_s(Q, \mu\pi T)$')
 	ax.set_ylim(0,2)
@@ -181,11 +196,11 @@ def alpha_s_at_T(args):
 	ax = axes[1]
 	for mu, num, line in zip([0.45, 0.6, 0.75],
 		["0.45", "0.6", "0.75"], ['--', '-', '-.']):
-		ax.plot(T, alpha_s(mD2(T,mu)**0.5, T, mu), line, color=cr, label=r"${:s}\pi T$".format(num))
+		ax.plot(T, alpha_s(mD2(T,mu)**0.5, T, mu), line, color=cr, label=r"${:s}\pi T$".format(num), linewidth=1)
 	ax.set_xlabel(r'$T$ [GeV]')
 	ax.set_ylim(0,2)
 	ax.set_xlim(0., .8)
-	ax.set_yticks([])
+	ax.set_yticklabels([])
 	ax.set_xticks([0., 0.3, 0.6])
 	ax.set_title("$Q=m_D$")
 	ax.legend()
@@ -412,11 +427,83 @@ def L_Eloss(quark):
 	finish(pad=1, h_pad=0.5, w_pad=0.5, rect=[0.01, 0.02, 0.99, 0.98])
 
 @plot
+def Eloss_LPM(quark):
+	M = 1.3 if quark == 'charm' else 4.2
+	fig, axes = plt.subplots(nrows=1, ncols=2, #sharex=True,
+								#sharey=True,
+							 figsize=(columnwidth*1.5, columnwidth))
+
+	with h5py.File('data/Eloss.h5','r') as f:
+		T = f['rad'].attrs['T']
+		E = f['rad'].attrs['E']
+		L = f['rad'].attrs['L']
+		def unpack(dset):
+			data = np.zeros([T.size, E.size, L.size])
+			for iT, eT in enumerate(T):
+				for iE, eE in enumerate(E):
+					data[iT, iE] = f[dset]['{}/{}'.format(iT, iE)].value
+			return data
+		rad_abs1 = unpack('rad')
+
+	with h5py.File('data/Eloss-BDMPSZ.h5','r') as f:
+		T = f['rad'].attrs['T']
+		E = f['rad'].attrs['E']
+		L = f['rad'].attrs['L']
+		def unpack(dset):
+			data = np.zeros([T.size, E.size, L.size])
+			for iT, eT in enumerate(T):
+				for iE, eE in enumerate(E):
+					data[iT, iE] = f[dset]['{}/{}'.format(iT, iE)].value
+			return data
+		rad_abs2 = unpack('rad')
+
+	with h5py.File('data/Eloss-no-lpm.h5','r') as f:
+		T = f['rad'].attrs['T']
+		E = f['rad'].attrs['E']
+		L = f['rad'].attrs['L']
+		def unpack(dset):
+			data = np.zeros([T.size, E.size, L.size])
+			for iT, eT in enumerate(T):
+				for iE, eE in enumerate(E):
+					data[iT, iE] = f[dset]['{}/{}'.format(iT, iE)].value
+			return data
+		rad_abs0 = unpack('rad')
+
+	lines = ['-', '--', '-.']
+	lE = np.linspace(M,100,50)
+	ax = axes[0]
+	# first row, dE/E vs E
+	for i, (dE, ls) in enumerate(zip([rad_abs0, rad_abs1, rad_abs2], lines)):
+		for iT, (eT, color) in enumerate(zip(T[:2], [cb, cr])):
+			dEE = dE[iT,:,-1]/E
+			ax.plot(E, dEE, ls, color=color, linewidth=1.5, zorder=i)
+		if ax.is_first_col():
+			ax.set_ylabel(r"$\Delta E / E$")
+		ax.semilogx()
+		ax.set_xlabel(r"$E$ [GeV]")
+	ax = axes[1]
+	# second row, dE/E vs L
+	for i, (dE, ls, l) in enumerate(zip([rad_abs0, rad_abs1, rad_abs2], lines, ["Bethe-Heitler,", "Higher-Twist,", "BDMPS-Z,"])):
+		for iT, (eT, color) in enumerate(zip(T[:2],[cb, cr])):
+			dEE = dE[iT,13,:]/E[13]
+			print(E[13])
+			ax.plot(L[::10], dEE[::10]/L[::10], ls, color=color, linewidth=1.5, zorder=i, label=l+r" $T: {:1.1f}$ GeV".format(eT))
+		if ax.is_first_col():
+			ax.set_ylabel(r"$\Delta E / E$")
+		ax.set_xlabel(r"$L$ [fm]")
+		ax.legend(fontsize=8, loc="upper left")
+		#ax.set_ylim(-0.06, 1.)
+	plt.tight_layout(True)
+	plt.subplots_adjust(hspace=0.05)
+	finish(pad=0.02, h_pad=0.05, w_pad=0.01, rect=[0.01, 0.01, 0.99, 0.99])
+
+
+@plot
 def Eloss(quark):
 	M = 1.3 if quark == 'charm' else 4.2
 	fig, axes = plt.subplots(nrows=2, ncols=2, #sharex=True,
-								#sharey=True,
-							 figsize=(columnwidth, 1.3*columnwidth))
+							#	sharey=True,
+							 figsize=(columnwidth, 1.*columnwidth))
 
 	with h5py.File('data/Eloss.h5','r') as f:
 		T = f['coll'].attrs['T']
@@ -442,27 +529,29 @@ def Eloss(quark):
 		if ax.is_first_col():
 			ax.set_ylabel(r"$\Delta E / E$")
 		else:
-			ax.set_yticks([])
+			ax.set_yticklabels([])
 		ax.semilogx()
-		ax.set_ylim(-0.06, 0.65)
+		ax.set_ylim(-0.06, 0.6)
 		ax.set_xlabel(r"$E$ [GeV]")
 	# second row, dE/E vs L
-	for i, (ax, dE, color, mk, l) in enumerate(zip([axes[1,0], axes[1,1], axes[1,1]], [coll, rad_abs, rad], [cb, cr, cb], ['', 'o', ''], ['elastic', 'w/ abs', 'rad'])):
+	for i, (ax, dE, color, mk, l) in enumerate(zip([axes[1,0], axes[1,1], axes[1,1]], [coll, rad_abs, rad], [cb, cb, cr], ['', '', 'o'], ['el.', 'rad.', 'abs.+abs.'])):
 		for iT, (eT, ls) in enumerate(zip(T[:2], lines)):
 			dEE = dE[iT,13,:]/E[13]
 			print(E[13])
-			ax.plot(L[::20], dEE[::20], mk+ls, color=color, linewidth=1., zorder=i, label=l+r" $T: {:1.1f}$ GeV".format(eT))
+			ax.plot(L[::20], dEE[::20], mk+ls, color=color, linewidth=1., zorder=i, label=l+r" $T: {:1.1f}$ GeV".format(eT) if i<2 else l)
 		if ax.is_first_col():
 			ax.set_ylabel(r"$\Delta E / E$")
+			ax.legend(loc=(0.01, 0.57))
 		else:
-			ax.set_yticks([])
+			ax.set_yticklabels([])
+			ax.legend(loc=(0.01, 0.32))
 		ax.set_xlabel(r"$L$ [fm]")
-		ax.legend(fontsize=8, loc="upper left")
-		ax.set_ylim(-0.06, 0.65)
-	axes[0,0].set_title("$L = 5$ [fm]")
-	axes[1,0].set_title("$E = 30$ [GeV]")
-	axes[0,1].set_title("$L = 5$ [fm]")
-	axes[1,1].set_title("$E = 30$ [GeV]")
+		
+		ax.set_ylim(-0.06, 0.75)
+	axes[0,0].annotate("$L = 5$ [fm]", (.5,.9), xycoords="axes fraction")
+	axes[1,0].annotate("$E = 30$ [GeV]", (.5,.92), xycoords="axes fraction")
+	axes[0,1].annotate("$L = 5$ [fm]", (.5,.9), xycoords="axes fraction")
+	axes[1,1].annotate("$E = 30$ [GeV]", (.5,.92), xycoords="axes fraction")
 	plt.tight_layout(True)
 	plt.subplots_adjust(hspace=0.05)
 	finish(pad=0.02, h_pad=0.05, w_pad=0.01, rect=[0.01, 0.01, 0.99, 0.99])
